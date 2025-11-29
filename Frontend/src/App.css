@@ -1,0 +1,32 @@
+#root{
+  width: 100%;
+}
+/* .app-header{
+  width: 300px;
+  } */
+  
+  .app-container{
+    display:flex;
+    width:250px;
+  }
+ 
+  .container{
+    display:flex;
+    flex-direction: column;
+    background-color: rebeccapurple;
+    width: 100%;
+    }
+ /* .app-container{
+  display:flex
+ }
+.app-header{
+  display: flex;
+}
+.div{
+  display:flex;
+  width: 250vh;
+  height: 50px;
+  justify-content: space-between;
+  padding: 10px 40px;
+  background-color: black;
+} */

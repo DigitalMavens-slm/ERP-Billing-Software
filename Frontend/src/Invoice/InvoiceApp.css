@@ -1,0 +1,164 @@
+/* Invoice Container */
+.invoice-header-container, .invoice-row, .item-input-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+/* Labels */
+.invoice-label {
+  display: block;
+  font-weight: 600;
+  color: #b33951; /* deep rose */
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+/* Inputs & Selects */
+.invoice-input, .invoice-select, .item-input-row input, .item-input-row select {
+  padding: 8px 10px;
+  border: 1px solid #f5a9b8; /* light pink border */
+  border-radius: 5px;
+  outline: none;
+  font-size: 0.9rem;
+  transition: 0.2s all;
+}
+
+.invoice-input:focus, .invoice-select:focus, .item-input-row input:focus, .item-input-row select:focus {
+  border-color: #d63031; /* dark rose on focus */
+  box-shadow: 0 0 5px rgba(214, 48, 49, 0.3);
+}
+
+/* Invoice Title */
+.invoice-title {
+  text-align: center;
+  color: #c44569; /* rose pink */
+  font-size: 2rem;
+  margin-bottom: 30px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Fields Container */
+.invoice-field {
+  flex: 1 1 200px;
+  min-width: 180px;
+}
+
+/* Item Row */
+.item-input-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.item-input-row input, .item-input-row select {
+  flex: 1 1 120px;
+}
+
+/* Buttons */
+button {
+  background: linear-gradient(45deg, #f78fb3, #f5a9b8);
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s all;
+}
+
+button:hover {
+  background: linear-gradient(45deg, #d63031, #c44569);
+  transform: scale(1.05);
+}
+
+/* Items List */
+ul {
+  margin-top: 10px;
+  padding-left: 0;
+  list-style: none;
+}
+
+ul li {
+  background: #f8c1d6; /* soft pink */
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  color: #6d214f; /* rose text */
+}
+.invoice-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #f9f9f9;
+  border-top: 2px solid #ddd;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 16px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.invoice-footer .payable {
+  color: green;
+  font-weight: 700;
+}
+
+
+ul li button {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  background: #c44569;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .invoice-header-container, .invoice-row, .item-input-row {
+    flex-direction: column;
+  }
+}
+
+
+
+.product-suggest-container {
+  position: relative;
+  width: 200px;
+}
+
+.suggestion-box {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  z-index: 999;
+  margin-top: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  padding: 0;
+}
+
+.suggestion-box li {
+  list-style: none;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.suggestion-box li:hover {
+  background: #f0f4ff;
+  color: #007bff;
+}

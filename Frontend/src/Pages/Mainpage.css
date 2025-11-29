@@ -1,0 +1,18 @@
+.Mainpage-container{
+    display: block;
+    background-color: red;
+}
+.Mainpage-div{
+    display: flex;
+}
+.first{
+    display: flex;
+    /* fle */
+    justify-content: space-between;
+    align-items: center;
+}
+.Mainpage-content{
+    background-color: black;
+    min-width: 230px;
+    color: aliceblue;
+}
