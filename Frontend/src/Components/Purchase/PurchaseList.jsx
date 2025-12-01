@@ -21,8 +21,7 @@ export default function PurchaseList() {
 
   const deletePurchase = async (id) => {
     if (!confirm("Are you sure you want to delete this purchase?")) return;
-
-    await axios.delete(`${API_URL}/api/purchase/${id}`);
+    await axios.delete(`${API_URL}/api/purchases/${id}`, {withCredentials: true});
     fetchPurchases();
   };
 
@@ -73,12 +72,10 @@ export default function PurchaseList() {
 
                 <td className="p-4 flex justify-center gap-4">
                   {/* EDIT BUTTON */}
-                  <button
-                    className="text-blue-600 hover:text-blue-800"
-                    onClick={() => navigate(`/purchaseapp/${pur._id}`)}
-                  >
-                    <Edit size={20} />
-                  </button>
+                  
+                  <button onClick={() => navigate(`/purchase/${pur._id}`, { state: { purchaseId: pur._id } })}>
+  <Edit size={20} />
+</button>
 
                   {/* DELETE BUTTON */}
                   <button

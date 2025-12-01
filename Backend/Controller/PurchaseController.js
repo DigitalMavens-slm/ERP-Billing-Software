@@ -12,7 +12,6 @@ const user = require("../Model/userModel");
 const getAllPurchases = async (req, res) => {
   try {
     const resPerPage = 10;
-    console.log("Company Id " + req.companyId)
 
     const apiFeatures = new APIFeatures(
       Purchase.find({ companyId: req.companyId }), 
@@ -48,7 +47,7 @@ const searchPurchase = async (req, res) => {
         { supplierName: { $regex: query, $options: "i" } },  // ✅ matches schema
       ],
     }).limit(10);
-console.log(purchases)
+
     if (!purchases || purchases.length === 0) {
       return res.status(404).json({ message: "No purchase found" });
     }
@@ -70,7 +69,6 @@ const createPurchase = async (req, res) => {
 
     purchaseData.companyId = req.companyId;
 
-    console.log("ID "+purchaseData.companyId);
 
     if (purchaseData.supplierId) {
       purchaseData.supplierId = new mongoose.Types.ObjectId(purchaseData.supplierId);
@@ -117,21 +115,53 @@ await SupplierLedger.create({
 // ✅ Get purchase by ID
 const getPurchaseById = async (req, res) => {
   try {
-    // console.log(req.params.id)
     const purchase = await Purchase.findById(req.params.id);
-    if (!purchase)
-      return res.status(404).json({ success: false, message: "Purchase not found" });
 
-    res.json({ success: true, data: purchase });
-    console.log(purchase)
+    if (!purchase) {
+      return res.status(404).json({
+        success: false,
+        message: "Purchase not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      data: purchase,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to fetch purchase",
+      message: "Error fetching purchase",
       error: error.message,
     });
   }
 };
+
+
+const deletePurchase = async (req, res) => {
+  try {
+    const purchase = await Purchase.findByIdAndDelete(req.params.id);
+    if (!purchase) {
+      return res.status(404).json({
+        success: false,
+        message: "Purchase not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Purchase deleted successfully",
+      deletedPurchase: purchase,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete purchase",
+      error: error.message,
+    });
+  }
+};
+
 
 // ✅ Send purchase PDF/email
 const sendPurchase = async (req, res) => {
@@ -160,10 +190,37 @@ const sendPurchase = async (req, res) => {
   }
 };
 
+const updatePurchase = async (req, res) => {
+  try {
+    const purchase = await Purchase.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+
+    if (!purchase) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Purchase not found" });
+    }
+
+    res.json({
+      success: true,
+      message: "Updated successfully",
+      data: purchase,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+
+
 module.exports = {
   createPurchase,
   getAllPurchases,
   getPurchaseById,
   searchPurchase,
   sendPurchase,
+  deletePurchase,
+  updatePurchase,
 };

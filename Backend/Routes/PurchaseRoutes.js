@@ -10,14 +10,29 @@ router.post("/purchases", auth, companyCheck, purchaseController.createPurchase)
 // ✅ Get all purchases
 router.get("/purchases",auth, companyCheck ,purchaseController.getAllPurchases);
 
+
+router.get(
+  "/purchases/:id",
+  auth,
+  companyCheck,
+  purchaseController.getPurchaseById
+);
 // ✅ Get single purchase
-// router.get("/purchases/id/:id", purchaseController.getPurchaseById);
+router.delete("/purchases/:id", auth, companyCheck, purchaseController.deletePurchase);
 
 // ✅ Search purchase (for frontend suggestions)
-router.get("/purchases/search", purchaseController.searchPurchase);
+router.get("/purchases/search", auth, companyCheck, purchaseController.searchPurchase);
 
 // ✅ (Optional) Send purchase PDF/email
 router.post("/purchases/send", purchaseController.sendPurchase);
+
+router.put(
+  "/purchases/:id",
+  auth,
+  companyCheck,
+  purchaseController.updatePurchase
+);
+
 
 module.exports = router;
 
