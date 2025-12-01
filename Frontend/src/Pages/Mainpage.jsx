@@ -56,6 +56,7 @@ const Mainpage = () => {
 
         <div className="flex items-center gap-5">
           <Bell className="w-6 h-6 cursor-pointer" />
+
           <User2 className="w-7 h-7 cursor-pointer"/>
           <ArrowRight size={24} color="blue" onClick={() => logout()}/>
         </div>
@@ -73,6 +74,8 @@ const Mainpage = () => {
         >
 
           {/* Menu: SURVEY STYLE */}
+            <button onClick={() => setSidebarOpen(false)}>close</button>
+
           <Link
             to="dashboard"
             className={`sidebar-btn ${isActive("dashboard") ? "sidebar-active" : ""}`}
