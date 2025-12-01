@@ -62,15 +62,20 @@ export default function ProductForm() {
   if (!productData.name.trim()) return;
 
   setLoading(true);
+  const cleanedData = {
+  ...productData,
+  categoryId: productData.categoryId || null,
+  subCategoryId: productData.subCategoryId || null,
+  brandId: productData.brandId || null,
+  gst: productData.gst || 0,
+};
 
-  try {
-    await axios.post(
-      `${API_URL}/api/products`,
-      productData,
-      {
-        withCredentials: true 
-      }
-    );
+try {
+  await axios.post(
+    `${API_URL}/api/products`,
+    cleanedData,
+    { withCredentials: true }
+  );
 
     setMessage("Product added successfully!");
 
