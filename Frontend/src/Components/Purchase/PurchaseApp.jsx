@@ -59,7 +59,7 @@ const PurchaseApp = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/products`);
+        const res = await axios.get(`${API_URL}/api/products`, {withCredentials: true});
         console.log("✅ Products:", res.data);
         setProductsList(res.data);
       } catch (err) {
@@ -311,145 +311,161 @@ return (
         </div>
       </div>
     </div>
+{/* ---------- CARD: SUPPLIER ---------- */}
+<div className="relative bg-white/80 backdrop-blur-xl shadow-lg rounded-2xl p-5 mb-6 border border-slate-200 overflow-visible z-10">
 
-    {/* ---------- CARD: SUPPLIER ---------- */}
-    <div className="bg-white/80 backdrop-blur-xl shadow-lg rounded-2xl p-5 mb-6 border border-slate-200">
-      <h2 className="text-xl font-semibold mb-4 text-slate-700">👤 Supplier Details</h2>
+  <h2 className="text-xl font-semibold mb-4 text-slate-700">👤 Supplier Details</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+  <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
 
-        {/* Supplier Name */}
-        <div className="relative">
-          <label className="text-sm text-slate-600">Supplier *</label>
-          <input
-            name="supplier"
-            value={selectedName}
-            onChange={handleChange}
-            onClick={() => setFilteredSuppliers(suppliersList)}
-            onFocus={() => setFilteredSuppliers(suppliersList)}
-            onKeyDown={(e) => handleKeyDown(e, selectSupplier)}
-            className="w-full mt-1 px-3 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500"
-            autoComplete="off"
-          />
+    {/* Supplier Name */}
+    <div className="relative overflow-visible z-[9999]">
 
-          {/* Suggestion Box */}
-          {filteredSuppliers.length > 0 && (
-            <ul className="absolute z-50 bg-white shadow-lg border rounded-xl w-full mt-1 max-h-56 overflow-y-auto">
-              {filteredSuppliers.map((s, idx) => (
-                <li
-                  key={s._id}
-                  onClick={() => selectSupplier(s.name || s.supplierName)}
-                  className={`px-3 py-2 cursor-pointer hover:bg-blue-100 ${
-                    idx === highlightIndex ? "bg-blue-200" : ""
-                  }`}
-                >
-                  {s.name || s.supplierName}
-                </li>
-              ))}
+      <label className="text-sm text-slate-600">Supplier *</label>
 
-              <button
-                onClick={() => navigate("/setting/customer")}
-                className="w-full py-2 bg-green-100 hover:bg-green-200"
-              >
-                ➕ Add New Supplier
-              </button>
-            </ul>
-          )}
-        </div>
+      <input
+        name="supplier"
+        value={selectedName}
+        onChange={handleChange}
+        onClick={() => setFilteredSuppliers(suppliersList)}
+        onFocus={() => setFilteredSuppliers(suppliersList)}
+        onKeyDown={(e) => handleKeyDown(e, selectSupplier)}
+        className="w-full mt-1 px-3 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500"
+        autoComplete="off"
+      />
 
-        <div>
-          <label className="text-sm text-slate-600">Bill Type</label>
-          <select
-            value={billType}
-            onChange={(e) => setBillType(e.target.value)}
-            className="w-full mt-1 px-3 py-2 border rounded-xl"
+      {/* Suggestion Dropdown */}
+      {filteredSuppliers.length > 0 && (
+        <ul className="absolute top-full left-0 z-[99999] bg-white border shadow-xl rounded-xl w-full mt-1 max-h-56 overflow-y-auto">
+
+          {filteredSuppliers.map((s, idx) => (
+            <li
+              key={s._id}
+              onClick={() => selectSupplier(s.name || s.supplierName)}
+              className={`px-3 py-2 cursor-pointer hover:bg-blue-100 ${
+                idx === highlightIndex ? "bg-blue-200" : ""
+              }`}
+            >
+              {s.name || s.supplierName}
+            </li>
+          ))}
+
+          <button
+            onClick={() => navigate("/setting/customer")}
+            className="w-full py-2 bg-green-100 hover:bg-green-200"
           >
-            <option>Cash</option>
-            <option>Credit</option>
-          </select>
-        </div>
+            ➕ Add New Supplier
+          </button>
 
-        <div>
-          <label className="text-sm text-slate-600">GST Type</label>
-          <select
-            value={gstType}
-            onChange={(e) => setGstType(e.target.value)}
-            className="w-full mt-1 px-3 py-2 border rounded-xl"
-          >
-            <option>GST</option>
-            <option>IGST</option>
-            <option>No Tax</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="text-sm text-slate-600">Amount Type</label>
-          <select
-            value={amountType}
-            onChange={(e) => setAmountType(e.target.value)}
-            className="w-full mt-1 px-3 py-2 border rounded-xl"
-          >
-            <option>No Tax</option>
-            <option>Including Tax</option>
-            <option>Excluding Tax</option>
-          </select>
-        </div>
-      </div>
+        </ul>
+      )}
     </div>
 
-    {/* ---------- CARD: ADD PRODUCT ---------- */}
-    <div className="bg-white/80 backdrop-blur-xl shadow-lg rounded-2xl p-5 mb-6 border border-slate-200">
-      <h2 className="text-xl font-semibold mb-4 text-slate-700">📦 Add Product</h2>
-
-      <div className="grid grid-cols-2 md:grid-cols-7 gap-3 items-center">
-
-        {/* Product search */}
-        <div className="relative col-span-2 md:col-span-1">
-          <input
-            name="product"
-            value={item.product}
-            onChange={handleChange}
-            placeholder="Product Name"
-            className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500"
-          />
-
-          {filteredProducts.length > 0 && (
-            <ul className="absolute z-50 bg-white border shadow-lg rounded-xl w-full mt-1 max-h-48 overflow-y-auto">
-              {filteredProducts.map((p) => (
-                <li
-                  key={p._id}
-                  onClick={() => selectProduct(p.name)}
-                  className="px-3 py-2 cursor-pointer hover:bg-blue-100"
-                >
-                  {p.name}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        <input name="qty" value={item.qty} onChange={handleChange} type="number" placeholder="Qty"
-          className="px-3 py-2 border rounded-xl" />
-        <input name="mrp" value={item.mrp} onChange={handleChange} type="number" placeholder="MRP"
-          className="px-3 py-2 border rounded-xl" />
-        <input name="rate" value={item.rate} onChange={handleChange} type="number" placeholder="Rate"
-          className="px-3 py-2 border rounded-xl" />
-        <input name="dis" value={item.dis} onChange={handleChange} type="number" placeholder="DIS %"
-          className="px-3 py-2 border rounded-xl" />
-
-        <select name="tax" value={item.tax} onChange={handleChange}
-          className="px-3 py-2 border rounded-xl">
-          <option>0</option><option>5</option><option>12</option><option>18</option><option>28</option>
-        </select>
-
-        <button
-          onClick={addItem}
-          className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700"
-        >
-          Add
-        </button>
-      </div>
+    {/* Bill Type */}
+    <div>
+      <label className="text-sm text-slate-600">Bill Type</label>
+      <select
+        value={billType}
+        onChange={(e) => setBillType(e.target.value)}
+        className="w-full mt-1 px-3 py-2 border rounded-xl"
+      >
+        <option>Cash</option>
+        <option>Credit</option>
+      </select>
     </div>
+
+    {/* GST Type */}
+    <div>
+      <label className="text-sm text-slate-600">GST Type</label>
+      <select
+        value={gstType}
+        onChange={(e) => setGstType(e.target.value)}
+        className="w-full mt-1 px-3 py-2 border rounded-xl"
+      >
+        <option>GST</option>
+        <option>IGST</option>
+        <option>No Tax</option>
+      </select>
+    </div>
+
+    {/* Amount Type */}
+    <div>
+      <label className="text-sm text-slate-600">Amount Type</label>
+      <select
+        value={amountType}
+        onChange={(e) => setAmountType(e.target.value)}
+        className="w-full mt-1 px-3 py-2 border rounded-xl"
+      >
+        <option>No Tax</option>
+        <option>Including Tax</option>
+        <option>Excluding Tax</option>
+      </select>
+    </div>
+
+  </div>
+</div>
+
+{/* ---------- CARD: ADD PRODUCT ---------- */}
+<div className="bg-white/80 backdrop-blur-xl shadow-lg rounded-2xl p-5 mb-6 border border-slate-200 overflow-visible">
+  <h2 className="text-xl font-semibold mb-4 text-slate-700">📦 Add Product</h2>
+
+  <div className="grid grid-cols-2 md:grid-cols-7 gap-3 items-center">
+
+    {/* Product search */}
+    <div className="relative overflow-visible col-span-2 md:col-span-1">
+      <input
+        name="product"
+        value={item.product}
+        onChange={handleChange}
+        placeholder="Product Name"
+        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500"
+      />
+
+      {filteredProducts.length > 0 && (
+        <ul className="absolute z-[9999] bg-white border shadow-xl rounded-xl w-full mt-1 max-h-48 overflow-y-auto">
+          {filteredProducts.map((p) => (
+            <li
+              key={p._id}
+              onClick={() => selectProduct(p.name)}
+              className="px-3 py-2 cursor-pointer hover:bg-blue-100"
+            >
+              {p.name}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+
+    <input name="qty" value={item.qty} onChange={handleChange} type="number"
+      placeholder="Qty" className="px-3 py-2 border rounded-xl" />
+
+    <input name="mrp" value={item.mrp} onChange={handleChange} type="number"
+      placeholder="MRP" className="px-3 py-2 border rounded-xl" />
+
+    <input name="rate" value={item.rate} onChange={handleChange} type="number"
+      placeholder="Rate" className="px-3 py-2 border rounded-xl" />
+
+    <input name="dis" value={item.dis} onChange={handleChange} type="number"
+      placeholder="DIS %" className="px-3 py-2 border rounded-xl" />
+
+    <select name="tax" value={item.tax} onChange={handleChange}
+      className="px-3 py-2 border rounded-xl">
+      <option>0</option>
+      <option>5</option>
+      <option>12</option>
+      <option>18</option>
+      <option>28</option>
+    </select>
+
+    <button
+      onClick={addItem}
+      className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700"
+    >
+      Add
+    </button>
+  </div>
+</div>
+
 
     {/* ---------- CARD: TABLE ---------- */}
     <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-lg p-5 mb-6 border border-slate-200">
