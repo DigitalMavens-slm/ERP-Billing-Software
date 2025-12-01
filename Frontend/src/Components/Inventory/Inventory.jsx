@@ -1,50 +1,3 @@
-// import { useEffect, useState } from "react";
-// import axios from "axios";
-// const API_URL=import.meta.env.VITE_API_URL
-
-// export default function Inventory() {
-//   const [inventory, setInventory] = useState([]);
-
-//   useEffect(() => {
-//     axios.get(`${API_URL}/api/allinventory`).then((res) => {
-//       console.log(res.data)
-//       setInventory(res.data);
-//     });
-//   }, []);
-
-//   return (
-//     <div>
-//       <h2>Stock Items</h2>
-//      <table>
-//       <thead>
-//         <tr>
-//           <td>Product Name</td>  <td>Quantity</td>
-//         </tr>
-//       </thead>
-//       {inventory.map((item) => (
-//         <div className="card" key={item._id}>
-//           <h3>{item.productId}</h3>
-//           {/* <p>Stock: {item.qty}</p> */}
-
-//           {item.qty < item.minQty && (
-//             <>
-//             <tbody>
-//                 <td>{item.productName}</td><td>{item.quantity}</td>
-//             </tbody>
-//             <p style={{ color: "red", fontWeight: "bold" }}>
-//               ⚠ Low Stock — Please Purchase!
-//             </p>
-//             </>
-//           )}
-//         </div>
-//       ))}
-//       </table>
-//     </div>
-//   );
-// }
-
-
-
 
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -53,7 +6,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Inventory() {
   const [inventory, setInventory] = useState([]);
-
+// console.log(inventory)
   useEffect(() => {
     loadInventory();
   }, []);
@@ -61,6 +14,7 @@ export default function Inventory() {
   const loadInventory = async () => {
     const res = await axios.get(`${API_URL}/api/allinventory`);
     setInventory(res.data);
+    console.log(res.data)
   };
 
   return (
@@ -84,11 +38,11 @@ export default function Inventory() {
                 className="border-b hover:bg-gray-50 transition"
               >
                 <td className="py-3 px-4 font-medium text-gray-700">
-                  {item?.productName}
+                  {item?.productId?.name}
                 </td>
 
                 <td className="py-3 px-4 font-semibold">
-                  {item.quantity}
+                  {item.minQty}
                 </td>
 
                 <td className="py-3 px-4">

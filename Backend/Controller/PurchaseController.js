@@ -77,6 +77,29 @@ const createPurchase = async (req, res) => {
     const newPurchase = new Purchase(purchaseData);
     await newPurchase.save();
 
+
+// after saving purchase
+const inventoryItem = await Inventory.findOne({
+  productId: purchase.productId,
+  companyId: purchase.companyId
+});
+
+if (inventoryItem) {
+  // already inventory irukku → qty add pannunga
+  inventoryItem.qty += purchase.qty;
+  await inventoryItem.save();
+} else {
+  // first time product varudhu → new inventory row create pannunga
+  await Inventory.create({
+    productId: purchase.productId,
+    qty: purchase.qty,
+    minQty: purchase.minQty || 0,
+    companyId: purchase.companyId,
+  });
+}
+
+
+
     // Add ledger entry
 const lastLedger = await SupplierLedger.findOne({ supplierId: newPurchase.supplierId })
   .sort({ createdAt: -1 })
