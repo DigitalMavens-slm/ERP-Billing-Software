@@ -6,7 +6,6 @@ exports.getProducts = async (req, res) => {
     // Company ID from middleware
     const companyId = req.companyId;
 
-    console.log("Id" + companyId)
     if (!companyId) {
       return res.status(400).json({ error: "Company not found for this user" });
     }
@@ -16,7 +15,6 @@ exports.getProducts = async (req, res) => {
       .populate("categoryId", "name")
       .populate("subCategoryId", "name");
 
-    console.log(data)
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -24,27 +22,38 @@ exports.getProducts = async (req, res) => {
 };
 
 exports.createProduct = async (req, res) => {
- 
-    try {
+  try {
+    
+    ["categoryId", "subCategoryId", "brandId"].forEach((key) => {
+      if (req.body[key] === "" || req.body[key] === undefined)
+        req.body[key] = null;
+    });
+
     const data = new Product({
       companyId: req.companyId,
-      ...req.body
+      ...req.body,
     });
-    const savedProduct=await data.save();
-       await Inventory.create({
+
+
+    const savedProduct = await data.save();
+
+    await Inventory.create({
       productId: savedProduct._id,
+      companyId: req.companyId,
       qty: 0,
-      minQty: savedProduct.minOrderQty || 10
+      minQty: savedProduct.minOrderQty || 10,
     });
 
     res.json({
       message: "Product added + inventory created",
-      product: savedProduct
+      product: savedProduct,
     });
   } catch (err) {
+    console.error("🔥 PRODUCT ERROR:", err);
     res.status(500).json({ error: err.message });
   }
 };
+
 
 exports.deleteProduct = async (req, res) => {
   try {

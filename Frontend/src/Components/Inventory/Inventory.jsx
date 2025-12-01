@@ -12,9 +12,9 @@ export default function Inventory() {
   }, []);
 
   const loadInventory = async () => {
-    const res = await axios.get(`${API_URL}/api/allinventory`);
+    const res = await axios.get(`${API_URL}/api/allinventory`, {withCredentials: true});
     setInventory(res.data);
-    console.log(res.data)
+    
   };
 
   return (
