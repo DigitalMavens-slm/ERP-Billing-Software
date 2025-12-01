@@ -6,6 +6,7 @@ exports.getProducts = async (req, res) => {
     // Company ID from middleware
     const companyId = req.companyId;
 
+    console.log("Id" + companyId)
     if (!companyId) {
       return res.status(400).json({ error: "Company not found for this user" });
     }
@@ -15,6 +16,7 @@ exports.getProducts = async (req, res) => {
       .populate("categoryId", "name")
       .populate("subCategoryId", "name");
 
+    console.log(data)
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });

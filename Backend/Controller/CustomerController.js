@@ -13,7 +13,7 @@ exports.getCustomers = async (req, res) => {
 // POST create customer
 exports.createCustomer = async (req, res) => {
   try {
-    const newCustomer = new Customer(req.body);
+    const newCustomer = new Customer( req.body, );
     await newCustomer.save();
     res.status(201).json({ message: "Customer created successfully", customer: newCustomer });
   } catch (err) {

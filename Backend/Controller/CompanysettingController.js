@@ -3,8 +3,7 @@ const User = require("../Model/userModel"); // correct import
 
 exports.createCompanySettings = async (req, res) => {
   try {
-    const userId = req.user; // Logged-in user
-    console.log("User ID:", userId);
+    const userId = req.user; // Logged-in us
 
     const { companyName, address, gstNumber } = req.body;
 
