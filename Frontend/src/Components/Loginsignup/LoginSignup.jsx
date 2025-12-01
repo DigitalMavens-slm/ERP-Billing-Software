@@ -36,12 +36,12 @@ const LoginSignup = () => {
   // Login User
   const signin = async () => {
     try {
-        await Axios.post(
+      const res=  await Axios.post(
         "http://localhost:4000/api/login",
         user,
         { withCredentials: true }
       );
-
+ localStorage.setItem("token", res.data.token);
       window.location.replace("/index");
     } catch (err) {
       console.log(err);

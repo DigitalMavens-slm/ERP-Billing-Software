@@ -69,6 +69,10 @@ export default function ProductForm() {
       productData,
       {
         withCredentials: true 
+      },{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
       }
     );
 
