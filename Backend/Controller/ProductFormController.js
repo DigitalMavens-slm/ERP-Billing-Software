@@ -29,6 +29,7 @@ exports.createProduct = async (req, res) => {
         req.body[key] = null;
     });
 
+    
     const data = new Product({
       companyId: req.companyId,
       ...req.body,

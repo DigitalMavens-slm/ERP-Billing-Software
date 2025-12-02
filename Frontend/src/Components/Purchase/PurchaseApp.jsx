@@ -178,6 +178,7 @@ if (name === "supplier") {
     if (selected) {
       setItem({
         ...item,
+        productId: selected._id, 
         product: selected.name,
         mrp: selected.mrp || 0,
         rate: selected.purchaseRate || 0,

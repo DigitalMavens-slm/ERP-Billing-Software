@@ -30,6 +30,7 @@ const InvoiceApp = () => {
   const [productsList, setProductsList] = useState([]);
   const [customersList, setCustomersList] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  console.log(filteredProducts)
 const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [item, setItem] = useState({
     product: "",
@@ -156,7 +157,7 @@ const selectCustomer = (name) => {
       address: selected.billingAddress,
       customerId:selected._id
     });
-    console.log(selected._id)
+    // console.log(selected._id)
   }
   setFilteredCustomers([]); // hide suggestion list
 };
@@ -168,6 +169,7 @@ const selectCustomer = (name) => {
     if (selected) {
       setItem({
         ...item,
+        productId:selected._id,
         product: selected.name,
         mrp: selected.mrp || 0,
         rate: selected.saleRate || 0,

@@ -55,7 +55,7 @@ exports.saveCompanySettings = async (req, res) => {
         data.extraPaymentUrl = req.files.extraPaymentUrl[0].path;
     }
 
-    const updated = await CompanySetting.findByIdAndUpdate(id, data, {
+    const updated = await Company.findByIdAndUpdate(id, data, {
       new: true,
     });
     res.json(updated);
@@ -68,7 +68,7 @@ exports.saveCompanySettings = async (req, res) => {
 // GET
 exports.getCompanySettings = async (req, res) => {
   try {
-    const settings = await CompanySetting.findOne();
+    const settings = await Company.findOne();
     res.json(settings);
   } catch (err) {
     console.error(err);

@@ -2,8 +2,9 @@ const User = require("../Model/userModel");
 
 module.exports = async (req, res, next) => {
   try {
+    console.log("companycheck",req.user)
     const user = await User.findById(req.user);
-
+    // console.log(user)
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -15,6 +16,7 @@ module.exports = async (req, res, next) => {
     }
 
     req.companyId = user.companyId; // Attach companyId to request
+    // console.log("companyId:",req.companyId)
     next();
   } catch (err) {
     return res.status(500).json({ error: err.message });

@@ -1,7 +1,7 @@
 const mongoose=require("mongoose")
 const Invoice = require("../../Model/InvoiceModel/InvoiceCreateModel");
 const Ledger=require("../../Model/LedgerModel")
-
+const Inventory=require("../../Model/InventoryModel")
 const APIFeatures = require("../../Utills/Apifeatures");
 
 // ✅ Get all invoices with search/filter/pagination
@@ -57,6 +57,10 @@ const searchInvoice = async (req, res) => {
 const createInvoice = async (req, res) => {
   try {
     const invoiceData = req.body;
+    const productId=req.body
+   const companyId=req.companyId
+   console.log("companyId",companyId)
+      console.log("productId",productId)
 
     // Ensure customerId is ObjectId
     if (invoiceData.customerId) {
@@ -65,6 +69,10 @@ const createInvoice = async (req, res) => {
 
     const newInvoice = new Invoice(invoiceData);
     await newInvoice.save();
+
+
+     Inventory.findone({})
+   
 
     // --- Create ledger entry for this invoice ---
     // Get last ledger entry for this customer to compute running balance

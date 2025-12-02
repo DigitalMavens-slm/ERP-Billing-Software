@@ -2,6 +2,11 @@
 const mongoose = require("mongoose");
 
 const itemSchema = new mongoose.Schema({
+   productId: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "Product", 
+      required: true 
+    },
   product: String,
   qty: Number,
   mrp: Number,
@@ -14,6 +19,11 @@ const itemSchema = new mongoose.Schema({
 
 const invoiceSchema = new mongoose.Schema(
   {
+     companyId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Company",
+          default: null,
+        },
     invoiceNum: { type: String, unique: true },
     date: { type: String, required: true },
     invoiceType: String,

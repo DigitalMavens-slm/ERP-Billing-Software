@@ -7,6 +7,7 @@ const fs = require("fs");
 const { generatePurchasePDF } = require("../Utills/PdfGenerator");
 const { sendMailWithAttachment } = require("../MailSender/MailSender");
 const user = require("../Model/userModel");
+const Inventory=require("../Model/InventoryModel")
 
 // ✅ Get all purchases
 const getAllPurchases = async (req, res) => {
@@ -66,7 +67,6 @@ const searchPurchase = async (req, res) => {
 const createPurchase = async (req, res) => {
   try {
     const purchaseData = req.body;
-
     purchaseData.companyId = req.companyId;
 
 
@@ -75,28 +75,34 @@ const createPurchase = async (req, res) => {
     }
 
     const newPurchase = new Purchase(purchaseData);
-    await newPurchase.save();
+       const purchase=  await newPurchase.save();
+      //  console.log(purchase.items._id)
 
 
-// after saving purchase
-const inventoryItem = await Inventory.findOne({
-  productId: purchase.productId,
-  companyId: purchase.companyId
-});
+purchase.items.forEach(async (itm) => {
 
-if (inventoryItem) {
-  // already inventory irukku → qty add pannunga
-  inventoryItem.qty += purchase.qty;
-  await inventoryItem.save();
-} else {
-  // first time product varudhu → new inventory row create pannunga
-  await Inventory.create({
-    productId: purchase.productId,
-    qty: purchase.qty,
-    minQty: purchase.minQty || 0,
+  // DEBUG PRINT
+  // console.log("PRODUCT ID:", itm.productId);
+
+  const inventoryItem = await Inventory.findOne({
+    productId: itm.productId,          // ✔️ Correct Product ID
     companyId: purchase.companyId,
   });
-}
+
+  if (inventoryItem) {
+    inventoryItem.qty += itm.qty;      // update qty
+    inventoryItem.minQty += itm.qty;
+    await inventoryItem.save();
+  } else {
+    await Inventory.create({
+      productId: itm.productId,        // ✔️ correct field
+      companyId: purchase.companyId,
+      qty: itm.qty,
+      minQty: itm.qty,
+    });
+  }
+});
+
 
 
 
