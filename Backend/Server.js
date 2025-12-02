@@ -62,7 +62,7 @@ app.use('/api', CompanySetting);
 app.use("/api",DashBoardRoutes)
 app.use("/api",PaymentRoutes)
 app.use("/api",LedgerRoutes)
-app.use("/api",require("./Routes/InvoiceRoute/InvoiceCreateRoutes"))
+app.use("/api",require("./Routes/InvoiceCreateRoutes"))
 app.use("/api",ReportsRoutes)
 
 app.use("/api",PurchaseRoutes)

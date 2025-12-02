@@ -1,4 +1,5 @@
 const Company = require("../Model/CompanysettingModel"); // correct import
+const CompanySetting = require("../Model/CompanysettingModel");
 const User = require("../Model/userModel"); // correct import
 
 exports.createCompanySettings = async (req, res) => {

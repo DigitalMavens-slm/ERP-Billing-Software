@@ -8,7 +8,11 @@ const APIFeatures = require("../../Utills/Apifeatures");
 const getAllInvoices = async (req, res, next) => {
   try {
     const resPerPage = 10;
-    const apiFeatures = new APIFeatures(Invoice.find(), req.query)
+
+    const apiFeatures = new APIFeatures(
+      Invoice.find({ companyId: req.companyId }), // ✅ Filter by company here
+      req.query
+    )
       .search()
       .filter()
       .paginate(resPerPage);
@@ -51,17 +55,14 @@ const searchInvoice = async (req, res) => {
   }
 };
 
-
-
-
 const createInvoice = async (req, res) => {
   try {
-    const invoiceData = req.body;
-    const productId=req.body
-   const companyId=req.companyId
-   console.log("companyId",companyId)
-      console.log("productId",productId)
 
+    const invoiceData = {
+      ...req.body,
+      companyId: req.companyId,
+    };
+    console.log(invoiceData)
     // Ensure customerId is ObjectId
     if (invoiceData.customerId) {
       invoiceData.customerId = new mongoose.Types.ObjectId(invoiceData.customerId);
@@ -76,7 +77,12 @@ const createInvoice = async (req, res) => {
 
     // --- Create ledger entry for this invoice ---
     // Get last ledger entry for this customer to compute running balance
-    const lastLedger = await Ledger.findOne({ customerId: newInvoice.customerId }).sort({ createdAt: -1 }).lean();
+    const lastLedger = await Ledger.findOne({
+      customerId: newInvoice.customerId,
+      companyId: req.companyId,
+    })
+      .sort({ createdAt: -1 })
+      .lean();
     const prevBalance = lastLedger ? lastLedger.balance : 0;
 
     const debit = Number(newInvoice.subtotal || 0);
@@ -84,6 +90,7 @@ const createInvoice = async (req, res) => {
     const newBalance = prevBalance + debit - credit;
 
     await Ledger.create({
+      companyId: req.companyId,
       customerId: newInvoice.customerId,
       date: newInvoice.createdAt || new Date(),
       particulars: "Invoice Generated",
