@@ -1,7 +1,7 @@
-const mongoose=require("mongoose")
+const mongoose = require("mongoose");
 const Invoice = require("../../Model/InvoiceModel/InvoiceCreateModel");
-const Ledger=require("../../Model/LedgerModel")
-const Inventory=require("../../Model/InventoryModel")
+const Ledger = require("../../Model/LedgerModel");
+
 const APIFeatures = require("../../Utills/Apifeatures");
 
 // ✅ Get all invoices with search/filter/pagination
@@ -30,7 +30,6 @@ const getAllInvoices = async (req, res, next) => {
   }
 };
 
-
 const searchInvoice = async (req, res) => {
   try {
     const query = req.query.query?.trim();
@@ -57,23 +56,20 @@ const searchInvoice = async (req, res) => {
 
 const createInvoice = async (req, res) => {
   try {
-
     const invoiceData = {
       ...req.body,
       companyId: req.companyId,
     };
-    console.log(invoiceData)
+    console.log(invoiceData);
     // Ensure customerId is ObjectId
     if (invoiceData.customerId) {
-      invoiceData.customerId = new mongoose.Types.ObjectId(invoiceData.customerId);
+      invoiceData.customerId = new mongoose.Types.ObjectId(
+        invoiceData.customerId
+      );
     }
 
     const newInvoice = new Invoice(invoiceData);
     await newInvoice.save();
-
-
-     Inventory.findone({})
-   
 
     // --- Create ledger entry for this invoice ---
     // Get last ledger entry for this customer to compute running balance
@@ -114,17 +110,14 @@ const createInvoice = async (req, res) => {
     });
   }
 };
-
-
-
-
-
 // 🔹 Get Single Invoice
 const getInvoiceById = async (req, res) => {
   try {
     const invoice = await Invoice.findById(req.params.id);
     if (!invoice)
-      return res.status(404).json({ success: false, message: "Invoice not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Invoice not found" });
 
     res.json({ success: true, data: invoice });
   } catch (error) {
@@ -136,10 +129,23 @@ const getInvoiceById = async (req, res) => {
   }
 };
 
+const deleteInvoice = async (req, res) => {
+  try {
+    const invoice = await Invoice.findByIdAndDelete(req.params.id);
+    if (!invoice)
+      return res
+        .status(404)
+        .json({ success: false, message: "Invoice not found" });
 
-
-
-
+    res.json({ success: true, data: invoice, message: "Successfully deleted" });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch invoice",
+      error: error.message,
+    });
+  }
+};
 
 const fs = require("fs");
 const { generateInvoicePDF } = require("../../Utills/PdfGenerator");
@@ -175,4 +181,11 @@ async function sendInvoice(req, res) {
 }
 
 // module.exports = { sendInvoice };
-module.exports = { createInvoice, getAllInvoices, getInvoiceById , sendInvoice , searchInvoice};
+module.exports = {
+  createInvoice,
+  getAllInvoices,
+  getInvoiceById,
+  sendInvoice,
+  searchInvoice,
+  deleteInvoice,
+};

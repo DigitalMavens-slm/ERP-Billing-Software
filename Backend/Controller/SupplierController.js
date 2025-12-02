@@ -2,7 +2,6 @@ const Supplier = require("../Model/SupplierModel");
 
 // Create new supplier
 exports.addSupplier = async (req, res) => {
-    console.log(req.body)
   try {
     const supplier = new Supplier(req.body);
     await supplier.save();
