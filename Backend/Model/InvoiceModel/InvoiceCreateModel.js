@@ -14,6 +14,11 @@ const itemSchema = new mongoose.Schema({
 
 const invoiceSchema = new mongoose.Schema(
   {
+    companyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
+      default: null,
+    },
     invoiceNum: { type: String, unique: true },
     date: { type: String, required: true },
     invoiceType: String,

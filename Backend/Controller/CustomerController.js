@@ -3,7 +3,7 @@ const Customer = require("../Model/CustomerModel");
 // GET all customers
 exports.getCustomers = async (req, res) => {
   try {
-    const customers = await Customer.find();
+    const customers = await Customer.find({ companyId: req.companyId });
     res.json(customers);
   } catch (err) {
     res.status(500).json({ message: "Error fetching customers" });
@@ -13,7 +13,11 @@ exports.getCustomers = async (req, res) => {
 // POST create customer
 exports.createCustomer = async (req, res) => {
   try {
-    const newCustomer = new Customer( req.body, );
+    console.log(req.companyId);
+    const newCustomer = new Customer({
+      ...req.body,
+      companyId: req.companyId,
+    });
     await newCustomer.save();
     res.status(201).json({ message: "Customer created successfully", customer: newCustomer });
   } catch (err) {

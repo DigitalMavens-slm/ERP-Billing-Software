@@ -57,7 +57,9 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/products`);
+        const res = await axios.get(`${API_URL}/api/products`,{
+        withCredentials: true,
+      });
         setProductsList(res.data);
         // console.log(res.data)
       } catch (err) {
@@ -71,7 +73,9 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/customers`);
+        const res = await axios.get(`${API_URL}/api/customers`,{
+        withCredentials: true,
+      });
         // console.log(res.data)
         setCustomersList(res.data);
       } catch (err) {
@@ -240,9 +244,8 @@ const selectCustomer = (name) => {
 
     try {
       // 🔹 Save to DB
-     const res= await axios.post(`${API_URL}/api/invoices`, invoiceData);
+      await axios.post(`${API_URL}/api/invoices`, invoiceData, {withCredentials: true});
       setCustomerId(customerDetails.customerId);
-       console.log(res)
       
       navigate("/invoice-details", { state: { invoiceData ,customerDetails,} });
 

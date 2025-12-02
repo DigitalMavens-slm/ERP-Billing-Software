@@ -4,12 +4,15 @@ const {
   getAllInvoices,
   getInvoiceById,searchInvoice
 
-} = require("../../Controller/InvoiceController/InvoiceCreateController");
+} = require("../Controller/InvoiceController/InvoiceCreateController");
 
 const router = express.Router();
 
-router.post("/invoices", createInvoice);
-router.get("/allinvoice", getAllInvoices);
+const auth = require("../Middlewares/auth");
+const companyCheck = require("../Middlewares/companyCheck");
+
+router.post("/invoices", auth, companyCheck, createInvoice);
+router.get("/allinvoice", auth,companyCheck, getAllInvoices);
 router.delete("/invoice/:id", getInvoiceById);
 
 
