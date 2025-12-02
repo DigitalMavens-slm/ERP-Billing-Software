@@ -3,7 +3,16 @@ const mongoose = require("mongoose");
 
 const SupplierLedgerSchema = new mongoose.Schema(
   {
-    supplierId: { type: mongoose.Schema.Types.ObjectId, ref: "Supplier", required: true },
+    companyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
+      default: null,
+    },
+    supplierId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Supplier",
+      required: true,
+    },
     date: { type: Date, required: true },
     particulars: { type: String },
     purchaseNo: { type: String },

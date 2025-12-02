@@ -60,7 +60,6 @@ const PurchaseApp = () => {
     const fetchProducts = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/products`, {withCredentials: true});
-        console.log("✅ Products:", res.data);
         setProductsList(res.data);
       } catch (err) {
         console.error("❌ Error fetching products:", err);
@@ -73,8 +72,7 @@ const PurchaseApp = () => {
   useEffect(() => {
     const fetchSuppliers = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/suppliers`);
-        // console.log("✅ Suppliers:", res.data);
+        const res = await axios.get(`${API_URL}/api/suppliers`, {withCredentials: true});
         setSuppliersList(res.data);
         // console.log(suppliersList.name)
       } catch (err) {
@@ -89,8 +87,6 @@ const PurchaseApp = () => {
     const fetchNextBillNum = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/purchases/next-bill-num`);
-        console.log(res.data.nextBillNum)
-        console.log(res)
         setBillNum(res.data.nextBillNum);
       } catch (err) {
         console.error("Error fetching bill number:", err);

@@ -5,11 +5,13 @@ const { getSuppliers, addSupplier, deleteSupplier } = require("../Controller/Sup
 const { AllModelExportExcel } = require("../Utills/AllModelExportExcel");
 const { AllModelImportExcel }=require("../Utills/AllModelImportExcel")
 const upload = multer({ dest: "uploads/" });
+const auth = require("../Middlewares/auth");
+const companyCheck = require("../Middlewares/companyCheck");
 
 
 
-router.get("/suppliers", getSuppliers);
-router.post("/suppliers", addSupplier);
+router.get("/suppliers",auth,companyCheck, getSuppliers);
+router.post("/suppliers", auth, companyCheck, addSupplier);
 router.delete("/suppliers/:id", deleteSupplier);
 
 

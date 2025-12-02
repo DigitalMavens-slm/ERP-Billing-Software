@@ -2,7 +2,7 @@ const User = require("../Model/userModel");
 
 module.exports = async (req, res, next) => {
   try {
-    console.log("companycheck",req.user)
+  
     const user = await User.findById(req.user);
     // console.log(user)
     if (!user) {

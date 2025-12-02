@@ -117,6 +117,7 @@ const newBalance = prevBalance + credit;
 
 await SupplierLedger.create({
   supplierId: newPurchase.supplierId,
+  companyId: req.companyId, // 🔥 MUST ADD THIS
   date: new Date(),
   particulars: "Purchase Generated",
   purchaseNo: newPurchase.purchaseNum,

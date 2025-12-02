@@ -3,12 +3,16 @@ const Supplier = require("../Model/SupplierModel");
 // Create new supplier
 exports.addSupplier = async (req, res) => {
   try {
-    const supplier = new Supplier(req.body);
+    const supplierData = {
+      ...req.body,
+      companyId: req.companyId,
+    };
+
+    const supplier = new Supplier(supplierData);
     await supplier.save();
     res.status(201).json({ message: "Supplier created", supplier });
-    // console.log(supplier);
-    
   } catch (err) {
+    console.error("Add supplier error:", err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -16,9 +20,12 @@ exports.addSupplier = async (req, res) => {
 // Get all suppliers
 exports.getSuppliers = async (req, res) => {
   try {
-    const suppliers = await Supplier.find().sort({ createdAt: -1 });
+    const suppliers = await Supplier.find({ companyId: req.companyId })
+      .sort({ createdAt: -1 })
+      .lean();
     res.json(suppliers);
   } catch (err) {
+    console.error("Get suppliers error:", err);
     res.status(500).json({ message: err.message });
   }
 };
