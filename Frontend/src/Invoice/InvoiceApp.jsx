@@ -30,7 +30,7 @@ const InvoiceApp = () => {
   const [productsList, setProductsList] = useState([]);
   const [customersList, setCustomersList] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  console.log(filteredProducts)
+  // console.log(filteredProducts)
 const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [item, setItem] = useState({
     product: "",
@@ -294,32 +294,52 @@ const selectCustomer = (name) => {
 
       {/* CUSTOMER DETAILS */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+  
+  <div className="flex flex-col relative">
+    <label>Customer Name *</label>
 
-        <div className="flex flex-col relative">
-          <label>Customer Name *</label>
-          <input
-            className="input"
-            placeholder="Enter Customer Name"
-            value={customerName}
-            name="customer"
-            autoComplete="off"
-            onChange={handleChange}
-          />
+    {/* INPUT BOX */}
+    <input
+      className="input"
+      placeholder="Enter Customer Name"
+      value={customerName}
+      name="customer"
+      autoComplete="off"
+      onChange={handleChange}
+    />
 
-          {filteredCustomers.length > 0 && (
-            <ul className="absolute bg-white shadow rounded w-full max-h-40 overflow-y-auto z-20">
-              {filteredCustomers.map((c) => (
-                <li
-                  key={c._id}
-                  className="p-2 cursor-pointer hover:bg-gray-200"
-                  onClick={() => selectCustomer(c.name)}
-                >
-                  {c.name}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+    {/* SUGGESTION BOX */}
+    {filteredCustomers.length > 0 && (
+      <ul className="absolute left-0 right-0 top-full mt-1 
+                     bg-white shadow-lg rounded-lg border 
+                     w-full max-h-48 overflow-y-auto z-20">
+
+        {filteredCustomers.map((c) => (
+          <li
+            key={c._id}
+            className="p-2 cursor-pointer hover:bg-gray-100 border-b last:border-none"
+            onClick={() => selectCustomer(c.name)}
+          >
+            {c.name}
+          </li>
+        ))}
+
+        {/* ADD CUSTOMER BUTTON INSIDE SUGGESTION BOX */}
+        <li
+          onClick={() => navigate("/setting/customer")}
+          className="p-2 text-center font-semibold 
+                     bg-black text-white cursor-pointer 
+                     hover:bg-gray-800 rounded-b-lg"
+        >
+          + Add New Customer
+        </li>
+
+      </ul>
+    )}
+  </div>
+
+
+
 
         <div className="flex flex-col">
           <label>Bill Type *</label>
@@ -377,6 +397,7 @@ const selectCustomer = (name) => {
             autoComplete="off"
           />
           {filteredProducts.length > 0 && (
+            <>
             <ul className="absolute z-20 w-full bg-white shadow rounded max-h-40 overflow-y-auto">
               {filteredProducts.map((p) => (
                 <li
@@ -388,6 +409,8 @@ const selectCustomer = (name) => {
                 </li>
               ))}
             </ul>
+             
+          </>
           )}
         </div>
 

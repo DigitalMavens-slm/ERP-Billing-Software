@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Invoice = require("../../Model/InvoiceModel/InvoiceCreateModel");
 const Ledger = require("../../Model/LedgerModel");
-
+const Inventory=require("../../Model/InventoryModel")
 const APIFeatures = require("../../Utills/Apifeatures");
 
 // ✅ Get all invoices with search/filter/pagination
@@ -69,7 +69,63 @@ const createInvoice = async (req, res) => {
     }
 
     const newInvoice = new Invoice(invoiceData);
-    await newInvoice.save();
+   const invoice= await newInvoice.save();
+
+
+       if (!invoice.items || !Array.isArray(invoice.items)) {
+      return res.status(400).json({ error: "Invoice items missing" });
+    }
+
+    // Reduce stock for each item
+    // invoice.items.forEach(async (itm) => {
+
+    //   const inventoryItem = await Inventory.findOne({
+    //     productId: itm.productId,
+    //     companyId: invoice.companyId,
+    //   });
+
+    //   if (inventoryItem) {
+    //     // inventoryItem.qty -= itm.qty;
+    //     inventoryItem.minQty -= itm.qty;
+    //     await inventoryItem.save();
+    //   } else {
+    //     await Inventory.create({
+    //       productId: itm.productId,
+    //       companyId: invoice.companyId,
+    //       // qty: 0 - itm.qty,            // negative stock allowed?
+    //        totalPurchased: 0,
+    //        totalSold: itm.qty,
+    //        // minQty: 0 - itm.qty,
+    //       });
+    //   }
+    // });
+
+
+
+    invoice.items.forEach(async (itm) => {
+  const inventoryItem = await Inventory.findOne({
+    productId: itm.productId,
+    companyId: invoice.companyId,
+  });
+
+  if (inventoryItem) {
+    // Update existing inventory
+    inventoryItem.minQty -= itm.qty;        // reduce stock
+    inventoryItem.totalSold += itm.qty;     // add sold qty (IMPORTANT FIX)
+    await inventoryItem.save();
+  } else {
+    // Create new inventory record
+    await Inventory.create({
+      productId: itm.productId,
+      companyId: invoice.companyId,
+      totalPurchased: 0,
+      totalSold: itm.qty,   // first time sold qty
+    });
+  }
+});
+
+
+
 
     // --- Create ledger entry for this invoice ---
     // Get last ledger entry for this customer to compute running balance
