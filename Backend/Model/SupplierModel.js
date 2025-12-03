@@ -12,6 +12,11 @@ const addressSchema = new mongoose.Schema({
 
 const supplierSchema = new mongoose.Schema(
   {
+    companyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
+      default: null,
+    },
     name: { type: String, required: true },
     phone: { type: String },
     email: { type: String },

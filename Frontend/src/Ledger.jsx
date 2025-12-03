@@ -1,116 +1,4 @@
 
-// import React, { useState, useEffect } from "react";
-// import axios from "axios";
-// // import "./ledger.css"
-
-// const API_URL = import.meta.env.VITE_API_URL;
-
-// export default function CustomerLedger() {
-//   const [ledger, setLedger] = useState([]);
-//   const [customerId, setCustomerId] = useState("");
-//   const [query, setQuery] = useState("");
-//   const [suggestions, setSuggestions] = useState([]);
-//   const [showList, setShowList] = useState(false);
-
-//   useEffect(() => {
-//     if (!customerId) return;
-//     axios
-//       .get(`${API_URL}/api/ledger/${customerId}`)
-//       .then((res) => setLedger(res.data.ledger || []))
-//       .catch((err) => console.error("Ledger fetch error:", err));
-//   }, [customerId]);
-
-//   const handleChange = async (value) => {
-//     console.log(value)
-//     setQuery(value);
-//   //    if (!value.trim()) {
-//   //   setSuggestions([]);
-//   //   setShowList(false);
-//   //   return;
-//   // }
-//     try {
-//       const res = await axios.get(`${API_URL}/api/suggest/customers?query=${value}`);
-//       setSuggestions(res.data);
-//       setShowList(true);
-//     } catch (err) {
-//       console.error("Error fetching suggestions:", err);
-//     }
-//   };
-
-  
-//   const handleSelect = async (customer) => {
-//     const res = await axios.get(`${API_URL}/api/customers/${customer._id}`);
-//     setShowList(false);
-//     setCustomerId(res.data._id);
-//     setQuery(res.data.name); // ✅ also show name in input
-//   };
-
-//   return (
-//     <div className="ledger-container">
-//       <h2 className="ledger-title">📒 Customer Ledger</h2>
-
-//       <div className="search-container">
-//         <input
-//           type="text"
-//           placeholder="Enter customer name..."
-//           value={query}
-//           onChange={(e) => handleChange(e.target.value)}
-//           className="search-input"
-//         />
-//         {showList && suggestions.length > 0 && (
-//           <ul className="suggestion-list">
-//             {suggestions.map((cust) => (
-//               <li
-//                 key={cust._id}
-//                 className="suggestion-item"
-//                 onClick={() => handleSelect(cust)}
-//               >
-//                 {cust.name}
-//               </li>
-//             ))}
-//           </ul>
-//         )}
-//       </div>
-
-//       <table className="ledger-table">
-//         <thead>
-//           <tr>
-//             <th>Date</th>
-//             <th>Particulars</th>
-//             <th>Invoice No</th>
-//             <th>Debit (₹)</th>
-//             <th>Credit (₹)</th>
-//             <th>Balance (₹)</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {ledger.length === 0 ? (
-//             <tr>
-//               <td colSpan="6" className="no-data">
-//                 No ledger records found
-//               </td>
-//             </tr>
-//           ) : (
-//             ledger.map((row, i) => (
-//               <tr key={i}>
-//                 <td>{new Date(row.date).toLocaleDateString()}</td>
-//                 <td>{row.particulars}</td>
-//                 <td>{row.invoiceNo}</td>
-//                 <td>{typeof row.debit === "number" ? row.debit.toFixed(2) : "-"}</td>
-//                 <td>{typeof row.credit === "number" ? row.credit.toFixed(2) : "-"}</td>
-//                 <td>{typeof row.balance === "number" ? row.balance.toFixed(2) : "-"}</td>
-//               </tr>
-//             ))
-//           )}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// }
-
-
-
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -127,7 +15,7 @@ export default function CustomerLedger() {
   useEffect(() => {
     if (!customerId) return;
     axios
-      .get(`${API_URL}/api/ledger/${customerId}`)
+      .get(`${API_URL}/api/ledger/${customerId}`, {withCredentials: true})
       .then((res) => setLedger(res.data.ledger || []))
       .catch((err) => console.error("Ledger fetch error:", err));
   }, [customerId]);
@@ -144,6 +32,7 @@ export default function CustomerLedger() {
     try {
       const res = await axios.get(
         `${API_URL}/api/suggest/customers?query=${value}`
+        , {withCredentials: true}
       );
       setSuggestions(res.data);
       setShowList(true);
@@ -153,7 +42,7 @@ export default function CustomerLedger() {
   };
 
   const handleSelect = async (customer) => {
-    const res = await axios.get(`${API_URL}/api/customers/${customer._id}`);
+    const res = await axios.get(`${API_URL}/api/customers/${customer._id}` , {withCredentials: true});
     setShowList(false);
     setCustomerId(res.data._id);
     setQuery(res.data.name);

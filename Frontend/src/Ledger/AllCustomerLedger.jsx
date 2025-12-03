@@ -7,7 +7,7 @@ export default function AllCustomerLedger() {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/api/ledger`) // ✅ All customers
+      .get(`${API_URL}/api/ledger`, {withCredentials: true}) 
       .then((res) => {
         setLedger(res.data.ledgers || []);
       })
