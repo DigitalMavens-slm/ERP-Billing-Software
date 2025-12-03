@@ -79,30 +79,60 @@ const createPurchase = async (req, res) => {
       //  console.log(purchase.items._id)
 
 
+// purchase.items.forEach(async (itm) => {
+
+//   // DEBUG PRINT
+//   // console.log("PRODUCT ID:", itm.productId);
+
+//   const inventoryItem = await Inventory.findOne({
+//     productId: itm.productId,          // ✔️ Correct Product ID
+//     companyId: purchase.companyId,
+//   });
+
+//   if (inventoryItem) {
+//     inventoryItem.qty += itm.qty;      // update qty
+//     inventoryItem.minQty += itm.qty;
+//     await inventoryItem.save();
+//   } else {
+//     await Inventory.create({
+//       productId: itm.productId,        // ✔️ correct field
+//       companyId: purchase.companyId,
+//       qty: itm.qty,
+//         totalPurchased: itm.qty,
+//   totalSold: 0,
+//       minQty: itm.qty,
+
+//     });
+//   }
+// });
+
+
+
 purchase.items.forEach(async (itm) => {
-
-  // DEBUG PRINT
-  // console.log("PRODUCT ID:", itm.productId);
-
   const inventoryItem = await Inventory.findOne({
-    productId: itm.productId,          // ✔️ Correct Product ID
+    productId: itm.productId,
     companyId: purchase.companyId,
   });
 
   if (inventoryItem) {
-    inventoryItem.qty += itm.qty;      // update qty
-    inventoryItem.minQty += itm.qty;
+    // Update existing inventory
+    inventoryItem.qty += itm.qty;              // increase stock
+    inventoryItem.minQty += itm.qty;           // update min qty or available qty
+    inventoryItem.totalPurchased += itm.qty;   // 🔥 IMPORTANT — add purchase qty
     await inventoryItem.save();
+
   } else {
+    // Create new inventory record
     await Inventory.create({
-      productId: itm.productId,        // ✔️ correct field
+      productId: itm.productId,
       companyId: purchase.companyId,
       qty: itm.qty,
       minQty: itm.qty,
+      totalPurchased: itm.qty,   // 🔥 first purchase qty
+      totalSold: 0,              // no sales yet
     });
   }
 });
-
 
 
 

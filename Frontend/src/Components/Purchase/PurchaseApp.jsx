@@ -90,7 +90,7 @@ const PurchaseApp = () => {
       try {
         const res = await axios.get(`${API_URL}/api/purchases/next-bill-num`);
         console.log(res.data.nextBillNum)
-        console.log(res)
+        // console.log(res)
         setBillNum(res.data.nextBillNum);
       } catch (err) {
         console.error("Error fetching bill number:", err);

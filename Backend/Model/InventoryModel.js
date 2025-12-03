@@ -20,7 +20,9 @@ const inventorySchema = new mongoose.Schema(
     minQty: {
       type: Number,
       default: 0,
-    }
+    },
+      totalPurchased: { type: Number, default: 0 },  // lifetime purchase count
+    totalSold: { type: Number, default: 0 }, 
   },
   { timestamps: true }
 );
