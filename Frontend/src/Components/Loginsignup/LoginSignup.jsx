@@ -9,7 +9,7 @@ const LoginSignup = () => {
     name: "",
     email: "",
     password: "",
-    role: "staff",
+    role: "",
     companyCode: "",
   });
 
