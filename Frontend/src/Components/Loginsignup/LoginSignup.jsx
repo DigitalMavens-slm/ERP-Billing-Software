@@ -9,7 +9,7 @@ const LoginSignup = () => {
     name: "",
     email: "",
     password: "",
-    role: "employee",
+    role: "staff",
     companyCode: "",
   });
 
@@ -98,7 +98,8 @@ const LoginSignup = () => {
               className="input-box"
             >
               <option value="">Select Role</option>
-              <option value="employee">Employee</option>
+              <option value="admin">Admin</option>
+              <option value="staff">Staff</option>
             </select>
           )}
 
