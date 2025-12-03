@@ -25,6 +25,7 @@ import PurchaseList from './Components/Purchase/PurchaseList'
 import PurchaseLedger from "./Ledger/PurchaseLedger"
 import ProtectedRoute from './ProtectedRoute'
 import EditPurchase from './Components/Purchase/EditPurchase'
+import AssignStaff from './Components/AssignStaff'
 
 function App() {
 
@@ -60,6 +61,7 @@ function App() {
     </Route>
 
     <Route path="company" element={<CompanySettingsForm />} />
+    <Route path="assign-staff" element={<AssignStaff />} />
     <Route path="invoicecreate" element={<InvoiceApp />} />
     <Route path="invoicelist" element={<InvoiceList />} />
     <Route path="invoice-details" element={<InvoiceDetails />} />

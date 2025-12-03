@@ -27,6 +27,7 @@ const DashBoardRoutes=require("./Routes/DashBoardRoutes")
 const getUserRoute = require("./Routes/getUserRoute")
 const logoutRoute = require("./Routes/logoutRoute")
 const CompanySetting=require("./Routes/CompanysettingRoutes")
+const assignStaffRoute = require("./Routes/assignStaffRoute")
 dotenv.config({path:path.join(__dirname,"config/config.env")})
 
 
@@ -80,6 +81,7 @@ app.use("/api", require("./InvoiceGenrator/InvoiceCounter"));
 app.use("/api", require("./Routes/checkAuthRoute"))
 app.use("/api", getUserRoute)
 app.use("/api", logoutRoute)
+app.use("/api", assignStaffRoute)
 
 app.listen(process.env.PORT,()=>{
     console.log(`http://localhost:${process.env.PORT}`);

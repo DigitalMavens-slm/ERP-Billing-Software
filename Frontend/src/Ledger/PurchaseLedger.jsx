@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import { useAuth } from "../Context/AuthContext";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function SupplierLedger() {
+  const { user } = useAuth();
+  const role = user?.role; 
   const [ledger, setLedger] = useState([]);
   const [supplierId, setSupplierId] = useState("");
   const [query, setQuery] = useState("");
@@ -63,6 +65,7 @@ export default function SupplierLedger() {
   };
 
   return (
+    
     <div className="max-w-6xl mx-auto p-4 md:p-6">
       <h2 className="text-3xl font-semibold mb-6 text-gray-800">
         📘 Supplier Purchase Ledger

@@ -17,33 +17,33 @@ exports.getCompanySettings = async (req, res) => {
 exports.createCompanySettings = async (req, res) => {
   try {
     const data = req.body;
+    console.log("Incoming data:", data);
 
-    // Handle file uploads
+    // Handle file uploads safely
     if (req.files) {
       if (req.files.logoUrl) data.logoUrl = req.files.logoUrl[0].path;
+
       if (req.files.paymentUrl) data.paymentUrl = req.files.paymentUrl[0].path;
+
       if (req.files.extraPaymentUrl)
         data.extraPaymentUrl = req.files.extraPaymentUrl[0].path;
     }
 
-    // Create new company
+    // Create the company
     const newCompany = await Company.create(data);
 
-    // Assign this company to the user who created it
+    // Assign company to the logged-in user
     await User.findByIdAndUpdate(req.user, {
       companyId: newCompany._id,
     });
 
-    User.companyId = Company._id;
-    await User.save();
-
-
-    res.json(newCompany);
+    res.status(201).json(newCompany);
   } catch (err) {
-    console.error(err);
+    console.error("Company creation error:", err);
     res.status(500).json({ error: err.message });
   }
 };
+
 
 exports.saveCompanySettings = async (req, res) => {
   try {

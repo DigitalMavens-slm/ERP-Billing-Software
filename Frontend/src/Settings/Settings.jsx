@@ -1,111 +1,54 @@
-
-// import React from 'react'
-// import { Link, Outlet, useLocation } from 'react-router-dom'
-// // import "./Settings.css"
-
-// const Settings = () => {
-//   const location = useLocation();
-
-//   // if current path includes /supplier → show only Outlet (child)
-//   const isChildPage = location.pathname !== "/setting";
-
-//   return (
-//     <div className="settings-container">
-//       {!isChildPage && (
-//         <>
-//           <h2>Settings Page</h2>
-//           <div className="setting-box-container">
-//           <Link to="supplier">
-//             <div className="settings-box">
-//                 <img src="" alt=""/>
-//               <span>My Vendor</span>
-//             </div>
-//           </Link>
-
-//           <Link to={"customer"}>
-//           <div className="settings-box">
-//             <img src="" alt=""/>
-//             <span>My Clients</span>
-//           </div>
-//           </Link>
- 
-//            <Link to={"subcategory"}>
-//           <div className="settings-box">
-//             <img src="" alt=""/>
-//             <span>Sub Categories</span>
-//           </div>
-//           </Link>
-
-//           <Link to={"category"}>
-//           <div className="settings-box">
-//             <img src="" alt=""/>
-//             <span> Categories</span>
-//           </div>
-//           </Link>
-
-        
-//         <Link to={"brand"}>
-//           <div className="settings-box">
-//             <img src="" alt=""/>
-//             <span>My Brands</span>
-//           </div>
-//           </Link>
-
-//            <Link to={"product"}>
-//           <div className="settings-box">
-//             <img src="" alt=""/>
-//             <span>My Products</span>
-//           </div>
-//           </Link>
-
-//            <Link>
-//           <div className="settings-box">
-//             <img src="" alt=""/>
-//             <span>Sales Person</span>
-//           </div>
-//           </Link>
-//           </div>
-//         </>
-//       )}
-
-//       <Outlet />
-//     </div>
-//   );
-// };
-
-// export default Settings;
-
-
-
 import React from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { Users, ShoppingBag, Layers, Folder, Tag, Package, UserCircle } from "lucide-react";
+import { useAuth } from "../Context/AuthContext";
+
+import {
+  Users,
+  ShoppingBag,
+  Layers,
+  Folder,
+  Tag,
+  Package,
+  UserCircle,
+} from "lucide-react";
 
 export default function Settings() {
   const location = useLocation();
+  const { user } = useAuth();
+  const role = user?.role; // "admin" or "staff"
+
   const isChildPage = location.pathname !== "/setting";
 
-  const menuItems = [
+  // =============================
+  // ROLE-BASED MENU ITEMS
+  // =============================
+  const adminItems = [
     { path: "supplier", label: "My Vendor", icon: <ShoppingBag size={36} /> },
     { path: "customer", label: "My Clients", icon: <Users size={36} /> },
     { path: "subcategory", label: "Sub Categories", icon: <Layers size={36} /> },
     { path: "category", label: "Categories", icon: <Folder size={36} /> },
-
-    // second row
     { path: "brand", label: "My Brands", icon: <Tag size={36} /> },
     { path: "product", label: "My Products", icon: <Package size={36} /> },
     { path: "salesperson", label: "Sales Person", icon: <UserCircle size={36} /> },
   ];
 
+  const staffItems = [
+    { path: "customer", label: "My Clients", icon: <Users size={36} /> },
+    { path: "product", label: "My Products", icon: <Package size={36} /> },
+    { path: "subcategory", label: "Sub Categories", icon: <Layers size={36} /> },
+    { path: "category", label: "Categories", icon: <Folder size={36} /> },
+  ];
+
+  // FINAL MENU BASED ON ROLE
+  const menuItems = role === "admin" ? adminItems : staffItems;
+
   return (
     <div className="w-full p-5">
       {!isChildPage && (
         <>
-          <h2 className="text-2xl font-bold text-center mb-6">
-            Settings
-          </h2>
+          <h2 className="text-2xl font-bold text-center mb-6">Settings</h2>
 
-          {/* GRID LAYOUT: 4 on top row, 3 on bottom row */}
+          {/* GRID LAYOUT */}
           <div
             className="
               grid 
@@ -156,4 +99,3 @@ export default function Settings() {
     </div>
   );
 }
-

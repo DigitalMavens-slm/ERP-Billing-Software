@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useLocation, Outlet } from "react-router-dom";
+
 import {
   Home,
   ShoppingCart,
@@ -17,6 +18,7 @@ import {
   ChevronDown,
   ArrowRight
 } from "lucide-react";
+
 import { useAuth } from "../Context/AuthContext";
 
 const Mainpage = () => {
@@ -53,7 +55,9 @@ const Mainpage = () => {
           <Menu className="w-7 h-7" />
         </button>
 
-        <h1 className="text-xl font-bold text-blue-800">ERP Billing — SOFTWARE</h1>
+        <h1 className="text-xl font-bold text-blue-800">
+          ERP Billing — SOFTWARE
+        </h1>
 
         <div className="flex items-center gap-5">
           <Bell className="w-6 h-6 cursor-pointer" />
@@ -62,7 +66,7 @@ const Mainpage = () => {
         </div>
       </header>
 
-      {/* MAIN CONTENT WRAPPER */}
+      {/* MAIN WRAPPER */}
       <div className="flex">
 
         {/* SIDEBAR */}
@@ -73,7 +77,11 @@ const Mainpage = () => {
             ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
           `}
         >
-          <button className="lg:hidden px-4 py-2 text-left" onClick={() => setSidebarOpen(false)}>
+          {/* Close button for mobile */}
+          <button
+            className="lg:hidden px-4 py-2 text-left"
+            onClick={() => setSidebarOpen(false)}
+          >
             Close
           </button>
 
@@ -82,8 +90,7 @@ const Mainpage = () => {
             to="dashboard"
             className={`sidebar-btn ${isActive("dashboard") ? "sidebar-active" : ""}`}
           >
-            <Home size={20} />
-            Dashboard
+            <Home size={20} /> Dashboard
           </Link>
 
           {/* PURCHASE */}
@@ -91,7 +98,9 @@ const Mainpage = () => {
             <>
               <button
                 onClick={() => setOpenPurchase(!openPurchase)}
-                className={`sidebar-btn w-full justify-between ${openPurchase ? "sidebar-active" : ""}`}
+                className={`sidebar-btn w-full justify-between ${
+                  openPurchase ? "sidebar-active" : ""
+                }`}
               >
                 <span className="flex gap-3">
                   <ShoppingCart size={20} />
@@ -101,7 +110,7 @@ const Mainpage = () => {
               </button>
 
               {openPurchase && (
-                <div className="flex flex-col">
+                <div className="flex flex-col animate-slideDown">
                   <Link to="index" className="sub-item">
                     <ChevronRight size={16} /> New Purchase
                   </Link>
@@ -118,7 +127,9 @@ const Mainpage = () => {
             <>
               <button
                 onClick={() => setOpenSales(!openSales)}
-                className={`sidebar-btn w-full justify-between ${openSales ? "sidebar-active" : ""}`}
+                className={`sidebar-btn w-full justify-between ${
+                  openSales ? "sidebar-active" : ""
+                }`}
               >
                 <span className="flex gap-3">
                   <FileText size={20} />
@@ -128,7 +139,7 @@ const Mainpage = () => {
               </button>
 
               {openSales && (
-                <div className="flex flex-col">
+                <div className="flex flex-col animate-slideDown">
                   <Link to="invoicecreate" className="sub-item">
                     <ChevronRight size={16} /> New Sale
                   </Link>
@@ -145,7 +156,9 @@ const Mainpage = () => {
             <>
               <button
                 onClick={() => setOpenLedger(!openLedger)}
-                className={`sidebar-btn w-full justify-between ${openLedger ? "sidebar-active" : ""}`}
+                className={`sidebar-btn w-full justify-between ${
+                  openLedger ? "sidebar-active" : ""
+                }`}
               >
                 <span className="flex gap-3">
                   <CreditCard size={20} />
@@ -155,11 +168,10 @@ const Mainpage = () => {
               </button>
 
               {openLedger && (
-                <div className="flex flex-col">
+                <div className="flex flex-col animate-slideDown">
                   <Link to="ledger" className="sub-item">
                     <ChevronRight size={16} /> Customer Ledger
                   </Link>
-
                   <Link to="purchaseledger" className="sub-item">
                     <ChevronRight size={16} /> Supplier Ledger
                   </Link>
@@ -186,18 +198,23 @@ const Mainpage = () => {
             >
               <Boxes size={20} /> Inventory
             </Link>
+            
           )}
-
-          {/* ADMIN ONLY */}
-          {role === "admin" && (
-            <>
-              <Link
+          {(role === "admin" || role === "staff") && (
+            <Link
                 to="setting"
                 className={`sidebar-btn ${isActive("setting") ? "sidebar-active" : ""}`}
               >
                 <Settings size={20} /> Settings
               </Link>
+            
+          )}
+          
 
+          {/* ADMIN ONLY OPTIONS */}
+          {role === "admin" && (
+            <>
+              
               <Link
                 to="reports"
                 className={`sidebar-btn ${isActive("reports") ? "sidebar-active" : ""}`}
@@ -210,6 +227,13 @@ const Mainpage = () => {
                 className={`sidebar-btn ${isActive("company") ? "sidebar-active" : ""}`}
               >
                 <Building size={20} /> Company
+              </Link>
+
+              <Link
+                to="assign-staff"
+                className={`sidebar-btn ${isActive("assign-staff") ? "sidebar-active" : ""}`}
+              >
+                <User2 size={20} /> Assign Staff
               </Link>
             </>
           )}
