@@ -25,7 +25,7 @@ const purchaseSchema = new mongoose.Schema(
       ref: "Company",
       default: null,
     },
-    billNum: { type: String, unique: true },
+    billNum: { type: String, },
     date: { type: String, required: true },
     purchaseType: { type: String, default: "Purchase" },
     supplierName: { type: String, required: true },
@@ -55,26 +55,26 @@ const purchaseSchema = new mongoose.Schema(
 );
 
 // 🔹 Auto-generate incremental Bill Number (like invoice auto INV0001)
-purchaseSchema.pre("save", async function (next) {
-  if (this.billNum) return next(); // skip if already set
+// purchaseSchema.pre("save", async function (next) {
+//   if (this.billNum) return next(); // skip if already set
 
-  try {
-    const lastPurchase = await mongoose
-      .model("Purchase")
-      .findOne({}, {}, { sort: { createdAt: -1 } });
+//   try {
+//     const lastPurchase = await mongoose
+//       .model("Purchase")
+//       .findOne({}, {}, { sort: { createdAt: -1 } });
 
-    let nextNum = 1;
-    if (lastPurchase && lastPurchase.billNum) {
-      const lastNum = parseInt(lastPurchase.billNum.replace("BILL", "")) || 0;
-      nextNum = lastNum + 1;
-    }
+//     let nextNum = 1;
+//     if (lastPurchase && lastPurchase.billNum) {
+//       const lastNum = parseInt(lastPurchase.billNum.replace("BILL", "")) || 0;
+//       nextNum = lastNum + 1;
+//     }
 
-    this.billNum = `BILL${String(nextNum).padStart(4, "0")}`;
-    // res.json([BillNo:this.billNum])
-    next();
-  } catch (err) {
-    next(err);
-  }
-});
+//     this.billNum = `BILL${String(nextNum).padStart(4, "0")}`;
+//     // res.json([BillNo:this.billNum])
+//     next();
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
 module.exports = mongoose.model("Purchase", purchaseSchema);

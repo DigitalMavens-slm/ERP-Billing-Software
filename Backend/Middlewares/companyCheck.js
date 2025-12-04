@@ -2,7 +2,7 @@ const User = require("../Model/userModel");
 
 module.exports = async (req, res, next) => {
   try {
-  
+    //  console.log(req.user)
     const user = await User.findById(req.user);
     // console.log(user)
     if (!user) {
@@ -16,9 +16,10 @@ module.exports = async (req, res, next) => {
     }
 
     req.companyId = user.companyId; // Attach companyId to request
-    // console.log("companyId:",req.companyId)
+
     next();
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 };
+

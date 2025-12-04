@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // GET must be protected
-router.get("/company-settings", auth, controller.getCompanySettings);
+router.get("/company-settings", auth, controller.saveCompanySettings);
 
 // CREATE
 router.post(

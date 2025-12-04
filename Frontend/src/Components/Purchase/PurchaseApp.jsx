@@ -54,6 +54,47 @@ const PurchaseApp = () => {
   });
 
   const [items, setItems] = useState([]);
+  const [companyId, setCompanyId] = useState("");
+
+// Fetch Logged-in User (Company ID)
+useEffect(() => {
+  const fetchUser = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/me`, {
+        withCredentials: true,
+      });
+      setCompanyId(res.data.companyId);
+      console.log("Company ID:", res.data.companyId);
+    } catch (err) {
+      console.error("Error fetching user:", err);
+    }
+  };
+  fetchUser();
+}, []);
+
+
+// Fetch Bill Number ONLY AFTER companyId arrives
+useEffect(() => {
+  if (!companyId) return;
+
+  const fetchNextBillNum = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/purchases/next-bill-num`, {
+        withCredentials: true,
+      });
+
+      setBillNum(res.data.nextBillNum);
+      console.log("Next Bill Num:", res.data.nextBillNum);
+
+    } catch (err) {
+      console.error("Error fetching bill number:", err);
+      setBillNum("BILL0001");
+    }
+  };
+
+  fetchNextBillNum();
+  setDate(new Date().toISOString().split("T")[0]);
+}, [companyId]);
 
   // ✅ Fetch all Products
   useEffect(() => {
@@ -74,7 +115,6 @@ const PurchaseApp = () => {
       try {
         const res = await axios.get(`${API_URL}/api/suppliers`, {withCredentials: true});
         setSuppliersList(res.data);
-        // console.log(suppliersList.name)
       } catch (err) {
         console.error("❌ Error fetching suppliers:", err);
       }
@@ -82,20 +122,7 @@ const PurchaseApp = () => {
     fetchSuppliers();
   }, []);
 
-  // ✅ Auto Bill No + Date
-  useEffect(() => {
-    const fetchNextBillNum = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/api/purchases/next-bill-num`);
-        setBillNum(res.data.nextBillNum);
-      } catch (err) {
-        console.error("Error fetching bill number:", err);
-        setBillNum("BILL0001");
-      }
-      setDate(new Date().toISOString().split("T")[0]);
-    };
-    fetchNextBillNum();
-  }, []);
+  
 
   // ✅ Handle Input Changes
   const handleChange = (e) => {
@@ -236,9 +263,9 @@ if (name === "supplier") {
   }
 
     const purchaseData = {
-      companyId : "",
+      companyId,
       supplierId: supplierDetails.supplierId,
-      // billNum,
+      billNum,
       date,
       purchaseType,
       // supplierName,

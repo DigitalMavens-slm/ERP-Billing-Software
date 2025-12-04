@@ -24,7 +24,7 @@ const invoiceSchema = new mongoose.Schema(
           ref: "Company",
           default: null,
         },
-    invoiceNum: { type: String, unique: true },
+    invoiceNum: { type: String, },
     date: { type: String, required: true },
     invoiceType: String,
     customerName: String,
@@ -51,26 +51,26 @@ const invoiceSchema = new mongoose.Schema(
 );
 
 // 🔹 Auto-generate incremental invoiceNum inside same model
-invoiceSchema.pre("save", async function (next) {
-  if (this.invoiceNum) return next(); // already set -> skip
+// invoiceSchema.pre("save", async function (next) {
+//   if (this.invoiceNum) return next(); // already set -> skip
 
-  try {
-    const lastInvoice = await mongoose
-      .model("Invoice")
-      .findOne({}, {}, { sort: { createdAt: -1 } }); // find latest invoice
+//   try {
+//     const lastInvoice = await mongoose
+//       .model("Invoice")
+//       .findOne({}, {}, { sort: { createdAt: -1 } }); // find latest invoice
 
-    let nextNum = 1;
-    if (lastInvoice && lastInvoice.invoiceNum) {
-      const lastNum = parseInt(lastInvoice.invoiceNum.replace("INV", "")) || 0;
-      nextNum = lastNum + 1;
-    }
+//     let nextNum = 1;
+//     if (lastInvoice && lastInvoice.invoiceNum) {
+//       const lastNum = parseInt(lastInvoice.invoiceNum.replace("INV", "")) || 0;
+//       nextNum = lastNum + 1;
+//     }
 
-    this.invoiceNum = `INV${String(nextNum).padStart(4, "0")}`;
-    next();
-  } catch (err) {
-    next(err);
-  }
-});
+//     this.invoiceNum = `INV${String(nextNum).padStart(4, "0")}`;
+//     next();
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
 module.exports = mongoose.model("Invoice", invoiceSchema);
 

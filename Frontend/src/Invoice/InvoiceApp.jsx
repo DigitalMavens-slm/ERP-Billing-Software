@@ -54,6 +54,9 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
 
   const [items, setItems] = useState([]);
 
+
+
+
   // 🔹 Fetch Products
   useEffect(() => {
     const fetchProducts = async () => {
@@ -90,8 +93,11 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
  useEffect(() => {
   const fetchNextInvoiceNum = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/invoices/next-invoice-num`);
+      const res = await axios.get(`${API_URL}/api/invoices/next-invoice-num`, {
+  withCredentials: true
+});
       setInvoiceNum(res.data.nextInvoiceNum);
+      console.log(res.data.nextInvoiceNum)
     } catch (err) {
       console.error("Error fetching invoice number:", err);
       setInvoiceNum("INV0001"); // fallback
@@ -230,6 +236,7 @@ const selectCustomer = (name) => {
     if (!customerName.trim()) return alert("Customer Name required!");
 
     const invoiceData = {
+      // companyId: user.companyId,
        customerId: customerDetails.customerId,
       invoiceNum,
       date,

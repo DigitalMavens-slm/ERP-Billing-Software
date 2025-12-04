@@ -41,7 +41,7 @@ const LoginSignup = () => {
         user,
         { withCredentials: true }
       );
- localStorage.setItem("token", res.data.token);
+//  localStorage.setItem("token", res.data.token);
       window.location.replace("/index");
     } catch (err) {
       console.log(err);
