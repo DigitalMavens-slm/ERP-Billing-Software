@@ -83,19 +83,25 @@ const PurchaseApp = () => {
   }, []);
 
   // ✅ Auto Bill No + Date
-  useEffect(() => {
-    const fetchNextBillNum = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/api/purchases/next-bill-num`);
-        setBillNum(res.data.nextBillNum);
-      } catch (err) {
-        console.error("Error fetching bill number:", err);
-        setBillNum("BILL0001");
-      }
-      setDate(new Date().toISOString().split("T")[0]);
-    };
-    fetchNextBillNum();
-  }, []);
+ useEffect(() => {
+  const fetchNextBillNum = async () => {
+    try {
+      const res = await axios.get(
+        `${API_URL}/api/purchases/next-bill-num`,
+        { withCredentials: true }
+      );
+      setBillNum(res.data.nextBillNum);
+    } catch (err) {
+      console.error("Error fetching bill number:", err);
+      setBillNum("BILL0001");
+    }
+
+    setDate(new Date().toISOString().split("T")[0]);
+  };
+
+  fetchNextBillNum();
+}, []);
+
 
   // ✅ Handle Input Changes
   const handleChange = (e) => {

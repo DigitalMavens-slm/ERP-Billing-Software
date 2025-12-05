@@ -25,7 +25,7 @@ const purchaseSchema = new mongoose.Schema(
       ref: "Company",
       default: null,
     },
-    billNum: { type: String, unique: true },
+    billNum: { type: String, required: true },
     date: { type: String, required: true },
     purchaseType: { type: String, default: "Purchase" },
     supplierName: { type: String, required: true },

@@ -78,7 +78,7 @@ const createInvoice = async (req, res) => {
 
     // Reduce stock for each item
     // invoice.items.forEach(async (itm) => {
-
+      
     //   const inventoryItem = await Inventory.findOne({
     //     productId: itm.productId,
     //     companyId: invoice.companyId,
