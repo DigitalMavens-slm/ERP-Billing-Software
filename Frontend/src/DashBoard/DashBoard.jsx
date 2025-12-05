@@ -47,15 +47,15 @@ export default function DashBoard() {
     overdueCount: 0,
   });
 
+
   const invoicefetcher = async () => {
-    const res = await axios.get(`${API_URL}/api/allinvoice`);
-    console.log(res.data)
+    const res = await axios.get(`${API_URL}/api/allinvoice`,{withCredentials:true});
     setInvoiceCount(res.data.invoices);
   };
 
   const getDashboardKPI = async () => {
-    const res = await axios.get(`${API_URL}/api/dashboardkpi`);
-    console.log(res.data)
+    const res = await axios.get(`${API_URL}/api/dashboardkpi`,{withCredentials:true});
+    // console.log(res.data)
     setKpi(res.data);
   };
 

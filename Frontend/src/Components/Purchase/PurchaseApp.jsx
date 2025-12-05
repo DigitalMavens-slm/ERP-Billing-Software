@@ -87,7 +87,7 @@ const PurchaseApp = () => {
   const fetchNextBillNum = async () => {
     try {
       const res = await axios.get(
-        `${API_URL}/api/purchases/next-bill-num`,
+        `${API_URL}/api/buy/billnum`,{withCredentials:true},
         { withCredentials: true }
       );
       setBillNum(res.data.nextBillNum);
@@ -100,7 +100,7 @@ const PurchaseApp = () => {
   };
 
   fetchNextBillNum();
-}, []);
+},);
 
 
   // ✅ Handle Input Changes

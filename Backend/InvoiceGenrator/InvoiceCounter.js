@@ -2,11 +2,15 @@ const express = require("express");
 const router = express.Router();
 const Invoice = require("../Model/InvoiceModel/InvoiceCreateModel");
 const Purchase=require("../Model/PurchaseModel")
+const auth=require("../Middlewares/auth")
+const comapnyCheck=require("../Middlewares/companyCheck");
+const companyCheck = require("../Middlewares/companyCheck");
 const auth = require("../Middlewares/auth");
 // ✅ Fetch next invoice number
-router.get("/invoices/next-invoice-num", async (req, res) => {
+router.get("/invoices/next-invoice-num", auth,comapnyCheck, async (req, res) => {
+  // console.log(req.companyId)
   try {
-    const lastInvoice = await Invoice.findOne({}, {}, { sort: { createdAt: -1 } });
+    const lastInvoice = await Invoice.findOne({companyId:req.companyId}, {}, { sort: { createdAt: -1 } });
     let nextNum = 1;
 
     if (lastInvoice && lastInvoice.invoiceNum) {
@@ -23,15 +27,9 @@ router.get("/invoices/next-invoice-num", async (req, res) => {
 });
 
 
-router.get("/purchases/next-bill-num", auth, async (req, res) => {
+router.get("/purchases/next-bill-num", async (req, res) => {
   try {
-    const companyId = req.companyId;
-    console.log(companyId )
-    // Get last bill for THIS company
-    const lastPurchase = await Purchase.findOne({ companyId }).sort({
-      createdAt: -1,
-    });
-
+    const lastPurchase = await Purchase.findOne().sort({ createdAt: -1 });
     let nextBillNum = "BILL0001";
 
     if (lastPurchase && lastPurchase.billNum) {
