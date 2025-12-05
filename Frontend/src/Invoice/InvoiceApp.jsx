@@ -90,7 +90,7 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
  useEffect(() => {
   const fetchNextInvoiceNum = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/invoices/next-invoice-num`);
+      const res = await axios.get(`${API_URL}/api/invoices/next-invoice-num`,{withCredentials:true});
       setInvoiceNum(res.data.nextInvoiceNum);
     } catch (err) {
       console.error("Error fetching invoice number:", err);

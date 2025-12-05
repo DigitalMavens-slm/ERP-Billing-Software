@@ -2,6 +2,7 @@ const Invoice=require("../Model/InvoiceModel/InvoiceCreateModel")
 
 const getDashboardData = async (req, res) => {
   try {
+    // console.log(req.companyId)
     const today = new Date();
     const thisMonth = today.getMonth() + 1;
     const lastMonth = thisMonth - 1 === 0 ? 12 : thisMonth - 1;
@@ -9,7 +10,7 @@ const getDashboardData = async (req, res) => {
     const lastMonthYear = lastMonth === 12 ? thisYear - 1 : thisYear;
 
     // 1) FETCH ALL invoices (small data)
-    const invoices = await Invoice.find();
+    const invoices = await Invoice.find({companyId:req.companyId});
 
     // 2) TOTAL REVENUE
     const totalRevenue = invoices.reduce((sum, inv) => sum + inv.subtotal, 0);
