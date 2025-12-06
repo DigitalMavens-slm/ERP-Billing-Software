@@ -32,14 +32,17 @@ const getAllInvoices = async (req, res, next) => {
 
 const searchInvoice = async (req, res) => {
   try {
+    // console.log(req.companyId)
     const query = req.query.query?.trim();
+    console.log(query);
+    
     if (!query) return res.status(400).json({ message: "Query required" });
-
+    
     const invoices = await Invoice.find({
+      companyId: req.companyId,
       $or: [
         { invoiceNum: { $regex: query, $options: "i" } },
         { customerName: { $regex: query, $options: "i" } },
-        { customerPhone: { $regex: query, $options: "i" } },
       ],
     }).limit(10);
 
@@ -76,32 +79,7 @@ const createInvoice = async (req, res) => {
       return res.status(400).json({ error: "Invoice items missing" });
     }
 
-    // Reduce stock for each item
-    // invoice.items.forEach(async (itm) => {
-
-    //   const inventoryItem = await Inventory.findOne({
-    //     productId: itm.productId,
-    //     companyId: invoice.companyId,
-    //   });
-
-    //   if (inventoryItem) {
-    //     // inventoryItem.qty -= itm.qty;
-    //     inventoryItem.minQty -= itm.qty;
-    //     await inventoryItem.save();
-    //   } else {
-    //     await Inventory.create({
-    //       productId: itm.productId,
-    //       companyId: invoice.companyId,
-    //       // qty: 0 - itm.qty,            // negative stock allowed?
-    //        totalPurchased: 0,
-    //        totalSold: itm.qty,
-    //        // minQty: 0 - itm.qty,
-    //       });
-    //   }
-    // });
-
-
-
+    
     invoice.items.forEach(async (itm) => {
   const inventoryItem = await Inventory.findOne({
     productId: itm.productId,

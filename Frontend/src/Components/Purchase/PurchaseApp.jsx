@@ -238,7 +238,7 @@ if (name === "supplier") {
     const purchaseData = {
       companyId : "",
       supplierId: supplierDetails.supplierId,
-      // billNum,
+      billNum,
       date,
       purchaseType,
       // supplierName,

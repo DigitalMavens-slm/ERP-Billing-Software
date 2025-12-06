@@ -2,23 +2,16 @@ const express = require("express");
 const router = express.Router();
 const {
   addPayment,
-  // updatePayment,
   getPaymentsByInvoice,
   getAllPayments,
 } = require("../Controller/PaymentController");
+const auth=require("../Middlewares/auth")
+const companyCheck=require("../Middlewares/companyCheck")
 
+router.post("/payments",auth,companyCheck, addPayment);
 
-// 🔹 Add new payment
-router.post("/payments", addPayment);
+router.get("/invoice/:invoiceId",auth,companyCheck, getPaymentsByInvoice);
 
-
-// 🔹 Update existing payment
-// router.patch("/invoices/:paymentId/payment", updatePayment);
-
-// 🔹 Get payments for one invoice
-router.get("/invoice/:invoiceId", getPaymentsByInvoice);
-
-// 🔹 Get all payments
-router.get("/all", getAllPayments);
+router.get("/all",auth,companyCheck, getAllPayments);
 
 module.exports = router;

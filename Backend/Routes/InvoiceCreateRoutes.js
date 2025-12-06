@@ -18,7 +18,7 @@ router.delete("/invoice/:id", getInvoiceById);
 
 // router.route("/invoices").get(getAllInvoices);
 // router.route("/invoices/search").get(searchInvoice);
-router.get("/invoices/search",searchInvoice)
+router.get("/inv/searchquery",auth,companyCheck,searchInvoice)
 // router.route("/:id/payment").patch(updatePayment);
 
 

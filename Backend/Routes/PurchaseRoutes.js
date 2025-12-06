@@ -21,7 +21,7 @@ router.get(
 router.delete("/purchases/:id", auth, companyCheck, purchaseController.deletePurchase);
 
 // ✅ Search purchase (for frontend suggestions)
-router.get("/purchases/search", auth, companyCheck, purchaseController.searchPurchase);
+router.get("/pur/searchquery", auth, companyCheck, purchaseController.searchPurchase);
 
 // ✅ (Optional) Send purchase PDF/email
 router.post("/purchases/send", purchaseController.sendPurchase);

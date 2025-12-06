@@ -39,10 +39,11 @@ const getAllPurchases = async (req, res) => {
 const searchPurchase = async (req, res) => {
   try {
     const query = req.query.query?.trim();
-    // console.log(query)
+    console.log(query)
     if (!query) return res.status(400).json({ message: "Query required" });
 
     const purchases = await Purchase.find({
+      companyId: req.companyId,
       $or: [
         { billNum: { $regex: query, $options: "i" } },       // ✅ matches schema
         { supplierName: { $regex: query, $options: "i" } },  // ✅ matches schema
@@ -77,36 +78,6 @@ const createPurchase = async (req, res) => {
     const newPurchase = new Purchase(purchaseData);
        const purchase=  await newPurchase.save();
       //  console.log(purchase.items._id)
-
-
-// purchase.items.forEach(async (itm) => {
-
-//   // DEBUG PRINT
-//   // console.log("PRODUCT ID:", itm.productId);
-
-//   const inventoryItem = await Inventory.findOne({
-//     productId: itm.productId,          // ✔️ Correct Product ID
-//     companyId: purchase.companyId,
-//   });
-
-//   if (inventoryItem) {
-//     inventoryItem.qty += itm.qty;      // update qty
-//     inventoryItem.minQty += itm.qty;
-//     await inventoryItem.save();
-//   } else {
-//     await Inventory.create({
-//       productId: itm.productId,        // ✔️ correct field
-//       companyId: purchase.companyId,
-//       qty: itm.qty,
-//         totalPurchased: itm.qty,
-//   totalSold: 0,
-//       minQty: itm.qty,
-
-//     });
-//   }
-// });
-
-
 
 purchase.items.forEach(async (itm) => {
   const inventoryItem = await Inventory.findOne({

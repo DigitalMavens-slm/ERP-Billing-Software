@@ -5,81 +5,6 @@ const Purchase=require("../Model/PurchaseModel")
 const  CustomerLedger = require("../Model/LedgerModel");
 const SupplierLedger=require("../Model/SupplierLedgerModel")
 
-// 🔹 Add New Payment
-// exports.addPayment = async (req, res) => {
-//   try {
-//     const { invoiceId, customerId, amount, mode, txnId, remarks } = req.body;
-//     console.log(req.body)
-
-//     // ✅ Validate required fields
-//     if (!invoiceId || !customerId) {
-//       return res.status(400).json({ success: false, message: "invoiceId and customerId are required" });
-//     }
-
-//     // ✅ Convert to ObjectIds
-//     const invoiceObjId = new mongoose.Types.ObjectId(invoiceId);
-//     const customerObjId = new mongoose.Types.ObjectId(customerId);
-
-//     // ✅ Create new payment
-//     const newPayment = await Payment.create({
-//       invoiceId: invoiceObjId,
-//       customerId: customerObjId,
-//       amount,
-//       mode,
-//       txnId,
-//       remarks,
-//     });
-
-//     // ✅ Update invoice totals and status
-//     const invoice = await Invoice.findById(invoiceObjId);
-//     if (invoice) {
-//       invoice.totalPaid = (invoice.totalPaid || 0) + Number(amount);
-//       const totalAmount = invoice.totalAmount || invoice.subtotal || 0;
-
-//       if (invoice.totalPaid >= totalAmount) invoice.paymentStatus = "Paid";
-//       else if (invoice.totalPaid > 0) invoice.paymentStatus = "Partially Paid";
-//       else invoice.paymentStatus = "Pending";
-
-//       await invoice.save();
-//     }
-
-//     // ✅ Get last ledger entry for balance
-//     const lastLedger = await Ledger.findOne({ customerId: customerObjId })
-//       .sort({ createdAt: -1 })
-//       .lean();
-
-//     const prevBalance = lastLedger ? lastLedger.balance : 0;
-//     const debit = 0;
-//     const credit = Number(amount);
-//     const newBalance = prevBalance + (debit - credit);
-
-//     // ✅ Create new ledger entry
-//     await Ledger.create({
-//       customerId: customerObjId,
-//       invoiceId: invoiceObjId,
-//       invoiceNo: invoice?.invoiceNum || "-",
-//       date: new Date(),
-//       particulars: `Payment Received (${mode || "NA"})`,
-//       debit,
-//       credit,
-//       balance: newBalance,
-//     });
-
-    
-//     res.status(201).json({
-//       success: true,
-//       message: "✅ Payment saved and ledger updated successfully",
-//       data: newPayment,
-//     });
-//   } catch (err) {
-//     console.error("💥 Payment create error:", err);
-//     res.status(500).json({
-//       success: false,
-//       message: "Failed to save payment",
-//       error: err.message,
-//     });
-//   }
-// };
 
 
 
@@ -87,7 +12,10 @@ exports.addPayment = async (req, res) => {
   try {
     const { invoiceId, purchaseId, customerId, supplierId, amount, mode, txnId, remarks } = req.body;
 
-    console.log("REQ BODY => ", req.body);
+
+    console.log(req.companyId)
+
+    // console.log("REQ BODY => ", req.body);
 
     if (!invoiceId && !purchaseId) {
       return res.status(400).json({ success: false, message: "invoiceId or purchaseId required" });
@@ -105,6 +33,7 @@ exports.addPayment = async (req, res) => {
 
     // Create Payment
     const newPayment = await Payment.create({
+      companyId:req.companyId,
       invoiceId: invoiceObjId,
       purchaseId: purchaseObjId,
       customerId: customerObjId,
@@ -115,9 +44,7 @@ exports.addPayment = async (req, res) => {
       remarks,
     });
 
-    // ------------------------------------------------
-    // SALES PAYMENT → UPDATE INVOICE
-    // ------------------------------------------------
+    
     if (invoiceObjId) {
       const invoice = await Invoice.findById(invoiceObjId);
       if (invoice) {
@@ -135,9 +62,7 @@ exports.addPayment = async (req, res) => {
       }
     }
 
-    // ------------------------------------------------
-    // PURCHASE PAYMENT → UPDATE PURCHASE
-    // ------------------------------------------------
+    
     if (purchaseObjId) {
       const purchase = await Purchase.findById(purchaseObjId);
       if (purchase) {
@@ -155,46 +80,45 @@ exports.addPayment = async (req, res) => {
       }
     }
 
-    // ------------------------------------------------
-    // 🔥 LEDGER LOGIC (MAIN PART)
-    // ------------------------------------------------
+   
     let LedgerModel;
     let query = {};
     let particulars = "";
     let debit = 0;
     let credit = 0;
 
-    // -----------------------------
-    // SALES PAYMENT → Customer Ledger
-    // -----------------------------
+   
     if (customerObjId) {
       LedgerModel = CustomerLedger;
       query = { customerId: customerObjId };
 
-      credit = Number(amount); // money coming in
+      credit = Number(amount); 
       particulars = `Payment Received (${mode})`;
     }
 
-    // -----------------------------
-    // PURCHASE PAYMENT → Supplier Ledger
-    // -----------------------------
+
     if (supplierObjId) {
       LedgerModel = SupplierLedger;
       query = { supplierId: supplierObjId };
 
-      debit = Number(amount); // money going out
+      debit = Number(amount); 
       particulars = `Payment Paid (${mode})`;
     }
 
     const lastLedger = await LedgerModel.findOne(query).sort({ createdAt: -1 }).lean();
     const prevBalance = lastLedger ? lastLedger.balance : 0;
-    const newBalance = prevBalance + (debit - credit);
+    // const newBalance = prevBalance + (debit - credit);
+    let newBalance=prevBalance
+
+    if (customerObjId) newBalance = prevBalance - credit;
+if (supplierObjId) newBalance = prevBalance + debit;
 
     await LedgerModel.create({
       customerId: customerObjId,
       supplierId: supplierObjId,
       invoiceId: invoiceObjId,
       purchaseId: purchaseObjId,
+      companyId:req.companyId,
       date: new Date(),
       particulars,
       debit,

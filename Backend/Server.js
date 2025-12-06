@@ -35,10 +35,13 @@ dotenv.config({path:path.join(__dirname,"config/config.env")})
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
+// app.use(cors({
+//   origin: "http://localhost:5173",
+//   credentials: true
+// }));
+
+app.use(cors());
+
 
 // app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use('/uploads', express.static('uploads'));
@@ -68,11 +71,12 @@ app.use("/api",ReportsRoutes)
 
 app.use("/api",PurchaseRoutes)
 app.use("/api",PurchasePaymentRoutes)
+
         // Export   and  import  Excel Route
-app.use("/api",require("./Routes/BrandRoutes"))
-app.use("/api",require("./Routes/CategoryRoutes"))
-app.use("/api",require("./Routes/SupplierRouts"))
-app.use("/api",require("./Routes/CustomerRoutes"))
+// app.use("/api",require("./Routes/BrandRoutes"))
+// app.use("/api",require("./Routes/CategoryRoutes"))
+// app.use("/api",require("./Routes/SupplierRouts"))
+// app.use("/api",require("./Routes/CustomerRoutes"))
 
 
 //         invoice num Genrator routs
