@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
+const API_URL=import.meta.env.VITE_API_URL;
 
 const ProtectedRoute = ({ children }) => {
   const [loading, setLoading] = useState(true);
@@ -8,7 +9,7 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4000/api/check-auth", { withCredentials: true })
+      .get(`${API_URL}/api/check-auth`, { withCredentials: true })
       .then((res) => {
         if (res.data.loggedIn) {
           setLoggedIn(true);
