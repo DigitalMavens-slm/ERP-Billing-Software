@@ -35,12 +35,17 @@ dotenv.config({path:path.join(__dirname,"config/config.env")})
 app.use(express.json());
 app.use(cookieParser());
 
-// app.use(cors({
-//   origin: "http://localhost:5173",
-//   credentials: true
-// }));
 
-app.use(cors());
+
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://erp-billing-software-10.onrender.com"   // YOUR FRONTEND URL
+  ],
+  credentials: true
+}));
+
+
 
 
 // app.use("/uploads", express.static(path.join(__dirname, "uploads")));
