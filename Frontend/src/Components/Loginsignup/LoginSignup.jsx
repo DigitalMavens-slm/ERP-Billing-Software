@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Axios from "axios";
 import './LoginSignup.css'
-
+const API_URL=import.meta.env.VITE_API_URL
 const LoginSignup = () => {
   const [state, setState] = useState("Login");
 
@@ -22,7 +22,7 @@ const LoginSignup = () => {
   // Register User
   const Register = async () => {
     try {
-      await Axios.post("http://localhost:4000/api/signup", user, {
+      await Axios.post(`{}/api/signup`, user, {
         withCredentials: true,
       });
       alert("Account created!");
