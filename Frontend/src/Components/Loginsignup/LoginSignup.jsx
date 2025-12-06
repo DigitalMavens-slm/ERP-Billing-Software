@@ -22,7 +22,7 @@ const LoginSignup = () => {
   // Register User
   const Register = async () => {
     try {
-      await Axios.post(`{}/api/signup`, user, {
+      await Axios.post(`${API_URL}/api/signup`, user, {
         withCredentials: true,
       });
       alert("Account created!");
@@ -37,7 +37,7 @@ const LoginSignup = () => {
   const signin = async () => {
     try {
       const res=  await Axios.post(
-        "http://localhost:4000/api/login",
+        `${API_URL}/api/login`,
         user,
         { withCredentials: true }
       );
