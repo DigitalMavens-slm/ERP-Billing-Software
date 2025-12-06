@@ -5,7 +5,7 @@ const router = express.Router();
 router.post("/logout", (req, res) => {
   res.clearCookie("auth-token", {
     httpOnly: true,
-    secure: false, // true in production with HTTPS
+    secure: true, 
     sameSite: "lax",
     path: "/",
   });
