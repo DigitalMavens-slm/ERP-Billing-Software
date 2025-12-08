@@ -28,7 +28,7 @@ const getUserRoute = require("./Routes/getUserRoute")
 const logoutRoute = require("./Routes/logoutRoute")
 const CompanySetting=require("./Routes/CompanysettingRoutes")
 const assignStaffRoute = require("./Routes/assignStaffRoute")
-dotenv.config({path:path.join(__dirname,"config/config.env")})
+// dotenv.config({path:path.join(__dirname,"config/config.env")})
 
 
 

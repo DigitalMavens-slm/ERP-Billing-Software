@@ -39,9 +39,10 @@ const LoginSignup = () => {
 
   // Login User
   const signin = async () => {
+
     try {
       const res=  await api.post(`/api/login`,user,);
- localStorage.setItem("token", res.data.token);
+//  localStorage.setItem("token", res.data.token);
       window.location.replace("/index");
     } catch (err) {
       console.log(err);
