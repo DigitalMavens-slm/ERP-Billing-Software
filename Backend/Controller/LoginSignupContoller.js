@@ -38,7 +38,7 @@ exports.login = async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user._id },JWT_SECRET, {
       expiresIn: "7d",
     });
 
@@ -46,7 +46,7 @@ exports.login = async (req, res) => {
     res.cookie("auth-token", token, {
       httpOnly: true,
       secure: true, // change to true when using https
-      sameSite: "ram",
+      sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 

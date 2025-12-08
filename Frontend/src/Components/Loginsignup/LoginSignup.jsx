@@ -21,7 +21,6 @@ const LoginSignup = () => {
   };
 
   console.log(api)
-  // Register User
 
   const Register = async () => {
     if (!user.name || !user.email || !user.password || !user.role) {
