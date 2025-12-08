@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = "my_secret_key"; //👉 production la env file la podanum
 
 exports.signup = async (req, res) => {
+  console.log(req.body)
   try {
     const { name, email, password,role} = req.body;
     console.log(name + " " + email + " " + password)
@@ -44,8 +45,8 @@ exports.login = async (req, res) => {
     // Set token as HTTP-only cookie
     res.cookie("auth-token", token, {
       httpOnly: true,
-      secure: false, // change to true when using https
-      sameSite: "lax",
+      secure: true, // change to true when using https
+      sameSite: "ram",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 

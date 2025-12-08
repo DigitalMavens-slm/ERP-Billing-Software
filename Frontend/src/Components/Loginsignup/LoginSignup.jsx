@@ -20,8 +20,14 @@ const LoginSignup = () => {
     setUser((prev) => ({ ...prev, [name]: value }));
   };
 
+  console.log(api)
   // Register User
+
   const Register = async () => {
+    if (!user.name || !user.email || !user.password || !user.role) {
+     alert("All required fields must be filled!");
+     return;
+   }
     try {
       await api.post(`/api/signup`, user,);
       alert("Account created!");
