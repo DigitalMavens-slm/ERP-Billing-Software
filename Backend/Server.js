@@ -48,7 +48,6 @@ app.use(cors({
 
 
 
-// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use('/uploads', express.static('uploads'));
 
 app.use("/api",LoginRoutes)
@@ -91,6 +90,13 @@ app.use("/api", require("./Routes/checkAuthRoute"))
 app.use("/api", getUserRoute)
 app.use("/api", logoutRoute)
 app.use("/api", assignStaffRoute)
+
+
+app.use(express.static(path.join(__dirname, "../Frontend/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../Frontend/dist/index.html"));
+});
 
 app.listen(process.env.PORT,()=>{
     console.log(`http://localhost:${process.env.PORT}`);

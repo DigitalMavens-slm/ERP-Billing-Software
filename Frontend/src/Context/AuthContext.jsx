@@ -40,8 +40,10 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     await api.post(`/api/logout`);
+
     setUser(null);
     setCompany(null);
+    // navigate("/login")
   };
 
   return (
