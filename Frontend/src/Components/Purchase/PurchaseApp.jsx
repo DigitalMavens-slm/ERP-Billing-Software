@@ -1,9 +1,10 @@
 import React, { useState, useEffect ,} from "react";
-import axios from "axios";
+// import axios from "axios";
 // import "./PurchaseApp.css";
 import {useSuggestion} from "../../Context/KeyBoardContext"
 import { useNavigate } from "react-router-dom";
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
+import api from "../../api"
 
 const PurchaseApp = () => {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ const PurchaseApp = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/products`, {withCredentials: true});
+        const res = await api.get(`/api/products`);
         setProductsList(res.data);
       } catch (err) {
         console.error("❌ Error fetching products:", err);
@@ -72,7 +73,7 @@ const PurchaseApp = () => {
   useEffect(() => {
     const fetchSuppliers = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/suppliers`, {withCredentials: true});
+        const res = await api.get(`/api/suppliers`);
         setSuppliersList(res.data);
         // console.log(suppliersList.name)
       } catch (err) {
@@ -86,7 +87,7 @@ const PurchaseApp = () => {
   useEffect(() => {
     const fetchNextBillNum = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/buy/billnum`,{withCredentials:true});
+        const res = await api.get(`/api/buy/billnum`);
         setBillNum(res.data.nextBillNum);
       } catch (err) {
         console.error("Error fetching bill number:", err);
@@ -252,7 +253,7 @@ if (name === "supplier") {
     };
 
     try {
-     const res= await axios.post(`${API_URL}/api/purchases`, purchaseData, { withCredentials: true });
+     const res= await api.post(`/api/purchases`, purchaseData,);
       setBillNum(res.data.nextBillNum);
     setDate(new Date().toISOString().split("T")[0]);
       alert("PURCHASE BILL GENERATED")

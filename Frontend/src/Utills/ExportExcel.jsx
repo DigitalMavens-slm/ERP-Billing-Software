@@ -1,11 +1,12 @@
-import axios from "axios";
+// import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
+import  api from "../api"
 
 export const ExportExcel = async (moduleName) => {
   console.log(moduleName)
   try {
-    const res = await axios.get(`${API_URL}/api/export/${moduleName}/export/excel`, {
+    const res = await api.get(`/api/export/${moduleName}/export/excel`, {
       responseType: "blob", // important for file download
     });
 

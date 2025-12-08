@@ -6,7 +6,7 @@ router.post("/logout", (req, res) => {
   res.clearCookie("auth-token", {
     httpOnly: true,
     secure: true, 
-    sameSite: "lax",
+    sameSite: "None",
     path: "/",
   });
 

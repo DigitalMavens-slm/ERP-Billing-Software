@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-const API_URL = import.meta.env.VITE_API_URL;
-
+// import axios from "axios";
+// const API_URL = import.meta.env.VITE_API_URL;
+import api from "../api"
 function AssignStaff() {
   const [staffList, setStaffList] = useState([]);
   const [formData, setFormData] = useState({
@@ -14,10 +14,8 @@ function AssignStaff() {
   // Fetch staff under admin's company
   const fetchStaff = async () => {
   try {
-    const res = await axios.get(
-      `${API_URL}/api/users?role=staff`,
-      { withCredentials: true }
-    );
+    const res = await api.get(
+      `/api/users?role=staff`);
     setStaffList(res.data);
   } catch (err) {
     console.error(err);
@@ -35,8 +33,8 @@ function AssignStaff() {
     e.preventDefault();
 
     try {
-      await axios.post(
-        `${API_URL}/api/create-staff`,
+      await api.post(
+        `/api/create-staff`,
         formData,
         { withCredentials: true }
       );

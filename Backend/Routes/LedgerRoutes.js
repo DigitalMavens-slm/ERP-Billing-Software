@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { getCustomerLedger ,getAllLedgers,getCustomerSuggestions,getCustomer,
-    getSupplierLedger,getSupplierSuggestions,getSupplier, getAllSupplierLedgers
+    getSupplierLedger,getSupplierSuggestions,getSupplier
 } = require("../Controller/LedgerController");
 const auth = require("../Middlewares/auth");
 const companyCheck = require("../Middlewares/companyCheck");
@@ -24,7 +24,7 @@ router.get(
 );
 router.get("/suppliers/:id", auth, companyCheck,  getSupplier);
 
-router.get("/suppliers-ledgers", getAllSupplierLedgers);
+// router.get("/suppliers-ledgers", getAllSupplierLedgers);
 
 
 module.exports = router;

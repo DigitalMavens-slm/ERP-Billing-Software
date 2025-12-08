@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { handlePrint, handleDownloadPDF } from "../Utills/AllPrinter";
-import axios from "axios";
+// import axios from "axios";
 import { useSuggestions } from "../Context/SuggestionContext";
+import api from "../api";
 
 const InvoiceDetails = () => {
   const { state } = useLocation();
@@ -25,7 +26,7 @@ const InvoiceDetails = () => {
 
   const sendMail = async () => {
     try {
-      const response = await axios.post("http://localhost:4000/api/invoice/send", {
+      const response = await api.post("/api/invoice/send", {
         customerEmail: customer.email,
         invoice: {
           invoiceNum: invoice.invoiceNum,

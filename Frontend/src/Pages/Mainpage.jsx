@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { Link, useLocation, Outlet } from "react-router-dom";
 
 import {
@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "../Context/AuthContext";
+import api from "../api";
 
 const Mainpage = () => {
   const { user } = useAuth();
@@ -35,11 +36,7 @@ const Mainpage = () => {
 
   const logout = async () => {
     try {
-      await axios.post(
-        "http://localhost:4000/api/logout",
-        {},
-        { withCredentials: true }
-      );
+      await api.post("/api/logout",);
       window.location.replace("/login");
     } catch (error) {
       console.log("Logout failed:", error);

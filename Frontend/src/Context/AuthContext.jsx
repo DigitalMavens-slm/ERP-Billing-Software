@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
-const API_URL=import.meta.env.VITE_API_URL
+// import axios from "axios";
+// const API_URL=import.meta.env.VITE_API_URL
+import api from "../api"
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -12,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/me`, {
+        const res = await api.get(`/api/me`, {
           withCredentials: true,
         });
         
@@ -31,17 +32,16 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (userData) => {
-    const res = await axios.post(
-      `${API_URL}/api/login`,
+    const res = await api.post(
+      `/api/login`,
       userData,
-      { withCredentials: true }
     );
     setUser(res.data.user);
     return res.data.user;
   };
 
   const logout = async () => {
-    await axios.post(`${API_URL}/api/logout`, {}, { withCredentials: true });
+    await api.post(`/api/logout`);
     setUser(null);
     setCompany(null);
   };

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 // import "./InvoiceApp.css";
 
 import { useNavigate } from "react-router-dom";
 import { useSuggestions } from "../Context/SuggestionContext";
+import api from "../api";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -58,9 +59,7 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/products`,{
-        withCredentials: true,
-      });
+        const res = await api.get(`/api/products`);
         setProductsList(res.data);
         // console.log(res.data)
       } catch (err) {
@@ -74,9 +73,7 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/customers`,{
-        withCredentials: true,
-      });
+        const res = await api.get(`/api/customers`);
         // console.log(res.data)
         setCustomersList(res.data);
       } catch (err) {
@@ -90,7 +87,7 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
  useEffect(() => {
   const fetchNextInvoiceNum = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/invoices/next-invoice-num`,{withCredentials:true});
+      const res = await api.get(`/api/invoices/next-invoice-num`);
       setInvoiceNum(res.data.nextInvoiceNum);
     } catch (err) {
       console.error("Error fetching invoice number:", err);
@@ -246,7 +243,7 @@ const selectCustomer = (name) => {
 
     try {
       // 🔹 Save to DB
-      await axios.post(`${API_URL}/api/invoices`, invoiceData, {withCredentials: true});
+      await api.post(`/api/invoices`, invoiceData);
       setCustomerId(customerDetails.customerId);
       
       navigate("/invoice-details", { state: { invoiceData ,customerDetails,} });

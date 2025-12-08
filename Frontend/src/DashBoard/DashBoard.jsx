@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -27,7 +27,8 @@ import {
   Cell,
 } from "recharts";
 
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
+import api from "../api"
 
 export default function DashBoard() {
   const navigate = useNavigate();
@@ -49,12 +50,12 @@ export default function DashBoard() {
 
 
   const invoicefetcher = async () => {
-    const res = await axios.get(`${API_URL}/api/allinvoice`,{withCredentials:true});
+    const res = await api.get(`/api/allinvoice`);
     setInvoiceCount(res.data.invoices);
   };
 
   const getDashboardKPI = async () => {
-    const res = await axios.get(`${API_URL}/api/dashboardkpi`,{withCredentials:true});
+    const res = await api.get(`/api/dashboardkpi`);
     // console.log(res.data)
     setKpi(res.data);
   };

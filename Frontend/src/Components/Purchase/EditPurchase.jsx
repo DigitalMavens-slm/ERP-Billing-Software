@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useNavigate, useLocation,useParams } from "react-router-dom";
 import { useSuggestion } from "../../Context/KeyBoardContext";
 
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
+import api from "../../api"
 
 const EditPurchase = () => {
   const navigate = useNavigate();
@@ -61,11 +62,11 @@ const EditPurchase = () => {
   // FETCH ALL DATA
   // -----------------------------
   useEffect(() => {
-    axios.get(`${API_URL}/api/products`, { withCredentials: true })
+    api.get(`/api/products`)
       .then(res => setProductsList(res.data))
       .catch(console.error);
 
-    axios.get(`${API_URL}/api/suppliers`)
+    api.get(`/api/suppliers`)
       .then(res => setSuppliersList(res.data))
       .catch(console.error);
 
@@ -82,9 +83,7 @@ const EditPurchase = () => {
 
   const fetchPurchase = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/purchases/${purchaseId}`, {
-        withCredentials: true,
-      });
+      const res = await api.get(`/api/purchases/${purchaseId}`);
 
       const p = res.data;
 
@@ -266,10 +265,7 @@ const EditPurchase = () => {
     };
 
     try {
-      await axios.put(`${API_URL}/api/purchases/${purchaseId}`,
-        updated,
-        { withCredentials: true }
-      );
+      await api.put(`/api/purchases/${purchaseId}`,updated);
 
       alert("Purchase Updated Successfully!");
       navigate("/purchaselist");

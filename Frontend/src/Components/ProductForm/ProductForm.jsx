@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useAppLocation } from "../../Context/LocationContext";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import api from "../../api"
+// const API_URL = import.meta.env.VITE_API_URL;
 
 export default function ProductForm() {
   const { location, Goback } = useAppLocation();
@@ -33,9 +33,9 @@ export default function ProductForm() {
   const fetchAllData = async () => {
     try {
       const [catRes, subRes, brandRes] = await Promise.all([
-        axios.get(`${API_URL}/api/categories`),
-        axios.get(`${API_URL}/api/subcategories`),
-        axios.get(`${API_URL}/api/brands`),
+        api.get(`/api/categories`),
+        api.get(`/api/subcategories`),
+        api.get(`/api/brands`),
       ]);
 
       setCategories(catRes.data);
@@ -71,11 +71,7 @@ export default function ProductForm() {
 };
 
 try {
-  await axios.post(
-    `${API_URL}/api/products`,
-    cleanedData,
-    { withCredentials: true }
-  );
+  await api.post(`/api/products`,cleanedData,);
 
     setMessage("Product added successfully!");
 

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
-const API_URL = import.meta.env.VITE_API_URL;
+// import axios from "axios";
+import api from "../api";
+// const API_URL = import.meta.env.VITE_API_URL;
 
 
 export default function PaymentUpdateUnified() {
@@ -18,10 +19,10 @@ export default function PaymentUpdateUnified() {
     try {
       const endpoint =
         type === "Sales"
-          ? `${API_URL}/api/inv/searchquery`
-          : `${API_URL}/api/pur/searchquery`;
+          ? `/api/inv/searchquery`
+          : `/api/pur/searchquery`;
 
-      const res = await axios.get(endpoint, { params: { query: value ,t: Date.now()},withCredentials:true },);
+      const res = await api.get(endpoint, { params: { query: value ,t: Date.now()} },);
 
       setSuggestions(type === "Sales" ? res.data.invoices : res.data.purchases);
     } catch {
@@ -43,8 +44,8 @@ export default function PaymentUpdateUnified() {
     const isSales = currentType === "Sales";
 
     const endpoint = isSales
-      ? `${API_URL}/api/payments`
-      : `${API_URL}/api/payments`;
+      ? `/api/payments`
+      : `/api/payments`;
 
     const payload = isSales
       ? {
@@ -59,12 +60,12 @@ export default function PaymentUpdateUnified() {
     try {
       setLoading(true);
 
-      await axios.post(endpoint, {
+      await api.post(endpoint, {
         ...payload,
         amount: Number(amount),
         mode,
         txnId,
-      },{withCredentials:true});
+      });
 
       alert("✅ Payment Updated Successfully!");
 

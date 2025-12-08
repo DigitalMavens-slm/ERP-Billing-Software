@@ -1,12 +1,12 @@
-import axios from "axios";
-const API_URL = import.meta.env.VITE_API_URL;
+// import axios from "axios";
+// const API_URL = import.meta.env.VITE_API_URL;
+
+import api from "../api"
 
 
 export const ImportExcel = async (moduleName, file) => {
-  // console.log(moduleName);
-  // console.log(file);
-  
-  
+ 
+   
   try {
     if (!file) {
       alert("Please select an Excel file");
@@ -17,7 +17,7 @@ export const ImportExcel = async (moduleName, file) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await axios.post(`${API_URL}/api/import/${moduleName}/excel`, formData, {
+    const res = await api.post(`/api/import/${moduleName}/excel`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
 

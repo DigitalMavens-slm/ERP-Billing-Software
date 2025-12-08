@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Edit, Trash2 } from "lucide-react";
+import api from "../api";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -14,16 +15,14 @@ export default function InvoiceList() {
   }, []);
 
   const fetchInvoices = async () => {
-    const res = await axios.get(`${API_URL}/api/allinvoice`, {
-        withCredentials: true,
-      });
+    const res = await api.get(`/api/allinvoice`);
     setInvoices(res.data.invoices);
   };
 
   const deleteInvoice = async (id) => {
     if (!confirm("Are you sure you want to delete this invoice?")) return;
 
-    await axios.delete(`${API_URL}/api/invoices/${id}`);
+    await api.delete(`/api/invoices/${id}`);
     fetchInvoices();
   };
 

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./CompanySetting.css";
-
-const API_URL = import.meta.env.VITE_API_URL;
+// import "./CompanySetting.css";
+import api from "../api"
+// const API_URL = import.meta.env.VITE_API_URL;
 
 export default function CompanySettingsForm() {
   const [formData, setFormData] = useState({
@@ -86,13 +86,13 @@ export default function CompanySettingsForm() {
   try {
     if (formData._id && formData._id.length === 24) {
       // UPDATE
-      await axios.put(`${API_URL}/api/company-settings/${formData._id}`, data, {
+      await api.put(`/api/company-settings/${formData._id}`, data, {
         withCredentials: true,
       });
       alert("Company settings updated!");
     } else {
       // CREATE NEW
-      await axios.post(`${API_URL}/api/company-settings`, data, {
+      await api.post(`/api/company-settings`, data, {
         withCredentials: true,
       });
       alert("Company settings saved!");

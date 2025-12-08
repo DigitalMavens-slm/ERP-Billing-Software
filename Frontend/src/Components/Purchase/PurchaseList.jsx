@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Edit, Trash2 } from "lucide-react";
+import api from "../../api";
 
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
 
 export default function PurchaseList() {
   const [purchases, setPurchases] = useState([]);
@@ -14,13 +15,13 @@ export default function PurchaseList() {
   }, []);
 
   const fetchPurchases = async () => {
-    const res = await axios.get(`${API_URL}/api/purchases`, { withCredentials: true });
+    const res = await api.get(`/api/purchases`);
     setPurchases(res.data.purchases);
   };
 
   const deletePurchase = async (id) => {
     if (!confirm("Are you sure you want to delete this purchase?")) return;
-    await axios.delete(`${API_URL}/api/purchases/${id}`, {withCredentials: true});
+    await api.delete(`/api/purchases/${id}`);
     fetchPurchases();
   };
 

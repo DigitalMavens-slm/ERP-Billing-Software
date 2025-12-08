@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Axios from "axios";
 import './LoginSignup.css'
-const API_URL=import.meta.env.VITE_API_URL
+// const API_URL=import.meta.env.VITE_API_URL
+import api from "../../api"
 const LoginSignup = () => {
   const [state, setState] = useState("Login");
 
@@ -22,9 +23,7 @@ const LoginSignup = () => {
   // Register User
   const Register = async () => {
     try {
-      await Axios.post(`${API_URL}/api/signup`, user, {
-        withCredentials: true,
-      });
+      await api.post(`/api/signup`, user,);
       alert("Account created!");
       setState("Login");
     } catch (err) {
@@ -36,11 +35,7 @@ const LoginSignup = () => {
   // Login User
   const signin = async () => {
     try {
-      const res=  await Axios.post(
-        `${API_URL}/api/login`,
-        user,
-        { withCredentials: true }
-      );
+      const res=  await api.post(`/api/login`,user,);
  localStorage.setItem("token", res.data.token);
       window.location.replace("/index");
     } catch (err) {

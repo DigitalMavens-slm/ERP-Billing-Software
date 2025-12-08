@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useAppLocation } from "../../Context/LocationContext";
-const API_URL=import.meta.env.VITE_API_URL
+// const API_URL=import.meta.env.VITE_API_URL
+import api from "../../api"
 
 export default function SubCategoryForm() {
   const {location,Goback} = useAppLocation();
@@ -16,7 +17,7 @@ export default function SubCategoryForm() {
   
   const fetchCategories = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/categories`);
+      const res = await api.get(`/api/categories`);
       setCategories(res.data);
     } catch (err) {
       console.error("Error fetching categories:", err);
@@ -26,7 +27,7 @@ export default function SubCategoryForm() {
   // 🔹 Fetch all subcategories
   const fetchSubCategories = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/subcategories`);
+      const res = await api.get(`/api/subcategories`);
       setSubCategories(res.data);
     } catch (err) {
       console.error("Error fetching subcategories:", err);
@@ -45,7 +46,7 @@ export default function SubCategoryForm() {
 
     setLoading(true);
     try {
-      await axios.post(`${API_URL}/api/subcategories`, {
+      await api.post(`/api/subcategories`, {
         name: subCategoryName,
         categoryId: selectedCategory,
       });
@@ -64,7 +65,7 @@ export default function SubCategoryForm() {
   // 🔹 DELETE subcategory
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_URL}/api/subcategories/${id}`);
+      await api.delete(`/api/subcategories/${id}`);
       fetchSubCategories();
     } catch (err) {
       console.error(err);
