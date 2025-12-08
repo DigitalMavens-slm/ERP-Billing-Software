@@ -92,11 +92,7 @@ app.use("/api", logoutRoute)
 app.use("/api", assignStaffRoute)
 
 
-app.use(express.static(path.join(__dirname, "../Frontend/dist")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../Frontend/dist/index.html"));
-});
 
 app.listen(process.env.PORT,()=>{
     console.log(`http://localhost:${process.env.PORT}`);
