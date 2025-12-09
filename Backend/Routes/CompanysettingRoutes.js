@@ -19,6 +19,7 @@ const upload = multer({ storage });
 router.get("/company-settings", auth, controller.getCompanySettings);
 
 // CREATE
+
 router.post(
   "/company-settings",
   auth,
@@ -31,15 +32,15 @@ router.post(
 );
 
 // UPDATE
-router.put(
-  "/company-settings/:id",
-  auth,
-  upload.fields([
-    { name: "logoUrl", maxCount: 1 },
-    { name: "paymentUrl", maxCount: 1 },
-    { name: "extraPaymentUrl", maxCount: 1 },
-  ]),
-  controller.saveCompanySettings
-);
+// router.put(
+//   "/company-settings/:id",
+//   auth,
+//   upload.fields([
+//     { name: "logoUrl", maxCount: 1 },
+//     { name: "paymentUrl", maxCount: 1 },
+//     { name: "extraPaymentUrl", maxCount: 1 },
+//   ]),
+//   controller.saveCompanySettings
+// );
 
 module.exports = router;

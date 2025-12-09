@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-
 const companySchema = new mongoose.Schema({
+ 
   companyName: String,
   contactPerson: String,
   mobile1: String,
@@ -16,6 +16,11 @@ const companySchema = new mongoose.Schema({
   compositionScheme: Boolean,
   gstNo: String,
   panNo: String,
+  loginUser: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null,
+      },
   address: {
     street: String,
     city: String,
@@ -32,5 +37,5 @@ const companySchema = new mongoose.Schema({
   extraPaymentUrl: String
 }, { timestamps: true });
 
-module.exports = mongoose.model('CompanySetting', companySchema);
+module.exports = mongoose.model('Company', companySchema);
 

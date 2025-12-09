@@ -1,82 +1,94 @@
 const Company = require("../Model/CompanysettingModel"); // correct import
-const CompanySetting = require("../Model/CompanysettingModel");
+// const CompanySetting = require("../Model/CompanysettingModel");
 const User = require("../Model/userModel"); // correct import
+
+// exports.getCompanySettings = async (req, res) => {
+//   try {
+//     const company = await Company.findOne(req.user.companyId);
+
+//     if (!company) return res.json(null);
+
+//     res.json(company);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+
 
 exports.getCompanySettings = async (req, res) => {
   try {
-    const company = await Company.findOne();
+    const user = await User.findById(req.user);
 
-    if (!company) return res.json(null);
+    if (!user || !user.companyId) {
+      return res.json(null); // NEW USER → NO COMPANY YET
+    }
 
-    res.json(company);
+    const company = await Company.findById(user.companyId);
+    return res.json(company);
+
   } catch (err) {
+    console.error("GET company error:", err);
     res.status(500).json({ error: err.message });
   }
 };
 
+// ----------------------------------------------------
+// ✅ CREATE or UPDATE COMPANY SETTINGS (Single controller)
+// ----------------------------------------------------
 exports.createCompanySettings = async (req, res) => {
   try {
     const data = req.body;
-    console.log("Incoming data:", data);
 
-    // Handle file uploads safely
+    // Handle file uploads
     if (req.files) {
       if (req.files.logoUrl) data.logoUrl = req.files.logoUrl[0].path;
-
       if (req.files.paymentUrl) data.paymentUrl = req.files.paymentUrl[0].path;
-
-      if (req.files.extraPaymentUrl)
+      if (req.files.extraPaymentUrl) 
         data.extraPaymentUrl = req.files.extraPaymentUrl[0].path;
     }
 
-    // Create the company
+    // Get logged-in user
+    const user = await User.findById(req.user);
+
+    // ✅ UPDATE FLOW
+    if (user.companyId) {
+      delete data._id; // ❌ Prevent immutable field error
+
+      const updatedCompany = await Company.findByIdAndUpdate(
+        user.companyId,
+        data,
+        { new: true }
+      );
+
+      return res.status(200).json({
+        message: "Company updated successfully",
+        company: updatedCompany,
+      });
+    }
+
+
+
+
+    
+
+    // ✅ CREATE FLOW (first time only)
+    data.loginUser = req.user;
+
     const newCompany = await Company.create(data);
 
-    // Assign company to the logged-in user
+    // Link company with user
     await User.findByIdAndUpdate(req.user, {
       companyId: newCompany._id,
     });
 
-    res.status(201).json(newCompany);
-  } catch (err) {
-    console.error("Company creation error:", err);
-    res.status(500).json({ error: err.message });
-  }
-};
-
-
-exports.saveCompanySettings = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const data = req.body;
-
-    // Handle uploaded files
-    if (req.files) {
-      if (req.files.logoUrl) data.logoUrl = req.files.logoUrl[0].path;
-      if (req.files.paymentUrl) data.paymentUrl = req.files.paymentUrl[0].path;
-      if (req.files.extraPaymentUrl)
-        data.extraPaymentUrl = req.files.extraPaymentUrl[0].path;
-    }
-
-    // Update Company
-    const updatedCompany = await Company.findByIdAndUpdate(id, data, {
-      new: true,
+    return res.status(201).json({
+      message: "Company created successfully",
+      company: newCompany,
     });
 
-    if (!updatedCompany) {
-      return res.status(404).json({ message: "Company not found" });
-    }
-
-    // Update only the current user's companyId
-    await User.findByIdAndUpdate(
-      req.user,
-      { companyId: id },
-      { new: true }
-    );
-
-    res.json(updatedCompany);
   } catch (err) {
-    console.error(err);
+    console.error("Company creation/update error:", err);
     res.status(500).json({ error: err.message });
   }
 };
+

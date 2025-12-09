@@ -58,9 +58,8 @@ const EditPurchase = () => {
 
   const [items, setItems] = useState([]);
 
-  // -----------------------------
   // FETCH ALL DATA
-  // -----------------------------
+  
   useEffect(() => {
     api.get(`/api/products`)
       .then(res => setProductsList(res.data))

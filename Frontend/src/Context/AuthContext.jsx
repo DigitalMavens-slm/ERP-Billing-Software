@@ -29,25 +29,25 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
 
-  // const login = async (userData) => {
-  //   const res = await api.post(
-  //     `/api/login`,
-  //     userData,
-  //   );
-  //   setUser(res.data.user);
-  //   return res.data.user;
-  // };
-
-  const logout = async () => {
-    await api.post(`/api/logout`);
-
-    setUser(null);
-    setCompany(null);
-    // navigate("/login")
+  const login = async (userData) => {
+    const res = await api.post(
+      `/api/login`,
+      userData,
+    );
+    setUser(res.data.user);
+    return res.data.user;
   };
 
+  // const logout = async () => {
+  //   await api.post(`/api/logout`);
+
+  //   setUser(null);
+  //   setCompany(null);
+  //   // navigate("/login")
+  // };
+
   return (
-    <AuthContext.Provider value={{ user, company, setCompany,  logout, loading }}>
+    <AuthContext.Provider value={{ user, company,login, setCompany, loading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -28,6 +28,9 @@ exports.signup = async (req, res) => {
 };
 
 
+
+const isProd = process.env.NODE_ENV === "production";
+
 exports.login = async (req, res) => {
   console.log(req.body)
   try {
@@ -40,15 +43,15 @@ exports.login = async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user._id }, "my_secret_key", {
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d"
     });
 
     // 🔥 THIS IS THE CORRECT COOKIE CONFIG FOR RENDER + FRONTEND DIFF DOMAIN
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,       // HTTPS ONLY (Render = HTTPS)
-      sameSite: "none",   // REQUIRED FOR DIFFERENT FRONTEND URL
+      secure: isProd,       // HTTPS ONLY (Render = HTTPS)
+      sameSite: isProd,   // REQUIRED FOR DIFFERENT FRONTEND URL
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 

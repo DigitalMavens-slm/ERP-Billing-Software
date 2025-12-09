@@ -1,4 +1,4 @@
-import './App.css'
+// import './App.css'
 import LoginSignupPage from './Components/Loginsignup/LoginSignup'
 import Purchase from "./Components/Purchase/PurchaseApp"
 import Inventory from "./Components/Inventory/Inventory"
