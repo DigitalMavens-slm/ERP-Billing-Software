@@ -30,7 +30,7 @@ const LoginSignup = () => {
     try {
       await api.post(`/api/signup`, user,);
       alert("Account created!");
-      setUser("")
+      // setUser("")
       setState("Login");
     } catch (err) {
       console.error("Registration Error:", err);

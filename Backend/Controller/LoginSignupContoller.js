@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 // const JWT_SECRET=process.env.JWT_SECRET
 
 exports.signup = async (req, res) => {
-  console.log(req.body)
+  // console.log(req.body)
   try {
     const { name, email, password,role} = req.body;
     console.log(name + " " + email + " " + password)
@@ -34,6 +34,7 @@ const isProd = process.env.NODE_ENV === "production";
 exports.login = async (req, res) => {
   console.log(req.body)
   try {
+    
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
