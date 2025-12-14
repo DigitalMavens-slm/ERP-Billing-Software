@@ -40,7 +40,7 @@ app.use(cookieParser());
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://erp-billing-software-10.onrender.com"   // YOUR FRONTEND URL
+    "https://erp-billing-software-12.onrender.com"   // YOUR FRONTEND URL
   ],
   credentials: true
 }));
