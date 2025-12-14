@@ -11,7 +11,7 @@ export default function CustomerLedger() {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showList, setShowList] = useState(false);
-  console.log(query)
+  console.log(ledger)
 
   useEffect(() => {
     if (!customerId) return;
@@ -109,6 +109,7 @@ export default function CustomerLedger() {
                   key={i}
                   className="border-t hover:bg-gray-50 transition"
                 >
+                  
                   <td className="p-3">
                     {new Date(row.date).toLocaleDateString()}
                   </td>

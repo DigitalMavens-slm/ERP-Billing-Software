@@ -16,7 +16,6 @@ module.exports = async (req, res, next) => {
     }
 
     req.companyId = user.companyId; // Attach companyId to request
-    // console.log("companyId:",req.companyId)
     next();
   } catch (err) {
     return res.status(500).json({ error: err.message });

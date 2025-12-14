@@ -1,6 +1,4 @@
 import { createContext, useContext, useState, useEffect } from "react";
-// import axios from "axios";
-// const API_URL=import.meta.env.VITE_API_URL
 import api from "../api"
 const AuthContext = createContext();
 
@@ -9,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // GET LOGGED-IN USER DETAILS ONCE
+  // GET LOGGED-IN USER DETAILS ONCEgr
   useEffect(() => {
     const fetchUser = async () => {
       try {

@@ -179,7 +179,7 @@ if (name === "supplier") {
         product: selected.name,
         mrp: selected.mrp || 0,
         rate: selected.purchaseRate || 0,
-        tax: selected.gst || 18,
+        tax: selected.gst || 0,
       });
     }
     setFilteredProducts([]);
@@ -190,6 +190,9 @@ if (name === "supplier") {
     if (!item.product.trim()) return alert("Product Name required!");
     if (item.qty <= 0) return alert("Quantity must be > 0!");
     if (item.rate <= 0) return alert("Rate must be > 0!");
+      if (!item.productId) {
+    return alert("Please add product, don’t type manually!");
+  }
     setItems((prev) => [...prev, item]);
     setItem({ product: "", qty: 0, mrp: 0, rate: 0, dis: 0, tax: 0 });
   };

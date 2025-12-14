@@ -13,6 +13,16 @@ const SupplierLedgerSchema = new mongoose.Schema(
       ref: "Supplier",
       required: true,
     },
+    purchaseId:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"Purchase",
+      required:true
+    },
+    paymentId:{
+       type:mongoose.Schema.Types.ObjectId,
+       ref:"Payment",
+       default:null
+    },
     date: { type: Date, required: true },
     particulars: { type: String },
     purchaseNo: { type: String },
@@ -23,4 +33,8 @@ const SupplierLedgerSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+
+
+
 module.exports = mongoose.model("SupplierLedger", SupplierLedgerSchema);
+

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 // import axios from "axios";
 import { useAppLocation } from "../../Context/LocationContext";
 import api from "../../api"
+import { Trash2 } from "lucide-react";
+
 // const API_URL = import.meta.env.VITE_API_URL;
 
 export default function ProductForm() {
@@ -28,6 +30,7 @@ export default function ProductForm() {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const[products,setProducts]=useState([])
 
   // Fetch All Dropdown Data
   const fetchAllData = async () => {
@@ -46,8 +49,20 @@ export default function ProductForm() {
     }
   };
 
+  
+
+const fetchProducts=async()=>{
+  try{
+    const res=await api.get("/api/products")
+    setProducts(res.data)
+  }
+  catch(err){
+    console.log(err)
+  }
+}
   useEffect(() => {
     fetchAllData();
+    fetchProducts();
   }, []);
 
   // Input Handler
@@ -91,12 +106,24 @@ try {
     });
 
     fetchAllData();
+    fetchProducts()
 
   } catch (err) {
     console.error(err);
     setMessage("Error adding product");
   } finally {
     setLoading(false);
+  }
+};
+
+const handleDelete = async (id) => {
+  if (!window.confirm("Are you sure you want to delete this product?")) return;
+
+  try {
+    await api.delete(`/api/products/${id}`);
+    setProducts(products.filter((p) => p._id !== id)); // UI update
+  } catch (err) {
+    console.error("Delete Error:", err);
   }
 };
 
@@ -267,6 +294,26 @@ try {
           )}
         </div>
       )}
+
+     
+     <div className="space-y-3">
+   {products.map((product) => (
+     <div
+       key={product._id}
+       className="flex justify-between items-center p-4 bg-white shadow rounded-lg border hover:bg-gray-50 transition"
+     >
+       <h3 className="text-lg font-semibold">{product.name}</h3>
+
+       <button
+         onClick={() => handleDelete(product._id)}
+         className="text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-100 transition"
+       >
+         <Trash2 size={20} />
+       </button>
+     </div>
+   ))}
+</div>
+
     </>
   );
 }

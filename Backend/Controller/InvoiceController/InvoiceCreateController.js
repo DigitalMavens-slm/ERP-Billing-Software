@@ -4,13 +4,80 @@ const Ledger = require("../../Model/LedgerModel");
 const Inventory=require("../../Model/InventoryModel")
 const APIFeatures = require("../../Utills/Apifeatures");
 
+// const CustomerLedger=require("../../Model/LedgerModel")
+
+
 // ✅ Get all invoices with search/filter/pagination
-const getAllInvoices = async (req, res, next) => {
+// const getAllInvoices = async (req, res, next) => {
+//   try {
+//     const resPerPage = 10;
+
+//     const apiFeatures = new APIFeatures(
+//       Invoice.find({ companyId: req.companyId }), // ✅ Filter by company here
+//       req.query
+//     )
+//       .search()
+//       .filter()
+//       .paginate(resPerPage);
+
+//     const invoices = await apiFeatures.query;
+
+//     res.status(200).json({
+//       success: true,
+//       count: invoices.length,
+//       invoices,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false, message: "Server Error" });
+//   }
+// };
+
+
+// const getAllInvoices = async (req, res) => {
+//   try {
+//     const resPerPage = 10;
+
+//     // 🔥 TOTAL COUNT (WITHOUT pagination)
+//     const totalCount = await Invoice.countDocuments({
+//       companyId: req.companyId,
+//     });
+
+//     const apiFeatures = new APIFeatures(
+//       Invoice.find({ companyId: req.companyId }),
+//       req.query
+//     )
+//       .search()
+//       .filter()
+//       .paginate(resPerPage);
+
+//     const invoices = await apiFeatures.query;
+
+//     res.status(200).json({
+//       success: true,
+//       invoices,
+//       totalInvoices,     // ✅ THIS IS THE KEY
+//       resPerPage,     // (optional)
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false, message: "Server Error" });
+//   }
+// };
+
+
+const getAllInvoices = async (req, res) => {
   try {
     const resPerPage = 10;
+    const currentPage = Number(req.query.page) || 1;
+
+    // 🔥 TOTAL COUNT (without pagination)
+    const totalInvoices = await Invoice.countDocuments({
+      companyId: req.companyId,
+    });
 
     const apiFeatures = new APIFeatures(
-      Invoice.find({ companyId: req.companyId }), // ✅ Filter by company here
+      Invoice.find({ companyId: req.companyId }),
       req.query
     )
       .search()
@@ -21,14 +88,22 @@ const getAllInvoices = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      count: invoices.length,
       invoices,
+      totalInvoices,   // ✅ NOW CORRECT
+      resPerPage,
+      currentPage,
     });
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
   }
 };
+
+
 
 const searchInvoice = async (req, res) => {
   try {
@@ -144,10 +219,11 @@ const createInvoice = async (req, res) => {
     });
   }
 };
+
 // 🔹 Get Single Invoice
 const getInvoiceById = async (req, res) => {
   try {
-    const invoice = await Invoice.findById(req.params.id);
+    const invoice = await Invoice.findById(req.params.id).populate("customerId");
     if (!invoice)
       return res
         .status(404)
@@ -163,23 +239,109 @@ const getInvoiceById = async (req, res) => {
   }
 };
 
-const deleteInvoice = async (req, res) => {
-  try {
-    const invoice = await Invoice.findByIdAndDelete(req.params.id);
-    if (!invoice)
-      return res
-        .status(404)
-        .json({ success: false, message: "Invoice not found" });
 
-    res.json({ success: true, data: invoice, message: "Successfully deleted" });
+
+
+
+
+// const deleteInvoice = async (req, res) => {
+//   try {
+//     const invoice = await Invoice.findByIdAndDelete(req.params.id);
+//     if (!invoice)
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Invoice not found" });
+
+//     res.json({ success: true, data: invoice, message: "Successfully deleted" });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Failed to fetch invoice",
+//       error: error.message,
+//     });
+//   }
+// };
+
+const deleteInvoice = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const invoiceId = req.params.id;
+
+    // 1️⃣ Find invoice
+    const invoice = await Invoice.findOne({
+      _id: invoiceId,
+      companyId: req.companyId,
+    }).session(session);
+
+    if (!invoice) {
+      return res.status(404).json({
+        success: false,
+        message: "Invoice not found",
+      });
+    }
+
+    // 2️⃣ Reverse inventory (add stock back)
+    for (const item of invoice.items) {
+      const inv = await Inventory.findOne({
+        productId: item.productId,
+        companyId: invoice.companyId,
+      }).session(session);
+
+      if (inv) {
+        inv.qty += item.qty;              // 🔁 reverse sold qty
+        inv.minQty += item.qty;
+        inv.totalSold -= item.qty;
+
+        if (inv.totalSold < 0) inv.totalSold = 0;
+        await inv.save({ session });
+      }
+    }
+
+    // 3️⃣ Reverse customer ledger
+    const ledger = await CustomerLedger.findOne({
+      invoiceId: invoice._id,
+      companyId: invoice.companyId,
+    }).session(session);
+
+    if (ledger) {
+      const last = await CustomerLedger.findOne({
+        customerId: invoice.customerId,
+        companyId: invoice.companyId,
+      })
+        .sort({ createdAt: -1 })
+        .session(session);
+
+      if (last) {
+        last.balance -= ledger.debit; // 🔁 reverse invoice amount
+        await last.save({ session });
+      }
+
+      await ledger.deleteOne({ session });
+    }
+
+    // 4️⃣ Delete invoice
+    await Invoice.deleteOne({ _id: invoiceId }).session(session);
+
+    await session.commitTransaction();
+
+    res.json({
+      success: true,
+      message: "Invoice deleted successfully",
+      deletedInvoice: invoice,
+    });
+
   } catch (error) {
+    await session.abortTransaction();
     res.status(500).json({
       success: false,
-      message: "Failed to fetch invoice",
+      message: "Failed to delete invoice",
       error: error.message,
     });
   }
 };
+
 
 const fs = require("fs");
 const { generateInvoicePDF } = require("../../Utills/PdfGenerator");
@@ -218,8 +380,9 @@ async function sendInvoice(req, res) {
 module.exports = {
   createInvoice,
   getAllInvoices,
-  getInvoiceById,
+  getInvoiceById,     
   sendInvoice,
+  // updateInvoice,
   searchInvoice,
   deleteInvoice,
 };

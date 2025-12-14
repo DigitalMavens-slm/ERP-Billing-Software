@@ -13,9 +13,6 @@ exports.addPayment = async (req, res) => {
     const { invoiceId, purchaseId, customerId, supplierId, amount, mode, txnId, remarks } = req.body;
 
 
-    console.log(req.companyId)
-
-    // console.log("REQ BODY => ", req.body);
 
     if (!invoiceId && !purchaseId) {
       return res.status(400).json({ success: false, message: "invoiceId or purchaseId required" });
@@ -44,7 +41,7 @@ exports.addPayment = async (req, res) => {
       remarks,
     });
 
-    
+
     if (invoiceObjId) {
       const invoice = await Invoice.findById(invoiceObjId);
       if (invoice) {
@@ -90,7 +87,8 @@ exports.addPayment = async (req, res) => {
    
     if (customerObjId) {
       LedgerModel = CustomerLedger;
-      query = { customerId: customerObjId };
+      // query = { customerId: customerObjId };
+      query = { customerId: customerObjId, companyId: req.companyId };
 
       credit = Number(amount); 
       particulars = `Payment Received (${mode})`;
@@ -99,7 +97,8 @@ exports.addPayment = async (req, res) => {
 
     if (supplierObjId) {
       LedgerModel = SupplierLedger;
-      query = { supplierId: supplierObjId };
+      // query = { supplierId: supplierObjId };
+      query = { supplierId: supplierObjId, companyId: req.companyId };
 
       debit = Number(amount); 
       particulars = `Payment Paid (${mode})`;
@@ -108,10 +107,15 @@ exports.addPayment = async (req, res) => {
     const lastLedger = await LedgerModel.findOne(query).sort({ createdAt: -1 }).lean();
     const prevBalance = lastLedger ? lastLedger.balance : 0;
     // const newBalance = prevBalance + (debit - credit);
-    let newBalance=prevBalance
+    // let newBalance=prevBalance
 
-    if (customerObjId) newBalance = prevBalance - credit;
-if (supplierObjId) newBalance = prevBalance + debit;
+//     if (customerObjId) newBalance = prevBalance - credit;
+// if (supplierObjId) newBalance = prevBalance + debit;
+let newBalance = prevBalance;
+
+if (customerObjId) newBalance = prevBalance - credit;   // customer payment received reduces balance
+if (supplierObjId) newBalance = prevBalance - debit;    // supplier payment paid reduces balance
+
 
     await LedgerModel.create({
       customerId: customerObjId,
@@ -142,7 +146,6 @@ if (supplierObjId) newBalance = prevBalance + debit;
 };
 
 
-// 🔹 Update existing payment
 exports.updatePayment = async (req, res) => {
   try {
     const { paymentId } = req.params;

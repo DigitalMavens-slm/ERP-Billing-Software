@@ -169,6 +169,7 @@ const Mainpage = () => {
                   <Link to="ledger" className="sub-item">
                     <ChevronRight size={16} /> Customer Ledger
                   </Link>
+                  {/* {role==="admin"()} */}
                   <Link to="purchaseledger" className="sub-item">
                     <ChevronRight size={16} /> Supplier Ledger
                   </Link>

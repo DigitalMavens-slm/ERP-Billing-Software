@@ -34,6 +34,7 @@ export default function DashBoard() {
   const navigate = useNavigate();
 
   const [InvoiceCount, setInvoiceCount] = useState([]);
+  // console.lo(InvoiceCount)
     const [salesTrendData, setSalesTrendData] = useState([]);
   const [statusPieData, setStatusPieData] = useState([]);
 
@@ -56,7 +57,7 @@ export default function DashBoard() {
 
   const getDashboardKPI = async () => {
     const res = await api.get(`/api/dashboardkpi`);
-    // console.log(res.data)
+    console.log(res.data)
     setKpi(res.data);
   };
 
@@ -264,7 +265,7 @@ export default function DashBoard() {
               {/* View */}
               <button
                 className="text-blue-600 hover:text-blue-800 transition"
-                onClick={() => navigate(`/invoiceview/${list._id}`)}
+                onClick={() => navigate(`/invoice/view/${list._id}`)}
               >
                 <Eye size={20} />
               </button>
@@ -272,7 +273,7 @@ export default function DashBoard() {
               {/* Print */}
               <button
                 className="text-gray-700 hover:text-black transition"
-                onClick={() => window.print()}   // or custom invoice print page
+                onClick={() =>navigate(`/invoice/view/${list._id}?print=true`) }   // or custom invoice print page
               >
                 <Printer size={20} />
               </button>

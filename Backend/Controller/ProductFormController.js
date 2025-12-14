@@ -42,7 +42,7 @@ exports.createProduct = async (req, res) => {
       productId: savedProduct._id,
       companyId: req.companyId,
       qty: 0,
-      minQty: savedProduct.minOrderQty || 10,
+      minQty: savedProduct.minOrderQty || 0,
     });
 
     res.json({

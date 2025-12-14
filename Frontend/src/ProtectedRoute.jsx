@@ -8,6 +8,7 @@ const ProtectedRoute = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
 
+  
   useEffect(() => {
     api
       .get(`/api/check-auth`)

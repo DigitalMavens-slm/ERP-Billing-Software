@@ -12,9 +12,10 @@
 const express = require("express");
 const { getReports } = require("../Controller/ReportsController");
 const router = express.Router();
-
+const auth=require("../Middlewares/auth")
+const companyCheck=require("../Middlewares/companyCheck")
 // GET /api/reports
-router.get("/reports", getReports);
-router.get("/reports/compare", getReports);
+router.get("/reports", auth,companyCheck,getReports);
+// router.get("/reports/compare", getReports);
 
 module.exports = router;

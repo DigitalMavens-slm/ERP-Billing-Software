@@ -47,6 +47,7 @@ exports.login = async (req, res) => {
       expiresIn: "7d"
     });
 
+
     // 🔥 THIS IS THE CORRECT COOKIE CONFIG FOR RENDER + FRONTEND DIFF DOMAIN
     res.cookie("token", token, {
       httpOnly: true,

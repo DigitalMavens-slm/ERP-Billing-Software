@@ -26,12 +26,12 @@ router.get("/pur/searchquery", auth, companyCheck, purchaseController.searchPurc
 // ✅ (Optional) Send purchase PDF/email
 router.post("/purchases/send", purchaseController.sendPurchase);
 
-router.put(
-  "/purchases/:id",
-  auth,
-  companyCheck,
-  purchaseController.updatePurchase
-);
+// router.put(
+//   "/purchases/:id",
+//   auth,
+//   companyCheck,
+//   purchaseController.updatePurchase
+// );
 
 
 module.exports = router;

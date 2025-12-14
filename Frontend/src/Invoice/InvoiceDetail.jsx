@@ -131,12 +131,12 @@ const InvoiceDetails = () => {
           ← Back to Invoice
         </button>
 
-        <button
+        {/* <button
           onClick={() => handlePrint("invoice-details")}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
           🖨 Print / PDF
-        </button>
+        </button> */}
 
         <button
           onClick={() => handleDownloadPDF("invoice-details", "Invoice-" + invoice.invoiceNum)}

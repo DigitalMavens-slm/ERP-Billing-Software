@@ -10,12 +10,43 @@ const user = require("../Model/userModel");
 const Inventory=require("../Model/InventoryModel")
 
 // ✅ Get all purchases
+// const getAllPurchases = async (req, res) => {
+//   try {
+//     const resPerPage = 10;
+
+//     const apiFeatures = new APIFeatures(
+//       Purchase.find({ companyId: req.companyId }), 
+//       req.query
+//     )
+//       .search()
+//       .filter()
+//       .paginate(resPerPage);
+
+//     const purchases = await apiFeatures.query;
+
+//     res.status(200).json({
+//       success: true,
+//       count: purchases.length,
+//       purchases,
+//     });
+//   } catch (err) {
+//     console.error("❌ Error fetching purchases:", err);
+//     res.status(500).json({ success: false, message: "Server Error" });
+//   }
+// };
+
+const PurchaseAPIFeatures = require("../Utills/PurchaseApiFeatures");
+
 const getAllPurchases = async (req, res) => {
   try {
     const resPerPage = 10;
 
-    const apiFeatures = new APIFeatures(
-      Purchase.find({ companyId: req.companyId }), 
+    const totalPurchases = await Purchase.countDocuments({
+      companyId: req.companyId,
+    });
+
+    const apiFeatures = new PurchaseAPIFeatures(
+      Purchase.find({ companyId: req.companyId }),
       req.query
     )
       .search()
@@ -24,16 +55,18 @@ const getAllPurchases = async (req, res) => {
 
     const purchases = await apiFeatures.query;
 
-    res.status(200).json({
+    res.json({
       success: true,
-      count: purchases.length,
       purchases,
+      totalPurchases,
+      resPerPage,
+      currentPage: Number(req.query.page) || 1,
     });
   } catch (err) {
-    console.error("❌ Error fetching purchases:", err);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
 
 
 const searchPurchase = async (req, res) => {
@@ -108,7 +141,7 @@ purchase.items.forEach(async (itm) => {
 
 
     // Add ledger entry
-const lastLedger = await SupplierLedger.findOne({ supplierId: newPurchase.supplierId })
+const lastLedger = await SupplierLedger.findOne({ supplierId: purchase.supplierId })
   .sort({ createdAt: -1 })
   .lean();
 
@@ -117,11 +150,12 @@ const credit = Number(newPurchase.subtotal || 0);
 const newBalance = prevBalance + credit;
 
 await SupplierLedger.create({
-  supplierId: newPurchase.supplierId,
+  purchaseId:purchase._id,
+  supplierId: purchase.supplierId,
   companyId: req.companyId, // 🔥 MUST ADD THIS
   date: new Date(),
   particulars: "Purchase Generated",
-  purchaseNo: newPurchase.purchaseNum,
+  purchaseNo: purchase.purchaseNum,
   debit: 0,
   credit,
   balance: newBalance,
@@ -131,7 +165,7 @@ await SupplierLedger.create({
     res.status(201).json({
       success: true,
       message: "Purchase saved successfully",
-      data: newPurchase,
+      data: purchase,
     });
   } catch (error) {
     console.error("❌ Error saving purchase:", error);
@@ -143,10 +177,10 @@ await SupplierLedger.create({
   }
 };
 
-// ✅ Get purchase by ID
+// ✅ Get purchase by ID                       Edit getPurchasecontroller
 const getPurchaseById = async (req, res) => {
   try {
-    const purchase = await Purchase.findById(req.params.id);
+    const purchase = await Purchase.findById(req.params.id).populate("supplierId");
 
     if (!purchase) {
       return res.status(404).json({
@@ -168,10 +202,168 @@ const getPurchaseById = async (req, res) => {
   }
 };
 
+// const updatePurchase = async (req, res) => {
+//   const session = await mongoose.startSession();
+//   session.startTransaction();
+
+//   try {
+//     const purchaseId = req.params.id;
+//     const newData = req.body;
+
+//     // 1️⃣ Fetch OLD Purchase with company filter
+//     const oldPurchase = await Purchase.findOne({
+//       _id: purchaseId,
+//       companyId: req.companyId,
+//     }).session(session);
+
+//     if (!oldPurchase) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Purchase not found for this company",
+//       });
+//     }
+
+//     // 2️⃣ Reverse OLD INVENTORY
+//     for (const item of oldPurchase.items) {
+//       const inv = await Inventory.findOne({
+//         productId: item.productId,
+//         companyId: oldPurchase.companyId,
+//       }).session(session);
+
+//       if (inv) {
+//         inv.qty -= item.qty;
+//         inv.minQty -= item.qty;
+//         inv.totalPurchased -= item.qty;
+
+//         if (inv.qty < 0) inv.qty = 0;
+
+//         await inv.save({ session });
+//       }
+//     }
+
+//     // 3️⃣ Reverse OLD LEDGER ENTRY
+//     const oldLedger = await SupplierLedger.findOne({
+//       purchaseId: oldPurchase._id,
+//       companyId: oldPurchase.companyId,
+//     }).session(session);
+
+//     if (oldLedger) {
+//       // Reduce supplier balance
+//       const lastBalance = await SupplierLedger.findOne({
+//         supplierId: oldPurchase.supplierId,
+//         companyId: oldPurchase.companyId,
+//       })
+//         .sort({ createdAt: -1 })
+//         .session(session);
+
+//       if (lastBalance) {
+//         lastBalance.balance -= oldLedger.credit;
+//         await lastBalance.save({ session });
+//       }
+
+//       await oldLedger.deleteOne({ session });
+//     }
+
+//     // 4️⃣ UPDATE Purchase with NEW values
+//     const updatedPurchase = await Purchase.findByIdAndUpdate(
+//       purchaseId,
+//       newData,
+//       { new: true, session }
+//     );
+
+//     // 5️⃣ APPLY NEW INVENTORY
+//     for (const item of updatedPurchase.items) {
+//       const inv = await Inventory.findOne({
+//         productId: item.productId,
+//         companyId: updatedPurchase.companyId,
+//       }).session(session);
+
+//       if (inv) {
+//         inv.qty += item.qty;
+//         inv.minQty += item.qty;
+//         inv.totalPurchased += item.qty;
+
+//         await inv.save({ session });
+
+//       } else {
+//         await Inventory.create(
+//           [
+//             {
+//               productId: item.productId,
+//               companyId: updatedPurchase.companyId,
+//               qty: item.qty,
+//               minQty: item.qty,
+//               totalPurchased: item.qty,
+//               totalSold: 0,
+//             },
+//           ],
+//           { session }
+//         );
+//       }
+//     }
+
+//     // 6️⃣ ADD NEW LEDGER ENTRY
+//     const latest = await SupplierLedger.findOne({
+//       supplierId: updatedPurchase.supplierId,
+//       companyId: updatedPurchase.companyId,
+//     })
+//       .sort({ createdAt: -1 })
+//       .session(session);
+
+//     const previousBalance = latest ? latest.balance : 0;
+//     const newCredit = updatedPurchase.subtotal || 0;
+
+//     await SupplierLedger.create(
+//       [
+//         {
+//           purchaseId: updatedPurchase._id,
+//           supplierId: updatedPurchase.supplierId,
+//           companyId: updatedPurchase.companyId,
+//           credit: newCredit,
+//           debit: 0,
+//           balance: previousBalance + newCredit,
+//           particulars: "Purchase Updated",
+//           purchaseNo: updatedPurchase.purchaseNum,
+//           date: new Date(),
+//         },
+//       ],
+//       { session }
+//     );
+
+//     // 7️⃣ FINALLY COMMIT
+//     await session.commitTransaction();
+
+//     return res.json({
+//       success: true,
+//       message: "Purchase updated successfully",
+//       data: updatedPurchase,
+//     });
+
+//   } catch (error) {
+//     await session.abortTransaction();
+//     return res.status(500).json({
+//       success: false,
+//       message: "Error updating purchase",
+//       error: error.message,
+//     });
+//   }
+// };
+
+
+
 
 const deletePurchase = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
-    const purchase = await Purchase.findByIdAndDelete(req.params.id);
+    const purchaseId = req.params.id;
+
+    const purchase = await Purchase.findOne({
+      _id: purchaseId,
+      companyId: req.companyId,
+    }).session(session);
+
     if (!purchase) {
       return res.status(404).json({
         success: false,
@@ -179,12 +371,59 @@ const deletePurchase = async (req, res) => {
       });
     }
 
+    // 2️⃣ Reverse inventory changes
+    for (const item of purchase.items) {
+      const inv = await Inventory.findOne({
+        productId: item.productId,
+        companyId: purchase.companyId,
+      }).session(session);
+
+      if (inv) {
+        inv.qty -= item.qty;              // reverse added stock
+        inv.minQty -= item.qty;
+        inv.totalPurchased -= item.qty;
+
+        if (inv.qty < 0) inv.qty = 0;     // prevent negative stock
+        await inv.save({ session });
+      }
+    }
+
+    // 3️⃣ Reverse Ledger entry
+    const ledger = await SupplierLedger.findOne({
+      purchaseId: purchase._id,
+      companyId: purchase.companyId,
+    }).session(session);
+
+    if (ledger) {
+      // reverse ledger balance
+      const last = await SupplierLedger.findOne({
+        supplierId: purchase.supplierId,
+        companyId: purchase.companyId,
+      })
+        .sort({ createdAt: -1 })
+        .session(session);
+
+      if (last) {
+        last.balance -= ledger.credit; // reverse purchase amount
+        await last.save({ session });
+      }
+
+      await ledger.deleteOne({ session }); // delete ledger entry
+    }
+
+    // 4️⃣ Delete purchase finally
+    await Purchase.deleteOne({ _id: purchaseId }).session(session);
+
+    await session.commitTransaction();
+
     res.json({
       success: true,
       message: "Purchase deleted successfully",
       deletedPurchase: purchase,
     });
+
   } catch (error) {
+    await session.abortTransaction();
     res.status(500).json({
       success: false,
       message: "Failed to delete purchase",
@@ -192,6 +431,7 @@ const deletePurchase = async (req, res) => {
     });
   }
 };
+
 
 
 // ✅ Send purchase PDF/email
@@ -221,27 +461,9 @@ const sendPurchase = async (req, res) => {
   }
 };
 
-const updatePurchase = async (req, res) => {
-  try {
-    const purchase = await Purchase.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
 
-    if (!purchase) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Purchase not found" });
-    }
 
-    res.json({
-      success: true,
-      message: "Updated successfully",
-      data: purchase,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
+
 
 
 
@@ -253,5 +475,5 @@ module.exports = {
   searchPurchase,
   sendPurchase,
   deletePurchase,
-  updatePurchase,
+  // updatePurchase,
 };

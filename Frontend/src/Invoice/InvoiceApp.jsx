@@ -87,7 +87,7 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
  useEffect(() => {
   const fetchNextInvoiceNum = async () => {
     try {
-      const res = await api.get(`/api/invoices/next-invoice-num`);
+      const res = await api.get(`/api/invoices/get/next-invoice-num`);
       setInvoiceNum(res.data.nextInvoiceNum);
     } catch (err) {
       console.error("Error fetching invoice number:", err);
@@ -174,7 +174,7 @@ const selectCustomer = (name) => {
         product: selected.name,
         mrp: selected.mrp || 0,
         rate: selected.saleRate || 0,
-        tax: selected.gst || 18,
+        tax: selected.gst || 0,
       });
     }
     setFilteredProducts([]);
@@ -362,7 +362,7 @@ const selectCustomer = (name) => {
           >
             <option value="GST">GST</option>
             <option value="IGST">IGST</option>
-            <option value="NOTax">No Tax</option>
+            {/* <option value="NOTax">No Tax</option> */}
           </select>
         </div>
 
@@ -373,7 +373,7 @@ const selectCustomer = (name) => {
             value={amountType}
             onChange={(e) => setAmountType(e.target.value)}
           >
-            <option value="No Tax">No Tax</option>
+            {/* <option value="No Tax">No Tax</option> */}
             <option value="Including Tax">Including Tax</option>
             <option value="Excluding Tax">Excluding Tax</option>
           </select>

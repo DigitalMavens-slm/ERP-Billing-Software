@@ -17,7 +17,6 @@ exports.getUsers = async (req, res) => {
   try {
     const filter = {};
 
-    // Filter by role if provided (example: ?role=staff)
     if (req.query.role) {
       filter.role = req.query.role;
     }

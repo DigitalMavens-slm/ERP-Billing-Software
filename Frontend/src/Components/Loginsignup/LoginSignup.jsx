@@ -10,7 +10,7 @@ const LoginSignup = () => {
     name: "",
     email: "",
     password: "",
-    role: "staff",
+    role: "",
     companyCode: "",
   });
 
@@ -30,6 +30,7 @@ const LoginSignup = () => {
     try {
       await api.post(`/api/signup`, user,);
       alert("Account created!");
+      setUser("")
       setState("Login");
     } catch (err) {
       console.error("Registration Error:", err);

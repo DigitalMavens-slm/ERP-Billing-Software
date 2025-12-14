@@ -6,7 +6,7 @@ const auth=require("../Middlewares/auth")
 const comapnyCheck=require("../Middlewares/companyCheck");
 const companyCheck = require("../Middlewares/companyCheck");
 // ✅ Fetch next invoice number
-router.get("/invoices/next-invoice-num", auth,comapnyCheck, async (req, res) => {
+router.get("/invoices/get/next-invoice-num", auth,comapnyCheck, async (req, res) => {
   // console.log(req.companyId)
   try {
     const lastInvoice = await Invoice.findOne({companyId:req.companyId}, {}, { sort: { createdAt: -1 } });
