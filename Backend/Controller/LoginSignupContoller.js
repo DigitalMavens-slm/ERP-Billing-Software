@@ -29,12 +29,12 @@ exports.signup = async (req, res) => {
 
 
 
-const isProd = process.env.NODE_ENV === "production";
+// const isProd = process.env.NODE_ENV === "production";
 
 exports.login = async (req, res) => {
   console.log(req.body)
   try {
-    
+
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
@@ -52,8 +52,8 @@ exports.login = async (req, res) => {
     // 🔥 THIS IS THE CORRECT COOKIE CONFIG FOR RENDER + FRONTEND DIFF DOMAIN
     res.cookie("token", token, {
       httpOnly: true,
-      secure: isProd,       // HTTPS ONLY (Render = HTTPS)
-      sameSite: isProd,   // REQUIRED FOR DIFFERENT FRONTEND URL
+      secure: true,       // HTTPS ONLY (Render = HTTPS)
+      sameSite: "none",   // REQUIRED FOR DIFFERENT FRONTEND URL
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
