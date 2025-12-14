@@ -352,7 +352,7 @@ return (
           ))}
 
           <button
-            onClick={() => navigate("/setting/customer")}
+            onClick={() => navigate("/setting/supplier")}
             className="w-full py-2 bg-green-100 hover:bg-green-200"
           >
             ➕ Add New Supplier
