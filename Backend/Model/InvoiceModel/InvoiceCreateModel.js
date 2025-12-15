@@ -24,7 +24,7 @@ const invoiceSchema = new mongoose.Schema(
           ref: "Company",
           default: null,
         },
-    invoiceNum: { type: String, unique: true },
+    invoiceNum: { type: String, },
     date: { type: String, required: true },
     invoiceType: String,
     customerName: String,
