@@ -13,6 +13,11 @@ const inventorySchema = new mongoose.Schema(
       ref: "Company",
       required: true,
     },
+     financialYear: {
+  type: String,
+  required: true,
+  index: true
+},
     qty: {
       type: Number,
       default: 0,

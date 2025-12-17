@@ -1,18 +1,8 @@
 const Company = require("../Model/CompanysettingModel"); // correct import
 // const CompanySetting = require("../Model/CompanysettingModel");
 const User = require("../Model/userModel"); // correct import
+const getFinancialYear=require("../Utills/getFinancialYear")
 
-// exports.getCompanySettings = async (req, res) => {
-//   try {
-//     const company = await Company.findOne(req.user.companyId);
-
-//     if (!company) return res.json(null);
-
-//     res.json(company);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
 
 
 exports.getCompanySettings = async (req, res) => {
@@ -37,8 +27,10 @@ exports.getCompanySettings = async (req, res) => {
 // ----------------------------------------------------
 exports.createCompanySettings = async (req, res) => {
   try {
-    const data = req.body;
-
+    const data ={...req.body};
+    // data.companyId=req.companyId
+    data.invoicePrefix = "INV";
+        data.financialYear=getFinancialYear()
     // Handle file uploads
     if (req.files) {
       if (req.files.logoUrl) data.logoUrl = req.files.logoUrl[0].path;
@@ -67,9 +59,7 @@ exports.createCompanySettings = async (req, res) => {
     }
 
 
-
-
-    
+  
 
     // ✅ CREATE FLOW (first time only)
     data.loginUser = req.user;

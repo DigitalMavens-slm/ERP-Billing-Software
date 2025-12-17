@@ -40,7 +40,7 @@ const handleDownload = (id) => {
   const deleteInvoice = async (id) => {
     if (!confirm("Are you sure you want to delete this invoice?")) return;
 
-    await api.delete(`/api/invoices/${id}`);
+    await api.delete(`/api/invoice/delete/${id}`);
     // fetchInvoices();
   };
 

@@ -12,7 +12,7 @@ module.exports = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({ message: "Not authorized" });
     }
-    console.log(token)
+    // console.log(token)
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id).select("-password");
@@ -24,6 +24,7 @@ module.exports = async (req, res, next) => {
 
     // req.user = decoded.id;
     req.user=user
+    req.companyId = user.companyId;
 
     next();
   } catch (err) {

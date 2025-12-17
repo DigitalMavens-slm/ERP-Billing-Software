@@ -87,7 +87,13 @@ const PurchaseApp = () => {
   useEffect(() => {
     const fetchNextBillNum = async () => {
       try {
-        const res = await api.get(`/api/buy/billnum`);
+        const financialYear =
+        localStorage.getItem("financialYear") || "2024-2025";
+        const res = await api.get(`/api/buy/billnum`,{
+        headers: {
+          "x-financial-year": financialYear,
+        },
+      });
         setBillNum(res.data.nextBillNum);
       } catch (err) {
         console.error("Error fetching bill number:", err);

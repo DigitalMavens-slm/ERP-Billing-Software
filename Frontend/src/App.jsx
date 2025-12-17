@@ -30,6 +30,7 @@ import InvoiceView from "./Invoice/InvoiceView";
 import PurchaseView from "./Components/Purchase/PurchaseView"
 
 import AssignStaff from './Components/AssignStaff'
+import DeletedInvoiceList from "./Invoice/DeletedInvoiceList"
 
 function App() {
 
@@ -77,6 +78,8 @@ function App() {
     <Route path="ledger" element={<CustomerLedger />} />
     <Route path="allcustomerledger" element={<AllCustomerLedger />} />
     <Route path="reports" element={<Report />} />
+    <Route path="/invoices/deleted" element={<DeletedInvoiceList />} />
+
   </Route>
 
 </Routes>

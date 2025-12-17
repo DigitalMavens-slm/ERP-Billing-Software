@@ -12,6 +12,7 @@ const InvoiceApp = () => {
   const navigate = useNavigate();
   const { setCustomerId } = useSuggestions();
   const [invoiceNum, setInvoiceNum] = useState("");
+  console.log(invoiceNum)
   const [date, setDate] = useState("");
   const [invoiceType, setInvoiceType] = useState("Invoice");
   const [customerName, setCustomerName] = useState("");
@@ -228,7 +229,7 @@ const selectCustomer = (name) => {
 
     const invoiceData = {
        customerId: customerDetails.customerId,
-      invoiceNum,
+      // invoiceNum,
       date,
       invoiceType,
       customerName,

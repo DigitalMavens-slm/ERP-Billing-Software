@@ -34,6 +34,11 @@ const purchaseSchema = new mongoose.Schema(
       ref: "Supplier",
       required: true,
     },
+    financialYear: {
+  type: String,
+  required: true,
+  index: true
+},
     billType: { type: String, default: "Cash" },
     gstType: { type: String, default: "GST" },
     amountType: { type: String, default: "Excluding Tax" },

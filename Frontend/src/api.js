@@ -5,4 +5,16 @@ const api = axios.create({
   withCredentials: true
 });
 
+
+
+api.interceptors.request.use((config) => {
+  const fy = localStorage.getItem("financialYear");
+
+  if (fy) {
+    config.headers["x-financial-year"] = fy;
+  }
+
+  return config;})
+
+
 export default api;

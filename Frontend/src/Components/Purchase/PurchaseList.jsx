@@ -34,7 +34,8 @@ const handleDownload = (id) => {
 } = usePagination(
   "/api/purchases",
   "purchases",
-  "totalPurchases"
+  "totalPurchases",
+  // activeFy
 );
 
 

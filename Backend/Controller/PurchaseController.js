@@ -8,6 +8,7 @@ const { generatePurchasePDF } = require("../Utills/PdfGenerator");
 const { sendMailWithAttachment } = require("../MailSender/MailSender");
 const user = require("../Model/userModel");
 const Inventory=require("../Model/InventoryModel")
+const getFinancialYear=require("../Utills/getFinancialYear")
 
 // ✅ Get all purchases
 // const getAllPurchases = async (req, res) => {
@@ -35,18 +36,22 @@ const Inventory=require("../Model/InventoryModel")
 //   }
 // };
 
+
+
 const PurchaseAPIFeatures = require("../Utills/PurchaseApiFeatures");
 
 const getAllPurchases = async (req, res) => {
+  console.log(req.financialYear)
   try {
     const resPerPage = 10;
 
     const totalPurchases = await Purchase.countDocuments({
       companyId: req.companyId,
+      financialYear: req.financialYear,
     });
 
     const apiFeatures = new PurchaseAPIFeatures(
-      Purchase.find({ companyId: req.companyId }),
+      Purchase.find({ companyId: req.companyId,financialYear: req.financialYear, }),
       req.query
     )
       .search()
@@ -102,7 +107,7 @@ const createPurchase = async (req, res) => {
   try {
     const purchaseData = req.body;
     purchaseData.companyId = req.companyId;
-
+    purchaseData.financialYear=getFinancialYear();
 
     if (purchaseData.supplierId) {
       purchaseData.supplierId = new mongoose.Types.ObjectId(purchaseData.supplierId);
@@ -112,36 +117,65 @@ const createPurchase = async (req, res) => {
        const purchase=  await newPurchase.save();
       //  console.log(purchase.items._id)
 
-purchase.items.forEach(async (itm) => {
+// purchase.items.forEach(async (itm) => {
+//   const inventoryItem = await Inventory.findOne({
+//     productId: itm.productId,
+//     companyId: purchase.companyId,
+//   });
+
+//   if (inventoryItem) {
+//     // Update existing inventory
+//     inventoryItem.qty += itm.qty;              // increase stock
+//     inventoryItem.minQty += itm.qty;           // update min qty or available qty
+//     inventoryItem.totalPurchased += itm.qty;   // 🔥 IMPORTANT — add purchase qty
+//     await inventoryItem.save();
+
+//   } else {
+//     // Create new inventory record
+//     await Inventory.create({
+//       productId: itm.productId,
+//       companyId: purchase.companyId,
+//       qty: itm.qty,
+//       minQty: itm.qty,
+//       totalPurchased: itm.qty,   // 🔥 first purchase qty
+//       totalSold: 0,              // no sales yet
+//     });
+//   }
+// });
+
+
+
+for (const itm of purchase.items) {
   const inventoryItem = await Inventory.findOne({
     productId: itm.productId,
     companyId: purchase.companyId,
   });
 
   if (inventoryItem) {
-    // Update existing inventory
-    inventoryItem.qty += itm.qty;              // increase stock
-    inventoryItem.minQty += itm.qty;           // update min qty or available qty
-    inventoryItem.totalPurchased += itm.qty;   // 🔥 IMPORTANT — add purchase qty
+    inventoryItem.qty += itm.qty;
+    inventoryItem.minQty += itm.qty;
+    inventoryItem.totalPurchased += itm.qty;
     await inventoryItem.save();
-
   } else {
-    // Create new inventory record
     await Inventory.create({
       productId: itm.productId,
       companyId: purchase.companyId,
       qty: itm.qty,
       minQty: itm.qty,
-      totalPurchased: itm.qty,   // 🔥 first purchase qty
-      totalSold: 0,              // no sales yet
+      totalPurchased: itm.qty,
+      totalSold: 0,
     });
   }
-});
+}
 
 
 
     // Add ledger entry
-const lastLedger = await SupplierLedger.findOne({ supplierId: purchase.supplierId })
+const lastLedger = await SupplierLedger.findOne({
+   supplierId: purchase.supplierId ,
+   companyId:purchase.companyId
+
+})
   .sort({ createdAt: -1 })
   .lean();
 
@@ -177,10 +211,17 @@ await SupplierLedger.create({
   }
 };
 
+
+
+
 // ✅ Get purchase by ID                       Edit getPurchasecontroller
 const getPurchaseById = async (req, res) => {
   try {
-    const purchase = await Purchase.findById(req.params.id).populate("supplierId");
+    const purchase = await Purchase.findById({
+       _id: req.params.id,
+  companyId: req.companyId,
+
+}).populate("supplierId");
 
     if (!purchase) {
       return res.status(404).json({

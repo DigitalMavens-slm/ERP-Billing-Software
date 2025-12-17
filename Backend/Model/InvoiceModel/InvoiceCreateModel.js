@@ -33,6 +33,12 @@ const invoiceSchema = new mongoose.Schema(
   ref: "Customer",
   required: true,
 },
+// financialYear:String,
+ financialYear: {
+  type: String,
+  required: true,
+  index: true
+},
     billType: String,
     gstType: String,
     amountType: String,
@@ -46,31 +52,41 @@ const invoiceSchema = new mongoose.Schema(
       enum: ["Pending", "Partially Paid", "Paid"],
       default: "Pending",
     },
+    // Invoice schema-la add this
+isDeleted: {
+  type: Boolean,
+  default: false,
+  index: true,
+},
+deletedAt: {
+  type: Date,
+},
+
   },
   { timestamps: true }
 );
 
-// 🔹 Auto-generate incremental invoiceNum inside same model
-invoiceSchema.pre("save", async function (next) {
-  if (this.invoiceNum) return next(); // already set -> skip
+// // 🔹 Auto-generate incremental invoiceNum inside same model
+// invoiceSchema.pre("save", async function (next) {
+//   if (this.invoiceNum) return next(); // already set -> skip
 
-  try {
-    const lastInvoice = await mongoose
-      .model("Invoice")
-      .findOne({}, {}, { sort: { createdAt: -1 } }); // find latest invoice
+//   try {
+//     const lastInvoice = await mongoose
+//       .model("Invoice")
+//       .findOne({}, {}, { sort: { createdAt: -1 } }); // find latest invoice
 
-    let nextNum = 1;
-    if (lastInvoice && lastInvoice.invoiceNum) {
-      const lastNum = parseInt(lastInvoice.invoiceNum.replace("INV", "")) || 0;
-      nextNum = lastNum + 1;
-    }
+//     let nextNum = 1;
+//     if (lastInvoice && lastInvoice.invoiceNum) {
+//       const lastNum = parseInt(lastInvoice.invoiceNum.replace("INV", "")) || 0;
+//       nextNum = lastNum + 1;
+//     }
 
-    this.invoiceNum = `INV${String(nextNum).padStart(4, "0")}`;
-    next();
-  } catch (err) {
-    next(err);
-  }
-});
+//     this.invoiceNum = `INV${String(nextNum).padStart(4, "0")}`;
+//     next();
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
 module.exports = mongoose.model("Invoice", invoiceSchema);
 

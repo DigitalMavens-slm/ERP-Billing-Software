@@ -8,9 +8,7 @@ const companySchema = new mongoose.Schema({
   email: String,
   website: String,
   industry: String,
-  currentFinancialYear: String,
-  financialYearStart: String,
-  financialYearEnd: String,
+  financialYear: String,
   currency: String,
   gstType: String,
   compositionScheme: Boolean,
@@ -21,6 +19,25 @@ const companySchema = new mongoose.Schema({
         ref: "User",
         default: null,
       },
+       invoicePrefix: {
+    type: String,
+    default: "INV",
+  },
+//   companyId: {
+//   type: mongoose.Schema.Types.ObjectId,
+//   ref: "Company",
+//   required: true,
+// },
+
+  invoiceStartNumber: {
+    type: Number,
+    default: 1,
+  },
+
+  lastInvoiceNumber: {
+    type: Number,
+    default: 0,
+  },
   address: {
     street: String,
     city: String,

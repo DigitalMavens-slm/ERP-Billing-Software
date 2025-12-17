@@ -1,7 +1,7 @@
 class BaseApiFeatures {
   constructor(query, queryString) {
-    this.query = query;
-    this.queryString = queryString;
+    this.query = query;                       //mongoose quey   find call in purchase controller
+    this.queryString = queryString;           //   req.query string
   }
 
   paginate(resPerPage) {
@@ -13,4 +13,7 @@ class BaseApiFeatures {
   }
 }
 
+
 module.exports = BaseApiFeatures;
+
+

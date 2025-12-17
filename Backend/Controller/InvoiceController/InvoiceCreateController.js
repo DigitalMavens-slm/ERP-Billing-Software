@@ -3,68 +3,10 @@ const Invoice = require("../../Model/InvoiceModel/InvoiceCreateModel");
 const Ledger = require("../../Model/LedgerModel");
 const Inventory=require("../../Model/InventoryModel")
 const APIFeatures = require("../../Utills/Apifeatures");
-
-// const CustomerLedger=require("../../Model/LedgerModel")
-
-
-// ✅ Get all invoices with search/filter/pagination
-// const getAllInvoices = async (req, res, next) => {
-//   try {
-//     const resPerPage = 10;
-
-//     const apiFeatures = new APIFeatures(
-//       Invoice.find({ companyId: req.companyId }), // ✅ Filter by company here
-//       req.query
-//     )
-//       .search()
-//       .filter()
-//       .paginate(resPerPage);
-
-//     const invoices = await apiFeatures.query;
-
-//     res.status(200).json({
-//       success: true,
-//       count: invoices.length,
-//       invoices,
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ success: false, message: "Server Error" });
-//   }
-// };
-
-
-// const getAllInvoices = async (req, res) => {
-//   try {
-//     const resPerPage = 10;
-
-//     // 🔥 TOTAL COUNT (WITHOUT pagination)
-//     const totalCount = await Invoice.countDocuments({
-//       companyId: req.companyId,
-//     });
-
-//     const apiFeatures = new APIFeatures(
-//       Invoice.find({ companyId: req.companyId }),
-//       req.query
-//     )
-//       .search()
-//       .filter()
-//       .paginate(resPerPage);
-
-//     const invoices = await apiFeatures.query;
-
-//     res.status(200).json({
-//       success: true,
-//       invoices,
-//       totalInvoices,     // ✅ THIS IS THE KEY
-//       resPerPage,     // (optional)
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ success: false, message: "Server Error" });
-//   }
-// };
-
+const getFinancialYear=require("../../Utills/getFinancialYear")
+const CustomerLedger=require("../../Model/LedgerModel")
+const CompanySettings=require("../../Model/CompanysettingModel")
+// const getFinancialYear=require("..")
 
 const getAllInvoices = async (req, res) => {
   try {
@@ -74,10 +16,11 @@ const getAllInvoices = async (req, res) => {
     // 🔥 TOTAL COUNT (without pagination)
     const totalInvoices = await Invoice.countDocuments({
       companyId: req.companyId,
+      isDeleted: false,
     });
 
     const apiFeatures = new APIFeatures(
-      Invoice.find({ companyId: req.companyId }),
+      Invoice.find({ companyId: req.companyId ,isDeleted: false}),
       req.query
     )
       .search()
@@ -134,12 +77,46 @@ const searchInvoice = async (req, res) => {
 
 const createInvoice = async (req, res) => {
   try {
+    
+  //                               invnum handler start
+     const fy = getFinancialYear();
+
+    // const settings = await CompanySettings.findOne({
+    //   companyId: req.companyId,
+    // });
+    
+    const settings = await CompanySettings.findById(req.companyId);
+
+
+    let invoiceNum = "INV0001";
+
+    if (settings) {
+      // Financial year reset
+      if (settings.financialYear !== fy) {
+        settings.financialYear = fy;
+        settings.lastInvoiceNumber = 0;
+      }
+
+      let nextNumber =
+        settings.lastInvoiceNumber === 0
+          ? settings.invoiceStartNumber
+          : settings.lastInvoiceNumber + 1;
+
+      invoiceNum = `${settings.invoicePrefix}${String(nextNumber).padStart(4, "0")}`;
+
+      settings.lastInvoiceNumber = nextNumber;
+      await settings.save();
+    }
+
+
+// console.log("controller invoiceNum",invoiceNum)
     const invoiceData = {
       ...req.body,
+      invoiceNum,
       companyId: req.companyId,
+      financialYear:fy
     };
-    console.log(invoiceData);
-    // Ensure customerId is ObjectId
+    // console.log(invoiceData);
     if (invoiceData.customerId) {
       invoiceData.customerId = new mongoose.Types.ObjectId(
         invoiceData.customerId
@@ -153,7 +130,7 @@ const createInvoice = async (req, res) => {
        if (!invoice.items || !Array.isArray(invoice.items)) {
       return res.status(400).json({ error: "Invoice items missing" });
     }
-
+// console.log(invoice)
     
     invoice.items.forEach(async (itm) => {
   const inventoryItem = await Inventory.findOne({
@@ -165,18 +142,19 @@ const createInvoice = async (req, res) => {
     // Update existing inventory
     inventoryItem.minQty -= itm.qty;        // reduce stock
     inventoryItem.totalSold += itm.qty;     // add sold qty (IMPORTANT FIX)
+    inventoryItem.financialYear = invoice.financialYear;
     await inventoryItem.save();
   } else {
     // Create new inventory record
     await Inventory.create({
       productId: itm.productId,
       companyId: invoice.companyId,
+      // financialYear:invoice.financialYear,
       totalPurchased: 0,
       totalSold: itm.qty,   // first time sold qty
     });
   }
 });
-
 
 
 
@@ -197,6 +175,7 @@ const createInvoice = async (req, res) => {
     await Ledger.create({
       companyId: req.companyId,
       customerId: newInvoice.customerId,
+      financialYear:invoice.financialYear,
       date: newInvoice.createdAt || new Date(),
       particulars: "Invoice Generated",
       invoiceNo: newInvoice.invoiceNum,
@@ -218,11 +197,12 @@ const createInvoice = async (req, res) => {
       error: error.message,
     });
   }
-};
+}; 
 
 // 🔹 Get Single Invoice
 const getInvoiceById = async (req, res) => {
   try {
+    console.log("getmethod",req.params.id)
     const invoice = await Invoice.findById(req.params.id).populate("customerId");
     if (!invoice)
       return res
@@ -240,27 +220,89 @@ const getInvoiceById = async (req, res) => {
 };
 
 
-
-
-
-
 // const deleteInvoice = async (req, res) => {
-//   try {
-//     const invoice = await Invoice.findByIdAndDelete(req.params.id);
-//     if (!invoice)
-//       return res
-//         .status(404)
-//         .json({ success: false, message: "Invoice not found" });
 
-//     res.json({ success: true, data: invoice, message: "Successfully deleted" });
+//   const session = await mongoose.startSession();
+//   session.startTransaction();
+  
+//   try {
+//     console.log("deleted",req.params.id)
+//     const invoiceId = req.params.id;
+
+//     // 1️⃣ Find invoice
+//     const invoice = await Invoice.findOne({
+//       _id: invoiceId,
+//       companyId: req.companyId,
+//     }).session(session);
+
+//     if (!invoice) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Invoice not found",
+//       });
+//     }
+
+//     // 2️⃣ Reverse inventory (add stock back)
+//     for (const item of invoice.items) {
+//       const inv = await Inventory.findOne({
+//         productId: item.productId,
+//         companyId: invoice.companyId,
+//       }).session(session);
+
+//       if (inv) {
+//         inv.qty += item.qty;              // 🔁 reverse sold qty
+//         inv.minQty += item.qty;
+//         inv.totalSold -= item.qty;
+
+//         if (inv.totalSold < 0) inv.totalSold = 0;
+//         await inv.save({ session });
+//       }
+//     }
+
+//     // 3️⃣ Reverse customer ledger
+//     const ledger = await CustomerLedger.findOne({
+//       invoiceId: invoice._id,
+//       companyId: invoice.companyId,
+//     }).session(session);
+
+//     if (ledger) {
+//       const last = await CustomerLedger.findOne({
+//         customerId: invoice.customerId,
+//         companyId: invoice.companyId,
+//       })
+//         .sort({ createdAt: -1 })
+//         .session(session);
+
+//       if (last) {
+//         last.balance -= ledger.debit; // 🔁 reverse invoice amount
+//         await last.save({ session });
+//       }
+
+//       await ledger.deleteOne({ session });
+//     }
+
+//     // 4️⃣ Delete invoice
+//     await Invoice.deleteOne({ _id: invoiceId }).session(session);
+
+//     await session.commitTransaction();
+
+//     res.json({
+//       success: true,
+//       message: "Invoice deleted successfully",
+//       deletedInvoice: invoice,
+//     });
+
 //   } catch (error) {
+//     await session.abortTransaction();
 //     res.status(500).json({
 //       success: false,
-//       message: "Failed to fetch invoice",
+//       message: "Failed to delete invoice",
 //       error: error.message,
 //     });
 //   }
 // };
+
+
 
 const deleteInvoice = async (req, res) => {
   const session = await mongoose.startSession();
@@ -269,10 +311,11 @@ const deleteInvoice = async (req, res) => {
   try {
     const invoiceId = req.params.id;
 
-    // 1️⃣ Find invoice
+    // 1️⃣ Find invoice (not already deleted)
     const invoice = await Invoice.findOne({
       _id: invoiceId,
       companyId: req.companyId,
+      isDeleted: false,
     }).session(session);
 
     if (!invoice) {
@@ -282,7 +325,7 @@ const deleteInvoice = async (req, res) => {
       });
     }
 
-    // 2️⃣ Reverse inventory (add stock back)
+    // 2️⃣ Reverse inventory
     for (const item of invoice.items) {
       const inv = await Inventory.findOne({
         productId: item.productId,
@@ -290,46 +333,30 @@ const deleteInvoice = async (req, res) => {
       }).session(session);
 
       if (inv) {
-        inv.qty += item.qty;              // 🔁 reverse sold qty
+        inv.qty += item.qty;
         inv.minQty += item.qty;
         inv.totalSold -= item.qty;
-
         if (inv.totalSold < 0) inv.totalSold = 0;
         await inv.save({ session });
       }
     }
 
-    // 3️⃣ Reverse customer ledger
-    const ledger = await CustomerLedger.findOne({
+    // 3️⃣ Reverse ledger (delete invoice ledger)
+    await CustomerLedger.deleteMany({
       invoiceId: invoice._id,
       companyId: invoice.companyId,
     }).session(session);
 
-    if (ledger) {
-      const last = await CustomerLedger.findOne({
-        customerId: invoice.customerId,
-        companyId: invoice.companyId,
-      })
-        .sort({ createdAt: -1 })
-        .session(session);
-
-      if (last) {
-        last.balance -= ledger.debit; // 🔁 reverse invoice amount
-        await last.save({ session });
-      }
-
-      await ledger.deleteOne({ session });
-    }
-
-    // 4️⃣ Delete invoice
-    await Invoice.deleteOne({ _id: invoiceId }).session(session);
+    // 4️⃣ SOFT DELETE (IMPORTANT PART)
+    invoice.isDeleted = true;
+    invoice.deletedAt = new Date();
+    await invoice.save({ session });
 
     await session.commitTransaction();
 
     res.json({
       success: true,
-      message: "Invoice deleted successfully",
-      deletedInvoice: invoice,
+      message: "Invoice moved to deleted list",
     });
 
   } catch (error) {
@@ -339,8 +366,53 @@ const deleteInvoice = async (req, res) => {
       message: "Failed to delete invoice",
       error: error.message,
     });
+  } finally {
+    session.endSession();
   }
 };
+                                     
+                     
+// deleted invoice        dont remove this controller
+
+const getDeletedInvoices = async (req, res) => {
+  try {
+    const resPerPage = 10;
+    const currentPage = Number(req.query.page) || 1;
+      const companyObjectId = new mongoose.Types.ObjectId(req.companyId);
+
+      // console.log(req.companyId)
+      // console.log(req.financialYear)
+    const baseFilter = {
+      // companyId: req.companyId,
+      companyId: companyObjectId, 
+      financialYear: req.financialYear,
+      isDeleted: true,
+    };
+
+    const totalDeletedInvoices = await Invoice.countDocuments(baseFilter);
+
+    const invoices = await Invoice.find(baseFilter)
+      .sort({ deletedAt: -1 })
+      .skip(resPerPage * (currentPage - 1))
+      .limit(resPerPage);
+
+    res.status(200).json({
+      success: true,
+      invoices,
+      totalDeletedInvoices,
+      resPerPage,
+      currentPage,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
 
 
 const fs = require("fs");
@@ -383,6 +455,7 @@ module.exports = {
   getInvoiceById,     
   sendInvoice,
   // updateInvoice,
+  getDeletedInvoices,
   searchInvoice,
   deleteInvoice,
 };

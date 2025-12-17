@@ -28,13 +28,14 @@ const getUserRoute = require("./Routes/getUserRoute")
 const logoutRoute = require("./Routes/logoutRoute")
 const CompanySetting=require("./Routes/CompanysettingRoutes")
 const assignStaffRoute = require("./Routes/assignStaffRoute")
+const financialYear=require("./Middlewares/financialYear")
 dotenv.config()
 
 
 
 app.use(express.json());
 app.use(cookieParser());
-
+app.use(financialYear)
 
 
 app.use(cors({
