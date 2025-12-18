@@ -29,6 +29,8 @@ export default function CompanySettingsForm() {
   const [logoFile, setLogoFile] = useState(null);
   const [paymentFile, setPaymentFile] = useState(null);
   const [extraPaymentFile, setExtraPaymentFile] = useState(null);
+  const [invoiceLocked, setInvoiceLocked] = useState(false);
+
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -42,6 +44,13 @@ export default function CompanySettingsForm() {
         if (res.data) {
           setFormData(res.data);
         }
+        if (res.data) {
+        setFormData(res.data);
+
+        if (res.data.invoiceStartNumber) {
+          setInvoiceLocked(true); 
+        }
+      }
       } catch (err) {
         console.log("Error loading company:", err);
       }
@@ -128,8 +137,20 @@ export default function CompanySettingsForm() {
                                            {/* invoice num handler */}
           <Section title="Invoice Settings" color="blue">
   <div className="grid md:grid-cols-2 gap-6">
-    {/* <InputField label="Invoice Prefix" name="invoicePrefix" value={formData.invoicePrefix} onChange={handleChange}/> */}
-    <InputField label="Invoice Start Number" name="invoiceStartNumber" value={formData.invoiceStartNumber} onChange={handleChange}/>
+  <>
+  <InputField
+  label="Invoice Start Number"
+  placeholder="Number only Must enter"
+hint={invoiceLocked ? "Locked (cannot be changed)" : "Set carefully. One-time only"}
+  name="invoiceStartNumber"
+  value={formData.invoiceStartNumber}
+  // type="number"
+  onChange={handleChange}
+  disabled={invoiceLocked}
+/>
+</>
+  
+ 
   </div>
          </Section>
          
@@ -170,13 +191,6 @@ export default function CompanySettingsForm() {
           {/* GST */}
           <Section title="GST Information" color="purple">
             <div className="grid md:grid-cols-2 gap-6">
-              <InputField label="GST Type" name="gstType" value={formData.gstType} onChange={handleChange} />
-
-              <div className="flex items-center gap-3 mt-6">
-                <input type="checkbox" name="compositionScheme" checked={formData.compositionScheme} onChange={handleChange} />
-                <label className="text-gray-700">Composition Scheme</label>
-              </div>
-
               <div>
                 <label className="form-label">GST No</label>
                 <select
@@ -189,6 +203,13 @@ export default function CompanySettingsForm() {
                   <option value="REGISTERED">REGISTERED</option>
                 </select>
               </div>
+              <InputField label="GST Type" name="gstType" value={formData.gstType} onChange={handleChange} />
+
+              <div className="flex items-center gap-3 mt-6">
+                <input type="checkbox" name="compositionScheme" checked={formData.compositionScheme} onChange={handleChange} />
+                <label className="text-gray-700">Composition Scheme</label>
+              </div>
+
 
               <InputField
                 label="PAN Number"
@@ -229,10 +250,15 @@ function Section({ title, color, children }) {
   );
 }
 
-function InputField({ label, name, value, onChange, type = "text", disabled }) {
+function InputField({ label, name, value, onChange,hint, type = "text", disabled }) {
   return (
     <div className="w-full">
       <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+        {hint && (
+          <span className="text-xs text-red-500">
+            {hint}
+          </span>
+        )}
       <input
         type={type}
         name={name}

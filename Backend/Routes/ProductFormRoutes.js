@@ -11,6 +11,7 @@ const companyCheck = require("../Middlewares/companyCheck");
 // router.get("/categories",Category.getCategories)
 // router.get("/brands",Brand.getBrands)
 
+
 router.get("/products",auth, companyCheck, ProductController.getProducts);
 router.post("/products", auth, companyCheck, ProductController.createProduct);
 router.delete("/products/:id",auth,companyCheck, ProductController.deleteProduct);

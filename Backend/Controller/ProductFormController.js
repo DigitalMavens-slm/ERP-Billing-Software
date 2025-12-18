@@ -35,7 +35,7 @@ exports.createProduct = async (req, res) => {
       ...req.body,
     });
 
-
+  console.log(data)
     const savedProduct = await data.save();
 
     await Inventory.create({
