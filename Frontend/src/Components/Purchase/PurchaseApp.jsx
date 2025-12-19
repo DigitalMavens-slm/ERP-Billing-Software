@@ -391,7 +391,7 @@ return (
       >
         <option>GST</option>
         <option>IGST</option>
-        <option>No Tax</option>
+        {/* <option>No Tax</option> */}
       </select>
     </div>
 
@@ -403,7 +403,7 @@ return (
         onChange={(e) => setAmountType(e.target.value)}
         className="w-full mt-1 px-3 py-2 border rounded-xl"
       >
-        <option>No Tax</option>
+        {/* <option>No Tax</option> */}
         <option>Including Tax</option>
         <option>Excluding Tax</option>
       </select>

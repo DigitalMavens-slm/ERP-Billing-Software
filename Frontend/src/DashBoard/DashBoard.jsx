@@ -34,9 +34,11 @@ export default function DashBoard() {
   const navigate = useNavigate();
 
   const [InvoiceCount, setInvoiceCount] = useState([]);
-  // console.lo(InvoiceCount)
     const [salesTrendData, setSalesTrendData] = useState([]);
   const [statusPieData, setStatusPieData] = useState([]);
+const [financialYear, setFinancialYear] = useState(
+  localStorage.getItem("financialYear")
+);
 
   const [kpi, setKpi] = useState({
     totalRevenue: 0,
@@ -64,7 +66,7 @@ export default function DashBoard() {
   useEffect(() => {
     invoicefetcher();
     getDashboardKPI();
-  }, []);
+  }, [financialYear]);
 
 
     /* ---- BUILD GRAPHS ---- */

@@ -9,6 +9,7 @@ exports.getAllLedgers = async (req, res) => {
   try {
     const ledgers = await Ledger.find({
       companyId: req.companyId, // ✅ Correct filter
+      // financialYear:req.financialYear
     }).populate("customerId", "name");
 
     res.status(200).json({ success: true, ledgers });

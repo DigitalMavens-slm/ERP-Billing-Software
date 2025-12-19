@@ -192,7 +192,7 @@ hint={invoiceLocked ? "Locked (cannot be changed)" : "Set carefully. One-time on
           <Section title="GST Information" color="purple">
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="form-label">GST No</label>
+                <label className="form-label">GST Type</label>
                 <select
                   name="gstNo"
                   className="input-box"
@@ -203,13 +203,14 @@ hint={invoiceLocked ? "Locked (cannot be changed)" : "Set carefully. One-time on
                   <option value="REGISTERED">REGISTERED</option>
                 </select>
               </div>
-              <InputField label="GST Type" name="gstType" value={formData.gstType} onChange={handleChange} />
+              {formData.gstNo !== "REGISTERED"&&(
 
+              <InputField label="GST Num" name="gstType" value={formData.gstType} onChange={handleChange} />
+              )}
               <div className="flex items-center gap-3 mt-6">
                 <input type="checkbox" name="compositionScheme" checked={formData.compositionScheme} onChange={handleChange} />
                 <label className="text-gray-700">Composition Scheme</label>
               </div>
-
 
               <InputField
                 label="PAN Number"

@@ -13,14 +13,16 @@ const getAllInvoices = async (req, res) => {
     const resPerPage = 10;
     const currentPage = Number(req.query.page) || 1;
 
+    console.log(req.financialYear)
     // 🔥 TOTAL COUNT (without pagination)
     const totalInvoices = await Invoice.countDocuments({
       companyId: req.companyId,
+      financialYear:req.financialYear,
       isDeleted: false,
     });
 
     const apiFeatures = new APIFeatures(
-      Invoice.find({ companyId: req.companyId ,isDeleted: false}),
+      Invoice.find({ companyId: req.companyId ,financialYear:req.financialYear,isDeleted: false}),
       req.query
     )
       .search()
@@ -380,10 +382,8 @@ const getDeletedInvoices = async (req, res) => {
     const currentPage = Number(req.query.page) || 1;
       const companyObjectId = new mongoose.Types.ObjectId(req.companyId);
 
-      // console.log(req.companyId)
-      // console.log(req.financialYear)
+    
     const baseFilter = {
-      // companyId: req.companyId,
       companyId: companyObjectId, 
       financialYear: req.financialYear,
       isDeleted: true,

@@ -13,6 +13,8 @@ const itemSchema = new mongoose.Schema({
   mrp: { type: Number, default: 0 },
   rate: { type: Number, required: true },
   dis: { type: Number, default: 0 },
+  unit:{type:String},
+  hsncode:{type:Number,default:0},
   tax: { type: Number, default: 0 },
 });
 

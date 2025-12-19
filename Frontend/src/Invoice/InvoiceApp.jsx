@@ -23,7 +23,6 @@ const InvoiceApp = () => {
   email: "",
   address: "",
 });
-// console.log(customerDetails);
 
   const [billType, setBillType] = useState("Cash");
   const [gstType, setGstType] = useState("GST");
@@ -44,7 +43,7 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
   });
 
   const [payment, setPayment] = useState({
-  billType: "Cash", // Default
+  billType: "Cash", 
   receivedAmount: 0,
   balanceAmount: 0,
   paymentStatus: "Pending",
@@ -55,6 +54,8 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
 
 
   const [items, setItems] = useState([]);
+  const [roundOff, setRoundOff] = useState(0);
+
 
   // 🔹 Fetch Products
   useEffect(() => {
@@ -62,7 +63,6 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
       try {
         const res = await api.get(`/api/products`);
         setProductsList(res.data);
-        // console.log(res.data)
       } catch (err) {
         console.error("Error fetching products:", err);
       }
@@ -219,8 +219,13 @@ const selectCustomer = (name) => {
     return { baseAmount, taxAmount, totalAmount };
   };
 
-  const subtotal = items.reduce((acc, itm) => acc + calculateItemBreakdown(itm).totalAmount,0);
+  // const subtotal = items.reduce((acc, itm) => acc + calculateItemBreakdown(itm).totalAmount,0);
+const subtotal = items.reduce(
+  (acc, itm) => acc + calculateItemBreakdown(itm).totalAmount,
+  0
+);
 
+const payableAmount = subtotal + roundOff;
   const quantity = items.reduce((acc, itm) => acc + itm.qty, 0);
 
    const handleSave = async () => {
@@ -238,6 +243,8 @@ const selectCustomer = (name) => {
       amountType,
       items,
       subtotal,
+      roundOff,
+      payableAmount,
       totalQty:quantity,
       // payment
     };
@@ -468,11 +475,26 @@ const selectCustomer = (name) => {
         </table>
       </div>
 
-      {/* FOOTER */}
       <div className="flex flex-col md:flex-row justify-between font-bold text-lg">
         <div>Total Qty: {quantity}</div>
-        <div className="text-blue-600">Payable: ₹{subtotal.toFixed(2)}</div>
+
+         <div className="flex items-center gap-2">
+    <label>RoundOff</label>
+    <input
+      type="number"
+      step="0.01"
+      className="w-24 border px-2 py-1 rounded"
+      value={roundOff}
+      onChange={(e) => setRoundOff(Number(e.target.value) || 0)}
+      placeholder="+ / -"
+    />
+  </div>
+        {/* <div className="text-blue-600">Payable: ₹{subtotal.toFixed(2)}</div> */}
+<div className="text-blue-600">
+  Payable: ₹{payableAmount.toFixed(2)}
+</div>
       </div>
+
 
       <div className="text-right">
         <button className="bg-green-600 text-white px-5 py-2 rounded" onClick={handleSave}>

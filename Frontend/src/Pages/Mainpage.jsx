@@ -24,6 +24,7 @@ import {
 
 import { useAuth } from "../Context/AuthContext";
 import api from "../api";
+// import useFinancialYearStore from "../Zustand/finacialYearStore"
 
 const Mainpage = () => {
   const { user } = useAuth();
@@ -34,13 +35,7 @@ const Mainpage = () => {
   const [openSales, setOpenSales] = useState(false);
   const [openLedger, setOpenLedger] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-//   const getFY = () => {
-//   const d = new Date();
-//   const y = d.getFullYear();
-//   return d.getMonth() >= 3 ? `${y}-${y+1}` : `${y-1}-${y}`;
-// };
 
-// const [activeFY, setActiveFY] = useState(getFY())
 
 
 const getFY = () => {
