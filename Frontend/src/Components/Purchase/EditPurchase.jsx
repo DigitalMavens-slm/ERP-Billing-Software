@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useNavigate, useLocation,useParams } from "react-router-dom";
 import { useSuggestion } from "../../Context/KeyBoardContext";
 
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
+import api from "../../api"
 
 const EditPurchase = () => {
   const navigate = useNavigate();
@@ -57,15 +58,14 @@ const EditPurchase = () => {
 
   const [items, setItems] = useState([]);
 
-  // -----------------------------
   // FETCH ALL DATA
-  // -----------------------------
+  
   useEffect(() => {
-    axios.get(`${API_URL}/api/products`, { withCredentials: true })
+    api.get(`/api/products`)
       .then(res => setProductsList(res.data))
       .catch(console.error);
 
-    axios.get(`${API_URL}/api/suppliers`)
+    api.get(`/api/suppliers`)
       .then(res => setSuppliersList(res.data))
       .catch(console.error);
 
@@ -82,9 +82,7 @@ const EditPurchase = () => {
 
   const fetchPurchase = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/purchases/${purchaseId}`, {
-        withCredentials: true,
-      });
+      const res = await api.get(`/api/purchases/${purchaseId}`);
 
       const p = res.data;
 
@@ -204,6 +202,7 @@ const EditPurchase = () => {
 
     if (p) {
       setItem({
+        productId:p._id,
         product: p.name,
         mrp: p.mrp || 0,
         rate: p.purchaseRate || 0,
@@ -216,14 +215,27 @@ const EditPurchase = () => {
     setFilteredProducts([]);
   };
 
-  // ADD ITEM
-  const addItem = () => {
-    if (!item.product.trim()) return alert("Product required!");
-    if (item.qty <= 0) return alert("Qty must be > 0!");
+  
 
-    setItems(prev => [...prev, item]);
-    setItem({ product: "", qty: 0, mrp: 0, rate: 0, dis: 0, tax: 0 });
+  const addItem = () => {
+  if (!item.productId) return alert("Please add product ,don`t type manually!");
+  if (!item.product.trim()) return alert("Product required!");
+  if (item.qty <= 0) return alert("Qty must be > 0!");
+
+  const newItem = {
+    productId: item.productId,  // ✔ ALWAYS SEND ID
+    product: item.product,
+    qty: item.qty,
+    mrp: item.mrp,
+    rate: item.rate,
+    dis: item.dis,
+    tax: item.tax
   };
+
+  setItems(prev => [...prev, newItem]);
+
+  setItem({ product: "", qty: 0, mrp: 0, rate: 0, dis: 0, tax: 0 });
+};
 
   // DELETE ITEM
   const deleteItem = (i) => {
@@ -245,9 +257,6 @@ const EditPurchase = () => {
   );
   const quantity = items.reduce((acc, itm) => acc + itm.qty, 0);
 
-  // -----------------------------
-  // UPDATE PURCHASE
-  // -----------------------------
   const handleUpdate = async () => {
     if (!supplierDetails.supplierId)
       return alert("Please select a valid supplier!");
@@ -266,10 +275,7 @@ const EditPurchase = () => {
     };
 
     try {
-      await axios.put(`${API_URL}/api/purchases/${purchaseId}`,
-        updated,
-        { withCredentials: true }
-      );
+      await api.put(`/api/purchases/${purchaseId}`,updated);
 
       alert("Purchase Updated Successfully!");
       navigate("/purchaselist");
@@ -280,9 +286,6 @@ const EditPurchase = () => {
     }
   };
 
-  // -----------------------------
-  // UI
-  // -----------------------------
   return (
     <div className="min-h-screen w-full p-4 md:p-6 bg-gradient-to-br from-slate-100 to-slate-200">
 

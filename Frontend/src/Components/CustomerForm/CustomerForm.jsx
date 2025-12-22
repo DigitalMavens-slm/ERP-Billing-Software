@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import {
   ArrowLeft,
   User,
@@ -15,8 +15,8 @@ import {
 import { useAppLocation } from "../../Context/LocationContext";
 import { ExportExcel } from "../../Utills/ExportExcel";
 import { ImportExcel } from "../../Utills/ImportExcel";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import api from "../../api"
+// const API_URL = import.meta.env.VITE_API_URL;
 
 const initialAddress = {
   line1: "",
@@ -75,9 +75,7 @@ export default function CustomerForm() {
     setLoading(true);
 
     try {
-      await axios.post(`${API_URL}/api/customers`, customer, {
-        withCredentials: true,
-      });
+      await api.post(`/api/customers`, customer, );
 
       alert("Customer Saved Successfully!");
 

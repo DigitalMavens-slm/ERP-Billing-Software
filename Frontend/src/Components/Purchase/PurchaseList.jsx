@@ -1,27 +1,53 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+// import axios from "axios";
+// import { useNavigate } from "react-router-dom";
+import { Eye, Download, Trash2, } from "lucide-react";
+import api from "../../api";
+import usePagination from "../../customHooks/usePagination"
+// const API_URL = import.meta.env.VITE_API_URL;
 import { useNavigate } from "react-router-dom";
-import { Edit, Trash2 } from "lucide-react";
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 export default function PurchaseList() {
-  const [purchases, setPurchases] = useState([]);
+  // const [purchases, setPurchases] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchPurchases();
-  }, []);
+// const navigate = useNavigate();
 
-  const fetchPurchases = async () => {
-    const res = await axios.get(`${API_URL}/api/purchases`, { withCredentials: true });
-    setPurchases(res.data.purchases);
-  };
+const handleView = (id) => {
+  navigate(`/purchase/view/${id}`);
+};
+
+const handleDownload = (id) => {
+  navigate(`/purchase/view/${id}?print=true`);
+};
+
+  // useEffect(() => {
+  //   fetchPurchases();
+  // }, []);
+
+  const {
+  data: purchases,
+  page,
+  totalPages,
+  next,
+  prev
+} = usePagination(
+  "/api/purchases",
+  "purchases",
+  "totalPurchases",
+  // activeFy
+);
+
+
+  // const fetchPurchases = async () => {
+  //   const res = await api.get(`/api/purchases`);
+  //   setPurchases(res.data.purchases);
+  // };
 
   const deletePurchase = async (id) => {
     if (!confirm("Are you sure you want to delete this purchase?")) return;
-    await axios.delete(`${API_URL}/api/purchases/${id}`, {withCredentials: true});
-    fetchPurchases();
+    await api.delete(`/api/purchases/${id}`);
+    // fetchPurchases();
   };
 
   // Status Badge Color Function
@@ -72,9 +98,9 @@ export default function PurchaseList() {
                 <td className="p-4 flex justify-center gap-4">
                   {/* EDIT BUTTON */}
                   
-                  <button onClick={() => navigate(`/purchase/${pur._id}`, { state: { purchaseId: pur._id } })}>
+                  {/* <button onClick={() => navigate(`/purchase/${pur._id}`, { state: { purchaseId: pur._id } })}>
   <Edit size={20} />
-</button>
+</button> */}
 
                   {/* DELETE BUTTON */}
                   <button
@@ -83,6 +109,23 @@ export default function PurchaseList() {
                   >
                     <Trash2 size={20} />
                   </button>
+
+                    <button
+    className="text-blue-600 hover:text-blue-800"
+    onClick={() => handleView(pur._id)}
+    title="View"
+  >
+    <Eye size={20} />
+  </button>
+
+  {/* DOWNLOAD */}
+  <button
+    className="text-green-600 hover:text-green-800"
+    onClick={() => handleDownload(pur._id)}
+    title="Download Invoice"
+  >
+    <Download size={20} />
+  </button>
                 </td>
 
               </tr>
@@ -90,6 +133,12 @@ export default function PurchaseList() {
           </tbody>
 
         </table>
+                                    {/* {pagination} */}
+                       <div className="flex justify-center items-center gap-4 py-4">
+          <button onClick={prev} disabled={page === 1}>&lt;</button>
+          <span>Page {page} / {totalPages}</span>
+          <button onClick={next} disabled={page === totalPages}>&gt;</button>
+        </div>
       </div>
     </div>
   );

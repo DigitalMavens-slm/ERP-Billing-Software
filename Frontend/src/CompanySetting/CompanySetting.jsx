@@ -1,8 +1,6 @@
-import React, { useState } from "react";
-import axios from "axios";
-import "./CompanySetting.css";
 
-const API_URL = import.meta.env.VITE_API_URL;
+import React, { useState, useEffect } from "react";
+import api from "../api";
 
 export default function CompanySettingsForm() {
   const [formData, setFormData] = useState({
@@ -13,9 +11,9 @@ export default function CompanySettingsForm() {
     email: "",
     website: "",
     industry: "",
-    currentFinancialYear: "",
-    financialYearStart: "",
-    financialYearEnd: "",
+    // currentFinancialYear: "",
+    // financialYearStart: "",
+    // financialYearEnd: "",
     currency: "",
     gstType: "",
     compositionScheme: false,
@@ -28,11 +26,41 @@ export default function CompanySettingsForm() {
     extraPaymentUrl: "",
   });
 
-  // FILE STATES
   const [logoFile, setLogoFile] = useState(null);
   const [paymentFile, setPaymentFile] = useState(null);
   const [extraPaymentFile, setExtraPaymentFile] = useState(null);
+  const [invoiceLocked, setInvoiceLocked] = useState(false);
 
+
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  // ----------------------------------------------
+  // 🔥 Load Existing Company (if any)
+  // ----------------------------------------------
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const res = await api.get("/api/company-settings", { withCredentials: true });
+        if (res.data) {
+          setFormData(res.data);
+        }
+        if (res.data) {
+        setFormData(res.data);
+
+        if (res.data.invoiceStartNumber) {
+          setInvoiceLocked(true); 
+        }
+      }
+      } catch (err) {
+        console.log("Error loading company:", err);
+      }
+    };
+    loadData();
+  }, []);
+
+  // ----------------------------------------------
+  // 🔥 Input Change
+  // ----------------------------------------------
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -55,6 +83,9 @@ export default function CompanySettingsForm() {
     }
   };
 
+  // ----------------------------------------------
+  // 🔥 File Change
+  // ----------------------------------------------
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     if (name === "logoUrl") setLogoFile(files[0]);
@@ -62,76 +93,38 @@ export default function CompanySettingsForm() {
     if (name === "extraPaymentUrl") setExtraPaymentFile(files[0]);
   };
 
+  // ----------------------------------------------
+  // 🔥 Submit (ONLY POST)
+  // ----------------------------------------------
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const data = new FormData();
+    const data = new FormData();
 
-  // append all simple & nested fields
-  Object.keys(formData).forEach((key) => {
-    if (typeof formData[key] === "object" && formData[key] !== null) {
-      Object.keys(formData[key]).forEach((subKey) => {
-        data.append(`${key}.${subKey}`, formData[key][subKey]);
-      });
-    } else {
-      data.append(key, formData[key]);
-    }
-  });
-
-  // append file uploads
-  if (logoFile) data.append("logoUrl", logoFile);
-  if (paymentFile) data.append("paymentUrl", paymentFile);
-  if (extraPaymentFile) data.append("extraPaymentUrl", extraPaymentFile);
-
-  try {
-    if (formData._id && formData._id.length === 24) {
-      // UPDATE
-      await axios.put(`${API_URL}/api/company-settings/${formData._id}`, data, {
-        withCredentials: true,
-      });
-      alert("Company settings updated!");
-    } else {
-      // CREATE NEW
-      await axios.post(`${API_URL}/api/company-settings`, data, {
-        withCredentials: true,
-      });
-      alert("Company settings saved!");
-    }
-
-    // Reset form data
-    setFormData({
-      companyName: "",
-      contactPerson: "",
-      mobile1: "",
-      mobile2: "",
-      email: "",
-      website: "",
-      industry: "",
-      currentFinancialYear: "",
-      financialYearStart: "",
-      financialYearEnd: "",
-      currency: "",
-      gstType: "",
-      compositionScheme: false,
-      gstNo: "",
-      panNo: "",
-      address: { street: "", city: "", state: "", pincode: "" },
-      bankDetails: { accountNumber: "", ifsc: "", bankName: "" },
-      logoUrl: "",
-      paymentUrl: "",
-      extraPaymentUrl: "",
+    // append simple & nested values
+    Object.keys(formData).forEach((key) => {
+      if (typeof formData[key] === "object") {
+        Object.keys(formData[key]).forEach((subKey) => {
+          data.append(`${key}.${subKey}`, formData[key][subKey]);
+        });
+      } else {
+        data.append(key, formData[key]);
+      }
     });
 
-    // Reset file states
-    setLogoFile(null);
-    setPaymentFile(null);
-    setExtraPaymentFile(null);
-  } catch (err) {
-    console.error(err);
-    alert("Error saving settings");
-  }
-};
+    // append files
+    if (logoFile) data.append("logoUrl", logoFile);
+    if (paymentFile) data.append("paymentUrl", paymentFile);
+    if (extraPaymentFile) data.append("extraPaymentUrl", extraPaymentFile);
 
+    try {
+      await api.post("/api/company-settings", data, { withCredentials: true });
+      alert("Company settings saved!");
+    } catch (err) {
+      console.error(err);
+      alert("Error saving company settings");
+    }
+  };
 
   return (
     <div className="p-4 md:p-10 bg-gray-50 min-h-screen">
@@ -141,6 +134,26 @@ export default function CompanySettingsForm() {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-10">
+                                           {/* invoice num handler */}
+          <Section title="Invoice Settings" color="blue">
+  <div className="grid md:grid-cols-2 gap-6">
+  <>
+  <InputField
+  label="Invoice Start Number"
+  placeholder="Number only Must enter"
+hint={invoiceLocked ? "Locked (cannot be changed)" : "Set carefully. One-time only"}
+  name="invoiceStartNumber"
+  value={formData.invoiceStartNumber}
+  // type="number"
+  onChange={handleChange}
+  disabled={invoiceLocked}
+/>
+</>
+  
+ 
+  </div>
+         </Section>
+         
 
           {/* BASIC */}
           <Section title="Basic Information" color="indigo">
@@ -158,34 +171,28 @@ export default function CompanySettingsForm() {
           {/* ADDRESS */}
           <Section title="Address" color="green">
             <div className="grid md:grid-cols-2 gap-6">
-              <InputField label="Street" name="address.street" value={formData.address.street} onChange={handleChange} />
-              <InputField label="City" name="address.city" value={formData.address.city} onChange={handleChange} />
-              <InputField label="State" name="address.state" value={formData.address.state} onChange={handleChange} />
-              <InputField label="Pincode" name="address.pincode" value={formData.address.pincode} onChange={handleChange} />
+              <InputField label="Street" name="address.street" value={formData.address?.street} onChange={handleChange} />
+              <InputField label="City" name="address.city" value={formData.address?.city} onChange={handleChange} />
+              <InputField label="State" name="address.state" value={formData.address?.state} onChange={handleChange} />
+              <InputField label="Pincode" name="address.pincode" value={formData.address?.pincode} onChange={handleChange} />
             </div>
           </Section>
+
 
           {/* BANK */}
           <Section title="Bank Details" color="orange">
             <div className="grid md:grid-cols-2 gap-6">
-              <InputField label="Account Number" name="bankDetails.accountNumber" value={formData.bankDetails.accountNumber} onChange={handleChange} />
-              <InputField label="IFSC" name="bankDetails.ifsc" value={formData.bankDetails.ifsc} onChange={handleChange} />
-              <InputField label="Bank Name" name="bankDetails.bankName" value={formData.bankDetails.bankName} onChange={handleChange} />
+              <InputField label="Account Number" name="bankDetails.accountNumber" value={formData.bankDetails?.accountNumber} onChange={handleChange} />
+              <InputField label="IFSC" name="bankDetails.ifsc" value={formData.bankDetails?.ifsc} onChange={handleChange} />
+              <InputField label="Bank Name" name="bankDetails.bankName" value={formData.bankDetails?.bankName} onChange={handleChange} />
             </div>
           </Section>
 
           {/* GST */}
           <Section title="GST Information" color="purple">
             <div className="grid md:grid-cols-2 gap-6">
-              <InputField label="GST Type" name="gstType" value={formData.gstType} onChange={handleChange} />
-
-              <div className="flex items-center gap-3 mt-6">
-                <input type="checkbox" name="compositionScheme" checked={formData.compositionScheme} onChange={handleChange} />
-                <label className="text-gray-700">Composition Scheme</label>
-              </div>
-
               <div>
-                <label className="form-label">GST No</label>
+                <label className="form-label">GST Type</label>
                 <select
                   name="gstNo"
                   className="input-box"
@@ -195,6 +202,14 @@ export default function CompanySettingsForm() {
                   <option value="UNREGISTERED">UNREGISTERED</option>
                   <option value="REGISTERED">REGISTERED</option>
                 </select>
+              </div>
+              {formData.gstNo !== "REGISTERED"&&(
+
+              <InputField label="GST Num" name="gstType" value={formData.gstType} onChange={handleChange} />
+              )}
+              <div className="flex items-center gap-3 mt-6">
+                <input type="checkbox" name="compositionScheme" checked={formData.compositionScheme} onChange={handleChange} />
+                <label className="text-gray-700">Composition Scheme</label>
               </div>
 
               <InputField
@@ -210,9 +225,9 @@ export default function CompanySettingsForm() {
           {/* UPLOADS */}
           <Section title="Uploads" color="gray">
             <div className="grid md:grid-cols-3 gap-6">
-              <UploadField label="Company Logo" name="logoUrl" filePath={formData.logoUrl} onChange={handleFileChange} />
-              <UploadField label="UPI QR" name="paymentUrl" filePath={formData.paymentUrl} onChange={handleFileChange} />
-              <UploadField label="Extra UPI" name="extraPaymentUrl" filePath={formData.extraPaymentUrl} onChange={handleFileChange} />
+              <UploadField label="Company Logo" name="logoUrl" filePath={formData.logoUrl} API_URL={API_URL} onChange={handleFileChange} />
+              <UploadField label="UPI QR" name="paymentUrl" filePath={formData.paymentUrl} API_URL={API_URL} onChange={handleFileChange} />
+              <UploadField label="Extra UPI" name="extraPaymentUrl" filePath={formData.extraPaymentUrl} API_URL={API_URL} onChange={handleFileChange} />
             </div>
           </Section>
 
@@ -236,10 +251,15 @@ function Section({ title, color, children }) {
   );
 }
 
-function InputField({ label, name, value, onChange, type = "text", disabled }) {
+function InputField({ label, name, value, onChange,hint, type = "text", disabled }) {
   return (
     <div className="w-full">
       <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+        {hint && (
+          <span className="text-xs text-red-500">
+            {hint}
+          </span>
+        )}
       <input
         type={type}
         name={name}
@@ -252,16 +272,18 @@ function InputField({ label, name, value, onChange, type = "text", disabled }) {
   );
 }
 
-function UploadField({ label, name, filePath, onChange }) {
+function UploadField({ label, name, filePath, onChange, API_URL }) {
   return (
     <div>
       <label className="form-label">{label}</label>
+
       {filePath && (
         <img
           src={`${API_URL}/${filePath.replace(/\\/g, "/")}`}
           className="h-24 w-24 object-cover rounded border mb-2"
         />
       )}
+
       <input type="file" name={name} onChange={onChange} className="input-box" />
     </div>
   );

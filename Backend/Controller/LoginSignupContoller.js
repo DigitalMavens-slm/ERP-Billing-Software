@@ -2,9 +2,11 @@ const User = require("../Model/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const JWT_SECRET = "my_secret_key"; //👉 production la env file la podanum
+// const JWT_SECRET = "my_secret_key"; //👉 production la env file la podanum
+// const JWT_SECRET=process.env.JWT_SECRET
 
 exports.signup = async (req, res) => {
+  // console.log(req.body)
   try {
     const { name, email, password,role} = req.body;
     console.log(name + " " + email + " " + password)
@@ -26,11 +28,16 @@ exports.signup = async (req, res) => {
 };
 
 
+
+// const isProd = process.env.NODE_ENV === "production";
+
 exports.login = async (req, res) => {
+  console.log(req.body)
   try {
+
     const { email, password } = req.body;
 
-    let user = await User.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "User not found" });
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -38,27 +45,27 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
+      expiresIn: "7d"
     });
 
-    // Set token as HTTP-only cookie
-    res.cookie("auth-token", token, {
+
+    // 🔥 THIS IS THE CORRECT COOKIE CONFIG FOR RENDER + FRONTEND DIFF DOMAIN
+    res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // change to true when using https
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      secure: true,       // HTTPS ONLY (Render = HTTPS)
+      sameSite: "none",   // REQUIRED FOR DIFFERENT FRONTEND URL
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
     return res.status(200).json({
       message: "Login successful",
-      token,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
-        companyId: user.companyId,
-      },
+        companyId: user.companyId
+      }
     });
   } catch (err) {
     return res.status(500).json({ error: err.message });

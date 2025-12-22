@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import Axios from "axios";
+// import Axios from "axios";
 import "./AutocompleteInput.css";
+import api from "../api"
 
 const AutocompleteInput = ({ field, value, onChange }) => {
   const [suggestions, setSuggestions] = useState([]);
@@ -34,8 +35,8 @@ const AutocompleteInput = ({ field, value, onChange }) => {
     setTypingTimeout(
       setTimeout(async () => {
         try {
-          const res = await Axios.get(
-            `http://localhost:4000/api/purchases/searchField?field=${field}&query=${val}`
+          const res = await api.get(
+            `/api/purchases/searchField?field=${field}&query=${val}`
           );
           setSuggestions(res.data);
           setActiveIndex(-1);

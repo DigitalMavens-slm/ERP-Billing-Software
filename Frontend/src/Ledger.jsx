@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
+import api from "./api";
 
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
 
 export default function CustomerLedger() {
   const [ledger, setLedger] = useState([]);
@@ -10,12 +11,12 @@ export default function CustomerLedger() {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showList, setShowList] = useState(false);
-  console.log(query)
+  console.log(ledger)
 
   useEffect(() => {
     if (!customerId) return;
-    axios
-      .get(`${API_URL}/api/ledger/${customerId}`, {withCredentials: true})
+    api
+      .get(`/api/ledger/${customerId}`)
       .then((res) => setLedger(res.data.ledger || []))
       .catch((err) => console.error("Ledger fetch error:", err));
   }, [customerId]);
@@ -30,10 +31,7 @@ export default function CustomerLedger() {
     }
 
     try {
-      const res = await axios.get(
-        `${API_URL}/api/suggest/customers?query=${value}`
-        , {withCredentials: true}
-      );
+      const res = await api.get(`/api/suggest/customers?query=${value}`)
       setSuggestions(res.data);
       setShowList(true);
     } catch (err) {
@@ -42,7 +40,7 @@ export default function CustomerLedger() {
   };
 
   const handleSelect = async (customer) => {
-    const res = await axios.get(`${API_URL}/api/customers/${customer._id}` , {withCredentials: true});
+    const res = await api.get(`/api/customers/${customer._id}`);
     setShowList(false);
     setCustomerId(res.data._id);
     setQuery(res.data.name);
@@ -111,6 +109,7 @@ export default function CustomerLedger() {
                   key={i}
                   className="border-t hover:bg-gray-50 transition"
                 >
+                  
                   <td className="p-3">
                     {new Date(row.date).toLocaleDateString()}
                   </td>

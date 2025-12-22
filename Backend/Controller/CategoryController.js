@@ -3,6 +3,7 @@ const Category = require("../Model/CategoryModel");
 // GET all categories
 exports.getCategories = async (req, res) => {
   try {
+
     const categories = await Category.find();
     res.json(categories);
   } catch (err) {
@@ -12,6 +13,7 @@ exports.getCategories = async (req, res) => {
 
 // POST create category
 exports.createCategory = async (req, res) => {
+   
   const { name } = req.body;
   if (!name) return res.status(400).json({ message: "Category name required" });
 

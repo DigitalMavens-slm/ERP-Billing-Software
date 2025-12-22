@@ -1,30 +1,47 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2,Download,Eye } from "lucide-react";
+import api from "../api";
+import usePagination from "../customHooks/usePagination";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function InvoiceList() {
-  const [invoices, setInvoices] = useState([]);
+  // const [invoices, setInvoices] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchInvoices();
-  }, []);
+  const handleView = (id) => {
+  navigate(`/invoice/view/${id}`);
+};
 
-  const fetchInvoices = async () => {
-    const res = await axios.get(`${API_URL}/api/allinvoice`, {
-        withCredentials: true,
-      });
-    setInvoices(res.data.invoices);
-  };
+const handleDownload = (id) => {
+  navigate(`/invoice/view/${id}?print=true`);
+};
 
+  // useEffect(() => {
+  //   fetchInvoices();
+  // }, []);
+
+  // const fetchInvoices = async () => {
+  //   const res = await api.get(`/api/allinvoice`);
+  //   setInvoices(res.data.invoices);
+  // };
+
+
+  const {
+    data: invoices,
+    page,
+    totalPages,
+    next,
+    prev
+  } = usePagination("/api/allinvoice", "invoices","totalInvoices");
+  
   const deleteInvoice = async (id) => {
     if (!confirm("Are you sure you want to delete this invoice?")) return;
 
-    await axios.delete(`${API_URL}/api/invoices/${id}`);
-    fetchInvoices();
+    await api.delete(`/api/invoice/delete/${id}`);
+    // fetchInvoices();
   };
 
   // Status Badge Color Function
@@ -75,23 +92,50 @@ export default function InvoiceList() {
                 <td className="p-4 flex justify-center gap-4">
                   {/* <button
                     className="text-blue-600 hover:text-blue-800"
-                    onClick={() => navigate(`/invoice/edit/${inv._id}`)}
+                    onClick={() => navigate(`/invoice/${inv._id}`,{state:{invoiceId:inv._id}})}
                   >
                     <Edit size={20} />
                   </button> */}
-
+ 
+                
+                
                   <button
                     className="text-red-600 hover:text-red-800"
                     onClick={() => deleteInvoice(inv._id)}
                   >
                     <Trash2 size={20} />
                   </button>
+
+                      <button
+                      className="text-blue-600 hover:text-blue-800"
+                      onClick={() => handleView(inv._id)}
+                      title="View"
+                    >
+                      <Eye size={20} />
+                    </button>
+                  
+                    {/* DOWNLOAD */}
+                    <button
+                      className="text-green-600 hover:text-green-800"
+                      onClick={() => handleDownload(inv._id)}
+                      title="Download Invoice"
+                    >
+                      <Download size={20} />
+                    </button>
                 </td>
               </tr>
             ))}
           </tbody>
 
         </table>
+
+                          {/* pagignation */}
+
+                            <div className="flex justify-center items-center gap-4 py-4">
+          <button onClick={prev} disabled={page === 1}>&lt;</button>
+          <span>Page {page} / {totalPages}</span>
+          <button onClick={next} disabled={page === totalPages}>&gt;</button>
+        </div>
       </div>
     </div>
   );

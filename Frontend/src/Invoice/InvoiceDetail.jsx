@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { handlePrint, handleDownloadPDF } from "../Utills/AllPrinter";
-import axios from "axios";
+// import axios from "axios";
 import { useSuggestions } from "../Context/SuggestionContext";
+import api from "../api";
 
 const InvoiceDetails = () => {
   const { state } = useLocation();
@@ -25,7 +26,7 @@ const InvoiceDetails = () => {
 
   const sendMail = async () => {
     try {
-      const response = await axios.post("http://localhost:4000/api/invoice/send", {
+      const response = await api.post("/api/invoice/send", {
         customerEmail: customer.email,
         invoice: {
           invoiceNum: invoice.invoiceNum,
@@ -130,12 +131,12 @@ const InvoiceDetails = () => {
           ← Back to Invoice
         </button>
 
-        <button
+        {/* <button
           onClick={() => handlePrint("invoice-details")}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
           🖨 Print / PDF
-        </button>
+        </button> */}
 
         <button
           onClick={() => handleDownloadPDF("invoice-details", "Invoice-" + invoice.invoiceNum)}

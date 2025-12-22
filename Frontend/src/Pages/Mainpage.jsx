@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState,useEffect } from "react";
+// import axios from "axios";
 import { Link, useLocation, Outlet } from "react-router-dom";
+// import { Trash2 } from "lucide-react";
+
 
 import {
   Home,
@@ -16,10 +18,13 @@ import {
   Menu,
   ChevronRight,
   ChevronDown,
+  Trash2,
   ArrowRight
 } from "lucide-react";
 
 import { useAuth } from "../Context/AuthContext";
+import api from "../api";
+// import useFinancialYearStore from "../Zustand/finacialYearStore"
 
 const Mainpage = () => {
   const { user } = useAuth();
@@ -31,20 +36,33 @@ const Mainpage = () => {
   const [openLedger, setOpenLedger] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+
+
+const getFY = () => {
+  const d = new Date();
+  const y = d.getFullYear();
+  return d.getMonth() >= 3 ? `${y}-${y+1}` : `${y-1}-${y}`;
+};
+
+const [activeFY, setActiveFY] = useState(
+  localStorage.getItem("fy") || getFY()
+);
+
   const isActive = (path) => location.pathname.includes(path);
 
   const logout = async () => {
     try {
-      await axios.post(
-        "http://localhost:4000/api/logout",
-        {},
-        { withCredentials: true }
-      );
+      await api.post("/api/logout",);
       window.location.replace("/login");
     } catch (error) {
       console.log("Logout failed:", error);
     }
   };
+
+  useEffect(() => {
+  api.defaults.headers.common["x-financial-year"] = activeFY;
+  console.log("🚀 Initial FY header set:", activeFY);
+}, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f7fb]">
@@ -58,6 +76,25 @@ const Mainpage = () => {
         <h1 className="text-xl font-bold text-blue-800">
           ERP Billing — SOFTWARE
         </h1>
+
+              
+
+<select
+  value={activeFY}
+  onChange={(e) => {
+    const fy = e.target.value;
+
+    setActiveFY(fy);
+
+    localStorage.setItem("fy", fy);
+    api.defaults.headers.common["x-financial-year"] = fy;
+    window.location.reload();
+  }}
+>
+  <option value="2023-2024">2023-24</option>
+  <option value="2024-2025">2024-25</option>
+  <option value="2025-2026">2025-26</option>
+</select>
 
         <div className="flex items-center gap-5">
           <Bell className="w-6 h-6 cursor-pointer" />
@@ -172,6 +209,7 @@ const Mainpage = () => {
                   <Link to="ledger" className="sub-item">
                     <ChevronRight size={16} /> Customer Ledger
                   </Link>
+                  {/* {role==="admin"()} */}
                   <Link to="purchaseledger" className="sub-item">
                     <ChevronRight size={16} /> Supplier Ledger
                   </Link>
@@ -228,6 +266,24 @@ const Mainpage = () => {
               >
                 <Building size={20} /> Company
               </Link>
+
+
+                                     {/* deleted icon */}
+<Link
+  to="/invoices/deleted"
+  className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg
+             text-red-600 hover:bg-red-50"
+>
+  <div className="flex items-center gap-2">
+    <Trash2 size={18} />
+    <span>Deleted Invoices</span>
+  </div>
+
+  <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+    DEL
+  </span>
+</Link>
+
 
               <Link
                 to="assign-staff"

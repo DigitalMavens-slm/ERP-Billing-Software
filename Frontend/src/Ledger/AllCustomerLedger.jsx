@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-const API_URL = import.meta.env.VITE_API_URL;
+// import axios from "axios";
+// const API_URL = import.meta.env.VITE_API_URL;
+import api from "../api"
 
 export default function AllCustomerLedger() {
   const [ledger, setLedger] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`${API_URL}/api/ledger`, {withCredentials: true}) 
+    api
+      .get(`/api/ledger`) 
       .then((res) => {
         setLedger(res.data.ledgers || []);
       })

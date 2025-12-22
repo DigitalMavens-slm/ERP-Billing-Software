@@ -1,4 +1,4 @@
-import './App.css'
+// import './App.css'
 import LoginSignupPage from './Components/Loginsignup/LoginSignup'
 import Purchase from "./Components/Purchase/PurchaseApp"
 import Inventory from "./Components/Inventory/Inventory"
@@ -25,7 +25,12 @@ import PurchaseList from './Components/Purchase/PurchaseList'
 import PurchaseLedger from "./Ledger/PurchaseLedger"
 import ProtectedRoute from './ProtectedRoute'
 import EditPurchase from './Components/Purchase/EditPurchase'
+import EditInvoice from "./Invoice/EditInvoice"
+import InvoiceView from "./Invoice/InvoiceView";
+import PurchaseView from "./Components/Purchase/PurchaseView"
+
 import AssignStaff from './Components/AssignStaff'
+import DeletedInvoiceList from "./Invoice/DeletedInvoiceList"
 
 function App() {
 
@@ -47,8 +52,9 @@ function App() {
     <Route path="index" element={<Purchase />} />
     <Route path="purchaselist" element={<PurchaseList />} />
     <Route path="/purchase/:id" element={<EditPurchase />} />
-
+    <Route path="purchase/view/:id" element={<PurchaseView/>}/>
     <Route path="purchaseledger" element={<PurchaseLedger />} />
+
     <Route path="inventory" element={<Inventory />} />
 
     <Route path="setting" element={<Settings />}>
@@ -64,11 +70,16 @@ function App() {
     <Route path="assign-staff" element={<AssignStaff />} />
     <Route path="invoicecreate" element={<InvoiceApp />} />
     <Route path="invoicelist" element={<InvoiceList />} />
+    <Route path="invoice/:id" element={<EditInvoice/>}/>
     <Route path="invoice-details" element={<InvoiceDetails />} />
+    <Route path="invoice/view/:id" element={<InvoiceView/>}/>
+
     <Route path="payment-updation" element={<PaymentUpdate />} />
     <Route path="ledger" element={<CustomerLedger />} />
     <Route path="allcustomerledger" element={<AllCustomerLedger />} />
     <Route path="reports" element={<Report />} />
+    <Route path="/invoices/deleted" element={<DeletedInvoiceList />} />
+
   </Route>
 
 </Routes>

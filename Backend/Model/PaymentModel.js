@@ -5,14 +5,32 @@ const paymentSchema = new mongoose.Schema(
       customerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
-      required: true, // ⚠️ important for ledger sync
+      required:  function () { return this.type === "Sales"; }
     },
     // 🔹 Invoice reference
     invoiceId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Invoice", 
-      required: true,
+      required:  function () { return this.type === "Sales"; }
     },
+
+     supplierId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Supplier",
+          required: function () { return this.type === "Purchase"; }
+        },
+        
+     purchaseId:{
+       type: mongoose.Schema.Types.ObjectId,
+          ref: "Purchase",
+          required: function () { return this.type === "Purchase"; }
+     },
+
+    companyId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Company",
+          required: true,
+        },
     amount: {
       type: Number,
       required: true,

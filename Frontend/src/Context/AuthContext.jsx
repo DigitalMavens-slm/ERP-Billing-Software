@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
-
+import api from "../api"
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -8,13 +7,11 @@ export const AuthProvider = ({ children }) => {
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // GET LOGGED-IN USER DETAILS ONCE
+  // GET LOGGED-IN USER DETAILS ONCEgr
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/api/me", {
-          withCredentials: true,
-        });
+        const res = await api.get(`/api/me`);
         
         setUser(res.data.user);
         setCompany(res.data.company || null);
@@ -31,23 +28,24 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (userData) => {
-    const res = await axios.post(
-      "http://localhost:4000/api/login",
+    const res = await api.post(
+      `/api/login`,
       userData,
-      { withCredentials: true }
     );
     setUser(res.data.user);
     return res.data.user;
   };
 
-  const logout = async () => {
-    await axios.post("http://localhost:4000/api/logout", {}, { withCredentials: true });
-    setUser(null);
-    setCompany(null);
-  };
+  // const logout = async () => {
+  //   await api.post(`/api/logout`);
+
+  //   setUser(null);
+  //   setCompany(null);
+  //   // navigate("/login")
+  // };
 
   return (
-    <AuthContext.Provider value={{ user, company, setCompany, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, company,login, setCompany, loading }}>
       {children}
     </AuthContext.Provider>
   );

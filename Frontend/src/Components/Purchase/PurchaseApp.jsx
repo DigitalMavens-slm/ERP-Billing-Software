@@ -1,9 +1,10 @@
 import React, { useState, useEffect ,} from "react";
-import axios from "axios";
+// import axios from "axios";
 // import "./PurchaseApp.css";
 import {useSuggestion} from "../../Context/KeyBoardContext"
 import { useNavigate } from "react-router-dom";
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
+import api from "../../api"
 
 const PurchaseApp = () => {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ const PurchaseApp = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/products`, {withCredentials: true});
+        const res = await api.get(`/api/products`);
         setProductsList(res.data);
       } catch (err) {
         console.error("❌ Error fetching products:", err);
@@ -72,7 +73,7 @@ const PurchaseApp = () => {
   useEffect(() => {
     const fetchSuppliers = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/suppliers`, {withCredentials: true});
+        const res = await api.get(`/api/suppliers`);
         setSuppliersList(res.data);
         // console.log(suppliersList.name)
       } catch (err) {
@@ -83,25 +84,25 @@ const PurchaseApp = () => {
   }, []);
 
   // ✅ Auto Bill No + Date
- useEffect(() => {
-  const fetchNextBillNum = async () => {
-    try {
-      const res = await axios.get(
-        `${API_URL}/api/buy/billnum`,{withCredentials:true},
-        { withCredentials: true }
-      );
-      setBillNum(res.data.nextBillNum);
-    } catch (err) {
-      console.error("Error fetching bill number:", err);
-      setBillNum("BILL0001");
-    }
-
-    setDate(new Date().toISOString().split("T")[0]);
-  };
-
-  fetchNextBillNum();
-},);
-
+  useEffect(() => {
+    const fetchNextBillNum = async () => {
+      try {
+        const financialYear =
+        localStorage.getItem("financialYear") || "2024-2025";
+        const res = await api.get(`/api/buy/billnum`,{
+        headers: {
+          "x-financial-year": financialYear,
+        },
+      });
+        setBillNum(res.data.nextBillNum);
+      } catch (err) {
+        console.error("Error fetching bill number:", err);
+        setBillNum("BILL0001");
+      }
+      setDate(new Date().toISOString().split("T")[0]);
+    };
+    fetchNextBillNum();
+  },);
 
   // ✅ Handle Input Changes
   const handleChange = (e) => {
@@ -184,7 +185,7 @@ if (name === "supplier") {
         product: selected.name,
         mrp: selected.mrp || 0,
         rate: selected.purchaseRate || 0,
-        tax: selected.gst || 18,
+        tax: selected.gst || 0,
       });
     }
     setFilteredProducts([]);
@@ -195,6 +196,9 @@ if (name === "supplier") {
     if (!item.product.trim()) return alert("Product Name required!");
     if (item.qty <= 0) return alert("Quantity must be > 0!");
     if (item.rate <= 0) return alert("Rate must be > 0!");
+      if (!item.productId) {
+    return alert("Please add product, don’t type manually!");
+  }
     setItems((prev) => [...prev, item]);
     setItem({ product: "", qty: 0, mrp: 0, rate: 0, dis: 0, tax: 0 });
   };
@@ -244,7 +248,7 @@ if (name === "supplier") {
     const purchaseData = {
       companyId : "",
       supplierId: supplierDetails.supplierId,
-      // billNum,
+      billNum,
       date,
       purchaseType,
       // supplierName,
@@ -258,7 +262,7 @@ if (name === "supplier") {
     };
 
     try {
-     const res= await axios.post(`${API_URL}/api/purchases`, purchaseData, { withCredentials: true });
+     const res= await api.post(`/api/purchases`, purchaseData,);
       setBillNum(res.data.nextBillNum);
     setDate(new Date().toISOString().split("T")[0]);
       alert("PURCHASE BILL GENERATED")
@@ -354,7 +358,7 @@ return (
           ))}
 
           <button
-            onClick={() => navigate("/setting/customer")}
+            onClick={() => navigate("/setting/supplier")}
             className="w-full py-2 bg-green-100 hover:bg-green-200"
           >
             ➕ Add New Supplier
@@ -387,7 +391,7 @@ return (
       >
         <option>GST</option>
         <option>IGST</option>
-        <option>No Tax</option>
+        {/* <option>No Tax</option> */}
       </select>
     </div>
 
@@ -399,7 +403,7 @@ return (
         onChange={(e) => setAmountType(e.target.value)}
         className="w-full mt-1 px-3 py-2 border rounded-xl"
       >
-        <option>No Tax</option>
+        {/* <option>No Tax</option> */}
         <option>Including Tax</option>
         <option>Excluding Tax</option>
       </select>

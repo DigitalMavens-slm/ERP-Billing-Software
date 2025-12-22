@@ -1,82 +1,148 @@
 const Company = require("../Model/CompanysettingModel"); // correct import
-const CompanySetting = require("../Model/CompanysettingModel");
+// const CompanySetting = require("../Model/CompanysettingModel");
 const User = require("../Model/userModel"); // correct import
+const getFinancialYear=require("../Utills/getFinancialYear")
+
+
 
 exports.getCompanySettings = async (req, res) => {
   try {
-    const company = await Company.findOne();
+    const user = await User.findById(req.user);
 
-    if (!company) return res.json(null);
+    if (!user || !user.companyId) {
+      return res.json(null); // NEW USER → NO COMPANY YET
+    }
 
-    res.json(company);
+    const company = await Company.findById(user.companyId);
+    return res.json(company);
+
   } catch (err) {
+    console.error("GET company error:", err);
     res.status(500).json({ error: err.message });
   }
 };
 
+// ✅ CREATE or UPDATE COMPANY SETTINGS (Single controller)
+
+// exports.createCompanySettings = async (req, res) => {
+//   try {
+//     const data ={...req.body};
+//     // console.log(data)
+//     data.invoicePrefix = "INV";
+//         data.financialYear=getFinancialYear()
+//     if (req.files) {
+//       if (req.files.logoUrl) data.logoUrl = req.files.logoUrl[0].path;
+//       if (req.files.paymentUrl) data.paymentUrl = req.files.paymentUrl[0].path;
+//       if (req.files.extraPaymentUrl) 
+//         data.extraPaymentUrl = req.files.extraPaymentUrl[0].path;
+//     }
+
+//     const user = await User.findById(req.user);
+
+//     if (user.companyId) {
+//       delete data._id; // ❌ Prevent immutable field error
+
+//       const updatedCompany = await Company.findByIdAndUpdate(
+//         user.companyId,
+//         data,
+//         { new: true }
+//       );
+
+//       return res.status(200).json({
+//         message: "Company updated successfully",
+//         company: updatedCompany,
+//       });
+//     }
+
+
+//     // ✅ CREATE FLOW (first time only)
+//     data.loginUser = req.user;
+
+//     const newCompany = await Company.create(data);
+
+//     // Link company with user
+//     await User.findByIdAndUpdate(req.user, {
+//       companyId: newCompany._id,
+//     });
+
+//     return res.status(201).json({
+//       message: "Company created successfully",
+//       company: newCompany,
+//     });
+
+//   } catch (err) {
+//     console.error("Company creation/update error:", err);
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+
+
+
 exports.createCompanySettings = async (req, res) => {
   try {
-    const data = req.body;
-    console.log("Incoming data:", data);
+    const data = { ...req.body };
 
-    // Handle file uploads safely
+    data.invoicePrefix = "INV";
+    data.financialYear = getFinancialYear();
+
     if (req.files) {
       if (req.files.logoUrl) data.logoUrl = req.files.logoUrl[0].path;
-
       if (req.files.paymentUrl) data.paymentUrl = req.files.paymentUrl[0].path;
-
       if (req.files.extraPaymentUrl)
         data.extraPaymentUrl = req.files.extraPaymentUrl[0].path;
     }
 
-    // Create the company
+    const user = await User.findById(req.user);
+
+    const existingCompany = user.companyId
+      ? await Company.findById(user.companyId)
+      : null;
+
+    // 🔐 INVOICE START NUMBER – ONE TIME ONLY
+    if (
+      existingCompany &&
+      existingCompany.invoiceStartNumber &&
+      data.invoiceStartNumber &&
+      String(existingCompany.invoiceStartNumber) !==
+        String(data.invoiceStartNumber)
+    ) {
+      return res.status(400).json({
+        message: "Invoice start number already set and cannot be changed",
+      });
+    }
+
+    // 🔁 UPDATE FLOW
+    if (existingCompany) {
+      delete data._id;
+
+      const updatedCompany = await Company.findByIdAndUpdate(
+        existingCompany._id,
+        data,
+        { new: true }
+      );
+
+      return res.status(200).json({
+        message: "Company updated successfully",
+        company: updatedCompany,
+      });
+    }
+
+    // 🆕 CREATE FLOW (first time only)
+    data.loginUser = req.user;
+
     const newCompany = await Company.create(data);
 
-    // Assign company to the logged-in user
     await User.findByIdAndUpdate(req.user, {
       companyId: newCompany._id,
     });
 
-    res.status(201).json(newCompany);
-  } catch (err) {
-    console.error("Company creation error:", err);
-    res.status(500).json({ error: err.message });
-  }
-};
-
-
-exports.saveCompanySettings = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const data = req.body;
-
-    // Handle uploaded files
-    if (req.files) {
-      if (req.files.logoUrl) data.logoUrl = req.files.logoUrl[0].path;
-      if (req.files.paymentUrl) data.paymentUrl = req.files.paymentUrl[0].path;
-      if (req.files.extraPaymentUrl)
-        data.extraPaymentUrl = req.files.extraPaymentUrl[0].path;
-    }
-
-    // Update Company
-    const updatedCompany = await Company.findByIdAndUpdate(id, data, {
-      new: true,
+    return res.status(201).json({
+      message: "Company created successfully",
+      company: newCompany,
     });
 
-    if (!updatedCompany) {
-      return res.status(404).json({ message: "Company not found" });
-    }
-
-    // Update only the current user's companyId
-    await User.findByIdAndUpdate(
-      req.user,
-      { companyId: id },
-      { new: true }
-    );
-
-    res.json(updatedCompany);
   } catch (err) {
-    console.error(err);
+    console.error("Company creation/update error:", err);
     res.status(500).json({ error: err.message });
   }
 };

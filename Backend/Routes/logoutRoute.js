@@ -3,10 +3,11 @@ const express = require("express");
 const router = express.Router();
 
 router.post("/logout", (req, res) => {
-  res.clearCookie("auth-token", {
+  const isProd = process.env.NODE_ENV === "production";
+  res.clearCookie("token", {
     httpOnly: true,
-    secure: false, // true in production with HTTPS
-    sameSite: "lax",
+    secure: isProd, 
+    sameSite: isProd ? "None" : "Lax",
     path: "/",
   });
 

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useAppLocation } from "../../Context/LocationContext";
+import api from "../../api"
+import { Trash2 } from "lucide-react";
 
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
 
 export default function ProductForm() {
   const { location, Goback } = useAppLocation();
@@ -20,7 +22,7 @@ export default function ProductForm() {
     purchaseRate: "",
     saleRate: "",
     gst: "",
-    barcode: "",
+    hsncode: "",
     unit: "",
     commission: "",
     minOrderQty: "",
@@ -28,14 +30,15 @@ export default function ProductForm() {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const[products,setProducts]=useState([])
 
   // Fetch All Dropdown Data
   const fetchAllData = async () => {
     try {
       const [catRes, subRes, brandRes] = await Promise.all([
-        axios.get(`${API_URL}/api/categories`),
-        axios.get(`${API_URL}/api/subcategories`),
-        axios.get(`${API_URL}/api/brands`),
+        api.get(`/api/categories`),
+        api.get(`/api/subcategories`),
+        api.get(`/api/brands`),
       ]);
 
       setCategories(catRes.data);
@@ -46,8 +49,20 @@ export default function ProductForm() {
     }
   };
 
+  
+
+const fetchProducts=async()=>{
+  try{
+    const res=await api.get("/api/products")
+    setProducts(res.data)
+  }
+  catch(err){
+    console.log(err)
+  }
+}
   useEffect(() => {
     fetchAllData();
+    fetchProducts();
   }, []);
 
   // Input Handler
@@ -71,11 +86,7 @@ export default function ProductForm() {
 };
 
 try {
-  await axios.post(
-    `${API_URL}/api/products`,
-    cleanedData,
-    { withCredentials: true }
-  );
+  await api.post(`/api/products`,cleanedData,);
 
     setMessage("Product added successfully!");
 
@@ -88,19 +99,31 @@ try {
       purchaseRate: "",
       saleRate: "",
       gst: "",
-      barcode: "",
+      hsncode: "",
       unit: "",
       commission: "",
       minOrderQty: "",
     });
 
     fetchAllData();
+    fetchProducts()
 
   } catch (err) {
     console.error(err);
     setMessage("Error adding product");
   } finally {
     setLoading(false);
+  }
+};
+
+const handleDelete = async (id) => {
+  if (!window.confirm("Are you sure you want to delete this product?")) return;
+
+  try {
+    await api.delete(`/api/products/${id}`);
+    setProducts(products.filter((p) => p._id !== id)); // UI update
+  } catch (err) {
+    console.error("Delete Error:", err);
   }
 };
 
@@ -209,30 +232,47 @@ try {
               className="border p-3 rounded-md focus:ring-2 focus:ring-blue-500"
             />
 
+           <select
+  name="gst"
+  value={productData.gst}
+  onChange={handleChange}
+  className="border p-3 rounded-md focus:ring-2 focus:ring-blue-500"
+>
+  <option value="">Select GST %</option>
+  <option value={0}>0%</option>
+  <option value={5}>5%</option>
+  <option value={12}>12%</option>
+  <option value={18}>18%</option>
+  <option value={28}>28%</option>
+</select>
+
             <input
-              name="gst"
-              type="number"
-              value={productData.gst}
+              name="hsncode"
+              value={productData.hsncode}
               onChange={handleChange}
-              placeholder="GST %"
+              placeholder="HSN Code"
               className="border p-3 rounded-md focus:ring-2 focus:ring-blue-500"
             />
 
-            <input
-              name="barcode"
-              value={productData.barcode}
-              onChange={handleChange}
-              placeholder="Barcode"
-              className="border p-3 rounded-md focus:ring-2 focus:ring-blue-500"
-            />
+          
+            <select
+  name="unit"
+  value={productData.unit}
+  onChange={handleChange}
+  className="border p-3 rounded-md focus:ring-2 focus:ring-blue-500"
+>
+  <option value="">Select Unit</option>
+  <option value="pcs">Pieces (pcs)</option>
+  <option value="box">Box</option>
+  <option value="kg">Kilogram (kg)</option>
+  <option value="g">Gram (g)</option>
+  <option value="ltr">Litre (ltr)</option>
+  <option value="ml">Millilitre (ml)</option>
+  <option value="dozen">Dozen</option>
+  <option value="packet">Packet</option>
+  <option value="set">Set</option>
+</select>
 
-            <input
-              name="unit"
-              value={productData.unit}
-              onChange={handleChange}
-              placeholder="Unit (e.g. pcs, box)"
-              className="border p-3 rounded-md focus:ring-2 focus:ring-blue-500"
-            />
 
             <input
               name="commission"
@@ -271,6 +311,114 @@ try {
           )}
         </div>
       )}
+
+     
+     {/* <div className="space-y-3">
+   {products.map((product) => (
+     <div
+       key={product._id}
+       className="flex justify-between items-center p-4 bg-white shadow rounded-lg border hover:bg-gray-50 transition"
+     >
+       <h3 className="text-lg font-semibold">{product.name}</h3>
+
+       <button
+         onClick={() => handleDelete(product._id)}
+         className="text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-100 transition"
+       >
+         <Trash2 size={20} />
+       </button>
+     </div>
+   ))}
+</div> */}
+
+{/* ================= PRODUCT LIST ================= */}
+<div className="mt-6">
+
+  {/* -------- Desktop / Tablet (Table view) -------- */}
+  <div className="hidden md:block overflow-x-auto">
+    <table className="w-full border border-gray-200 rounded-lg">
+      <thead className="bg-gray-100 text-sm text-gray-700">
+        <tr>
+          <th className="p-3 text-left">Product</th>
+          <th className="p-3 text-right">MRP</th>
+          <th className="p-3 text-right">Purchase</th>
+          <th className="p-3 text-right">Sale</th>
+          <th className="p-3 text-center">Unit</th>
+          <th className="p-3 text-center">GST</th>
+          <th className="p-3 text-center">Action</th>
+        </tr>
+      </thead>
+
+      <tbody className="text-sm">
+        {products.map((product) => (
+          <tr
+            key={product._id}
+            className="border-t hover:bg-gray-50 transition"
+          >
+            <td className="p-3 font-medium">{product.name}</td>
+            <td className="p-3 text-right">₹{product.mrp}</td>
+            <td className="p-3 text-right">₹{product.purchaseRate}</td>
+            <td className="p-3 text-right font-semibold text-green-600">
+              ₹{product.saleRate}
+            </td>
+            <td className="p-3 text-center">{product.unit}</td>
+            <td className="p-3 text-center">{product.gst}%</td>
+            <td className="p-3 text-center">
+              <button
+                onClick={() => handleDelete(product._id)}
+                className="text-red-600 hover:text-red-800"
+              >
+                <Trash2 size={18} />
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  {/* -------- Mobile View (Card style) -------- */}
+  <div className="md:hidden space-y-3">
+    {products.map((product) => (
+      <div
+        key={product._id}
+        className="border rounded-lg p-4 bg-white shadow"
+      >
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="font-semibold text-lg">{product.name}</h3>
+          <button
+            onClick={() => handleDelete(product._id)}
+            className="text-red-600"
+          >
+            <Trash2 size={18} />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-y-2 text-sm">
+          <span className="text-gray-500">MRP</span>
+          <span className="text-right">₹{product.mrp}</span>
+
+          <span className="text-gray-500">Purchase</span>
+          <span className="text-right">₹{product.purchaseRate}</span>
+
+          <span className="text-gray-500">Sale</span>
+          <span className="text-right font-semibold text-green-600">
+            ₹{product.saleRate}
+          </span>
+
+          <span className="text-gray-500">Unit</span>
+          <span className="text-right">{product.unit}</span>
+
+          <span className="text-gray-500">GST</span>
+          <span className="text-right">{product.gst}%</span>
+        </div>
+      </div>
+    ))}
+  </div>
+
+</div>
+
+
     </>
   );
 }

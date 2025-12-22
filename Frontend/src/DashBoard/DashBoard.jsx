@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -27,7 +27,8 @@ import {
   Cell,
 } from "recharts";
 
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
+import api from "../api"
 
 export default function DashBoard() {
   const navigate = useNavigate();
@@ -35,6 +36,9 @@ export default function DashBoard() {
   const [InvoiceCount, setInvoiceCount] = useState([]);
     const [salesTrendData, setSalesTrendData] = useState([]);
   const [statusPieData, setStatusPieData] = useState([]);
+const [financialYear, setFinancialYear] = useState(
+  localStorage.getItem("financialYear")
+);
 
   const [kpi, setKpi] = useState({
     totalRevenue: 0,
@@ -49,23 +53,22 @@ export default function DashBoard() {
 
 
   const invoicefetcher = async () => {
-    const res = await axios.get(`${API_URL}/api/allinvoice`,{withCredentials:true});
+    const res = await api.get(`/api/allinvoice`);
     setInvoiceCount(res.data.invoices);
   };
 
   const getDashboardKPI = async () => {
-    const res = await axios.get(`${API_URL}/api/dashboardkpi`,{withCredentials:true});
-    // console.log(res.data)
+    const res = await api.get(`/api/dashboardkpi`);
+    console.log(res.data)
     setKpi(res.data);
   };
 
   useEffect(() => {
     invoicefetcher();
     getDashboardKPI();
-  }, []);
+  }, [financialYear]);
 
 
-    /* ---- BUILD GRAPHS ---- */
   useEffect(() => {
     if (InvoiceCount.length > 0) {
       buildSalesTrend();
@@ -110,14 +113,11 @@ export default function DashBoard() {
 
 
 
-
-
   return (
     <div className="w-full p-4 md:p-6 lg:p-10 bg-gray-50 min-h-screen">
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
 
-  {/* TOTAL REVENUE */}
   <div className="bg-white p-4 rounded-2xl shadow hover:shadow-md border-l-4 border-blue-500 relative overflow-hidden">
     <div className="flex justify-between items-start mb-2">
       <p className="text-sm font-medium text-gray-600">TOTAL REVENUE</p>
@@ -263,7 +263,7 @@ export default function DashBoard() {
               {/* View */}
               <button
                 className="text-blue-600 hover:text-blue-800 transition"
-                onClick={() => navigate(`/invoiceview/${list._id}`)}
+                onClick={() => navigate(`/invoice/view/${list._id}`)}
               >
                 <Eye size={20} />
               </button>
@@ -271,7 +271,7 @@ export default function DashBoard() {
               {/* Print */}
               <button
                 className="text-gray-700 hover:text-black transition"
-                onClick={() => window.print()}   // or custom invoice print page
+                onClick={() =>navigate(`/invoice/view/${list._id}?print=true`) }   // or custom invoice print page
               >
                 <Printer size={20} />
               </button>

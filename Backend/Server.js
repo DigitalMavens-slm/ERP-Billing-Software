@@ -28,19 +28,27 @@ const getUserRoute = require("./Routes/getUserRoute")
 const logoutRoute = require("./Routes/logoutRoute")
 const CompanySetting=require("./Routes/CompanysettingRoutes")
 const assignStaffRoute = require("./Routes/assignStaffRoute")
-dotenv.config({path:path.join(__dirname,"config/config.env")})
+const financialYear=require("./Middlewares/financialYear")
+dotenv.config()
 
 
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(financialYear)
+
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: [
+    "http://localhost:5173",
+    "https://erp-billing-software-12.onrender.com"   // YOUR FRONTEND URL
+  ],
   credentials: true
 }));
 
-// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
+
 app.use('/uploads', express.static('uploads'));
 
 app.use("/api",LoginRoutes)
@@ -68,11 +76,12 @@ app.use("/api",ReportsRoutes)
 
 app.use("/api",PurchaseRoutes)
 app.use("/api",PurchasePaymentRoutes)
+
         // Export   and  import  Excel Route
-app.use("/api",require("./Routes/BrandRoutes"))
-app.use("/api",require("./Routes/CategoryRoutes"))
-app.use("/api",require("./Routes/SupplierRouts"))
-app.use("/api",require("./Routes/CustomerRoutes"))
+// app.use("/api",require("./Routes/BrandRoutes"))
+// app.use("/api",require("./Routes/CategoryRoutes"))
+// app.use("/api",require("./Routes/SupplierRouts"))
+// app.use("/api",require("./Routes/CustomerRoutes"))
 
 
 //         invoice num Genrator routs
@@ -82,6 +91,9 @@ app.use("/api", require("./Routes/checkAuthRoute"))
 app.use("/api", getUserRoute)
 app.use("/api", logoutRoute)
 app.use("/api", assignStaffRoute)
+
+
+
 
 app.listen(process.env.PORT,()=>{
     console.log(`http://localhost:${process.env.PORT}`);

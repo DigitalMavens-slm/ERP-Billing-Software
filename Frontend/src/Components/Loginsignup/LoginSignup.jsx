@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import Axios from "axios";
+// import Axios from "axios";
 import './LoginSignup.css'
-
+// const API_URL=import.meta.env.VITE_API_URL
+import api from "../../api"
 const LoginSignup = () => {
   const [state, setState] = useState("Login");
 
@@ -9,7 +10,7 @@ const LoginSignup = () => {
     name: "",
     email: "",
     password: "",
-    role: "staff",
+    role: "",
     companyCode: "",
   });
 
@@ -19,13 +20,17 @@ const LoginSignup = () => {
     setUser((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Register User
+  console.log(api)
+
   const Register = async () => {
+    if (!user.name || !user.email || !user.password || !user.role) {
+     alert("All required fields must be filled!");
+     return;
+   }
     try {
-      await Axios.post("http://localhost:4000/api/signup", user, {
-        withCredentials: true,
-      });
+      await api.post(`/api/signup`, user,);
       alert("Account created!");
+      // setUser("")
       setState("Login");
     } catch (err) {
       console.error("Registration Error:", err);
@@ -35,13 +40,10 @@ const LoginSignup = () => {
 
   // Login User
   const signin = async () => {
+
     try {
-      const res=  await Axios.post(
-        "http://localhost:4000/api/login",
-        user,
-        { withCredentials: true }
-      );
- localStorage.setItem("token", res.data.token);
+      const res=  await api.post(`/api/login`,user,);
+//  localStorage.setItem("token", res.data.token);
       window.location.replace("/index");
     } catch (err) {
       console.log(err);

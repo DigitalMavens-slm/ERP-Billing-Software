@@ -26,7 +26,7 @@ const productSchema = new mongoose.Schema({
   purchaseRate: Number,
   saleRate: Number,
   gst: Number,
-  barcode: String,
+  hsncode: Number,
   unit: String,
   commission: Number,
   minOrderQty: Number,

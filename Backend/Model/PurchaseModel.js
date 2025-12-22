@@ -13,6 +13,8 @@ const itemSchema = new mongoose.Schema({
   mrp: { type: Number, default: 0 },
   rate: { type: Number, required: true },
   dis: { type: Number, default: 0 },
+  unit:{type:String},
+  hsncode:{type:Number,default:0},
   tax: { type: Number, default: 0 },
 });
 
@@ -25,7 +27,7 @@ const purchaseSchema = new mongoose.Schema(
       ref: "Company",
       default: null,
     },
-    billNum: { type: String, required: true },
+    billNum: { type: String, },
     date: { type: String, required: true },
     purchaseType: { type: String, default: "Purchase" },
     supplierName: { type: String, required: true },
@@ -34,6 +36,11 @@ const purchaseSchema = new mongoose.Schema(
       ref: "Supplier",
       required: true,
     },
+    financialYear: {
+  type: String,
+  required: true,
+  index: true
+},
     billType: { type: String, default: "Cash" },
     gstType: { type: String, default: "GST" },
     amountType: { type: String, default: "Excluding Tax" },

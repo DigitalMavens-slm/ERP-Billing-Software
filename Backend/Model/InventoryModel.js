@@ -13,6 +13,7 @@ const inventorySchema = new mongoose.Schema(
       ref: "Company",
       required: true,
     },
+    
     qty: {
       type: Number,
       default: 0,

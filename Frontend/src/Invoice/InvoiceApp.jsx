@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 // import "./InvoiceApp.css";
 
 import { useNavigate } from "react-router-dom";
 import { useSuggestions } from "../Context/SuggestionContext";
+import api from "../api";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -11,6 +12,7 @@ const InvoiceApp = () => {
   const navigate = useNavigate();
   const { setCustomerId } = useSuggestions();
   const [invoiceNum, setInvoiceNum] = useState("");
+  console.log(invoiceNum)
   const [date, setDate] = useState("");
   const [invoiceType, setInvoiceType] = useState("Invoice");
   const [customerName, setCustomerName] = useState("");
@@ -21,7 +23,6 @@ const InvoiceApp = () => {
   email: "",
   address: "",
 });
-// console.log(customerDetails);
 
   const [billType, setBillType] = useState("Cash");
   const [gstType, setGstType] = useState("GST");
@@ -42,7 +43,7 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
   });
 
   const [payment, setPayment] = useState({
-  billType: "Cash", // Default
+  billType: "Cash", 
   receivedAmount: 0,
   balanceAmount: 0,
   paymentStatus: "Pending",
@@ -53,16 +54,15 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
 
 
   const [items, setItems] = useState([]);
+  const [roundOff, setRoundOff] = useState(0);
+
 
   // 🔹 Fetch Products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/products`,{
-        withCredentials: true,
-      });
+        const res = await api.get(`/api/products`);
         setProductsList(res.data);
-        // console.log(res.data)
       } catch (err) {
         console.error("Error fetching products:", err);
       }
@@ -74,9 +74,7 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/customers`,{
-        withCredentials: true,
-      });
+        const res = await api.get(`/api/customers`);
         // console.log(res.data)
         setCustomersList(res.data);
       } catch (err) {
@@ -90,7 +88,7 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
  useEffect(() => {
   const fetchNextInvoiceNum = async () => {
     try {
-      const res = await axios.get(`${API_URL}/api/invoices/next-invoice-num`,{withCredentials:true});
+      const res = await api.get(`/api/invoices/get/next-invoice-num`);
       setInvoiceNum(res.data.nextInvoiceNum);
     } catch (err) {
       console.error("Error fetching invoice number:", err);
@@ -177,7 +175,7 @@ const selectCustomer = (name) => {
         product: selected.name,
         mrp: selected.mrp || 0,
         rate: selected.saleRate || 0,
-        tax: selected.gst || 18,
+        tax: selected.gst || 0,
       });
     }
     setFilteredProducts([]);
@@ -221,8 +219,13 @@ const selectCustomer = (name) => {
     return { baseAmount, taxAmount, totalAmount };
   };
 
-  const subtotal = items.reduce((acc, itm) => acc + calculateItemBreakdown(itm).totalAmount,0);
+  // const subtotal = items.reduce((acc, itm) => acc + calculateItemBreakdown(itm).totalAmount,0);
+const subtotal = items.reduce(
+  (acc, itm) => acc + calculateItemBreakdown(itm).totalAmount,
+  0
+);
 
+const payableAmount = subtotal + roundOff;
   const quantity = items.reduce((acc, itm) => acc + itm.qty, 0);
 
    const handleSave = async () => {
@@ -231,7 +234,7 @@ const selectCustomer = (name) => {
 
     const invoiceData = {
        customerId: customerDetails.customerId,
-      invoiceNum,
+      // invoiceNum,
       date,
       invoiceType,
       customerName,
@@ -240,13 +243,15 @@ const selectCustomer = (name) => {
       amountType,
       items,
       subtotal,
+      roundOff,
+      payableAmount,
       totalQty:quantity,
       // payment
     };
 
     try {
       // 🔹 Save to DB
-      await axios.post(`${API_URL}/api/invoices`, invoiceData, {withCredentials: true});
+      await api.post(`/api/invoices`, invoiceData);
       setCustomerId(customerDetails.customerId);
       
       navigate("/invoice-details", { state: { invoiceData ,customerDetails,} });
@@ -365,7 +370,7 @@ const selectCustomer = (name) => {
           >
             <option value="GST">GST</option>
             <option value="IGST">IGST</option>
-            <option value="NOTax">No Tax</option>
+            {/* <option value="NOTax">No Tax</option> */}
           </select>
         </div>
 
@@ -376,7 +381,7 @@ const selectCustomer = (name) => {
             value={amountType}
             onChange={(e) => setAmountType(e.target.value)}
           >
-            <option value="No Tax">No Tax</option>
+            {/* <option value="No Tax">No Tax</option> */}
             <option value="Including Tax">Including Tax</option>
             <option value="Excluding Tax">Excluding Tax</option>
           </select>
@@ -470,11 +475,26 @@ const selectCustomer = (name) => {
         </table>
       </div>
 
-      {/* FOOTER */}
       <div className="flex flex-col md:flex-row justify-between font-bold text-lg">
         <div>Total Qty: {quantity}</div>
-        <div className="text-blue-600">Payable: ₹{subtotal.toFixed(2)}</div>
+
+         <div className="flex items-center gap-2">
+    <label>RoundOff</label>
+    <input
+      type="number"
+      step="0.01"
+      className="w-24 border px-2 py-1 rounded"
+      value={roundOff}
+      onChange={(e) => setRoundOff(Number(e.target.value) || 0)}
+      placeholder="+ / -"
+    />
+  </div>
+        {/* <div className="text-blue-600">Payable: ₹{subtotal.toFixed(2)}</div> */}
+<div className="text-blue-600">
+  Payable: ₹{payableAmount.toFixed(2)}
+</div>
       </div>
+
 
       <div className="text-right">
         <button className="bg-green-600 text-white px-5 py-2 rounded" onClick={handleSave}>
