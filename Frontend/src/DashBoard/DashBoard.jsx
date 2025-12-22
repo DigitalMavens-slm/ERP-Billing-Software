@@ -69,7 +69,6 @@ const [financialYear, setFinancialYear] = useState(
   }, [financialYear]);
 
 
-    /* ---- BUILD GRAPHS ---- */
   useEffect(() => {
     if (InvoiceCount.length > 0) {
       buildSalesTrend();
@@ -114,14 +113,11 @@ const [financialYear, setFinancialYear] = useState(
 
 
 
-
-
   return (
     <div className="w-full p-4 md:p-6 lg:p-10 bg-gray-50 min-h-screen">
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
 
-  {/* TOTAL REVENUE */}
   <div className="bg-white p-4 rounded-2xl shadow hover:shadow-md border-l-4 border-blue-500 relative overflow-hidden">
     <div className="flex justify-between items-start mb-2">
       <p className="text-sm font-medium text-gray-600">TOTAL REVENUE</p>
