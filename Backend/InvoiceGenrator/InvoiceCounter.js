@@ -5,12 +5,8 @@ const Purchase=require("../Model/PurchaseModel")
 const auth=require("../Middlewares/auth")
 // const comapnyCheck=require("../Middlewares/companyCheck");
 const companyCheck = require("../Middlewares/companyCheck");
-<<<<<<< HEAD
-const auth = require("../Middlewares/auth");
-=======
 const getFinancialYear=require("../Utills/getFinancialYear")
 const CompanySettings = require("../Model/CompanysettingModel")
->>>>>>> LakshBranch2
 // ✅ Fetch next invoice number
 // router.get("/invoices/get/next-invoice-num", auth,comapnyCheck, async (req, res) => {
 //   // console.log(req.companyId)
