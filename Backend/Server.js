@@ -32,20 +32,32 @@ const financialYear=require("./Middlewares/financialYear")
 dotenv.config()
 
 
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://erp.digitalmavens.tech"
+  ],
+  credentials: true,
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
+  allowedHeaders: ["Content-Type","Authorization"]
+}));
+
+app.options("*", cors());
+
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(financialYear)
 
 
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    // "https://erp-billing-software-12.onrender.com"   
-    "https://erp.digitalmavens.tech"
-  ],
-  credentials: true
-}));
+// app.use(cors({
+//   origin: [
+//     "http://localhost:5173",
+//     // "https://erp-billing-software-12.onrender.com"   
+//     "https://erp.digitalmavens.tech"
+//   ],
+//   credentials: true
+// }));
 
 
 
