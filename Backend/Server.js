@@ -34,7 +34,7 @@ dotenv.config()
 
 app.use(cors({
   origin: [
-    "http://localhost:5173",
+    // "http://localhost:5173",
     "https://erp.digitalmavens.tech"
   ],
   credentials: true,
@@ -42,7 +42,7 @@ app.use(cors({
   allowedHeaders: ["Content-Type","Authorization"]
 }));
 
-app.options("/*", cors());
+// app.options("/*", cors());
 
 
 app.use(express.json());
