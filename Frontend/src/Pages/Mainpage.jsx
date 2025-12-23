@@ -24,7 +24,7 @@ import {
 
 import { useAuth } from "../Context/AuthContext";
 import api from "../api";
-// import useFinancialYearStore from "../Zustand/finacialYearStore"
+import useFinancialYearStore from "../Zustand/finacialYearStore"
 
 const Mainpage = () => {
   const { user } = useAuth();
@@ -44,8 +44,15 @@ const getFY = () => {
   return d.getMonth() >= 3 ? `${y}-${y+1}` : `${y-1}-${y}`;
 };
 
-const [activeFY, setActiveFY] = useState(
-  localStorage.getItem("fy") || getFY()
+// const [activeFY, setActiveFY] = useState(
+//   localStorage.getItem("fy") || getFY()
+// );
+
+const activeFY = useFinancialYearStore(
+  (state) => state.activeFY
+);
+const setActiveFY = useFinancialYearStore(
+  (state) => state.setActiveFY
 );
 
   const isActive = (path) => location.pathname.includes(path);
@@ -85,7 +92,6 @@ const [activeFY, setActiveFY] = useState(
     const fy = e.target.value;
 
     setActiveFY(fy);
-
     localStorage.setItem("fy", fy);
     api.defaults.headers.common["x-financial-year"] = fy;
     window.location.reload();
