@@ -68,7 +68,7 @@ const setActiveFY = useFinancialYearStore(
 
   useEffect(() => {
   api.defaults.headers.common["x-financial-year"] = activeFY;
-  console.log("🚀 Initial FY header set:", activeFY);
+  // console.log("🚀 Initial FY header set:", activeFY);
 }, []);
 
   return (

@@ -32,6 +32,20 @@ const userSchema = new mongoose.Schema(
       ref: "Company",
       default: null,
     },
+                        //  subscription based 
+     plan: {
+    type: String,
+    enum: ["FREE", "PRO"],
+    default: "FREE",
+  },
+
+  trialEndsAt: Date,
+  isSubscribed: {
+    type: Boolean,
+    default: false,
+  },
+
+  clerkSubscriptionId: String,
 
   },
   { timestamps: true }

@@ -78,6 +78,7 @@ const activeFY = useFinancialYearStore(
     getDashboardKPI();
   }, [activeFY]);
 
+  console.log(activeFY)
 
 
   useEffect(() => {
