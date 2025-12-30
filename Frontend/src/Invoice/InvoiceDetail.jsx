@@ -117,11 +117,13 @@ const InvoiceDetails = () => {
           <b>Sub Total:</b> ₹{totalAmount.toFixed(2)}
         </p>
         <p className="text-xl font-bold">
-          <b>Payable Amount:</b> ₹{totalAmount.toFixed(2)}
+          <b>Round Off:</b> ₹{invoice.roundOff.toFixed(2)}
+        </p>
+        <p className="text-xl font-bold">
+          <b>Payable Amount:</b> ₹{(totalAmount + Number(invoice.roundOff)).toFixed(2)}
         </p>
       </div>
 
-      {/* BUTTONS */}
       <div className="flex flex-wrap justify-center gap-4 mt-6">
 
         <button

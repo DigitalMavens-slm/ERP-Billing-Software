@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-// import axios from "axios";
 import { Navigate } from "react-router-dom";
 import api from "./api";
-// const API_URL=import.meta.env.VITE_API_URL;
 
 const ProtectedRoute = ({ children }) => {
   const [loading, setLoading] = useState(true);
@@ -26,7 +24,7 @@ const ProtectedRoute = ({ children }) => {
   if (!loggedIn) {
     return <Navigate to="/login" replace />;
   }
-
+  
   return children;
 };
 

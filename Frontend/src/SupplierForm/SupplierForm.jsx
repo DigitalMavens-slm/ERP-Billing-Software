@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { useAppLocation } from "../Context/LocationContext";
 import { ExportExcel } from "../Utills/ExportExcel";
 import { ImportExcel } from "../Utills/ImportExcel";
-// const API_URL=import.meta.env.VITE_API_URL
+import {useNavigate} from "react-router-dom"
+import PageActions from "../Components/PageActions"
 import api from "../api"
 
 // console.log(API_URL)
@@ -22,7 +23,7 @@ const initialAddress = {
 
 export default function SupplierForm() {
   const {location,Goback} = useAppLocation();
-// console.log(location)
+  const navigate=useNavigate()
   const [supplier, setSupplier] = useState({
     name: "",
     phone: "",
@@ -104,9 +105,7 @@ export default function SupplierForm() {
 
   const handleSubmit = async (e) => {
   e.preventDefault()
-  console.log("button clicked")
     setMessage("");
-    // if (!validate()) return;
 
     setLoading(true);
     try {
@@ -139,13 +138,25 @@ export default function SupplierForm() {
         onSubmit={handleSubmit}
         className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-md mt-6 border"
       >
-        <button
+        {/* <button
           onClick={Goback}
           type="button"
           className="mb-4 text-blue-600 hover:text-blue-800"
         >
           ← Back
         </button>
+         <button
+          onClick={()=>navigate("/setting/supplierlist")}
+          type="button"
+          className="mb-4 text-blue-600 hover:text-blue-800"
+        >
+          SupplierList
+        </button> */}
+        <PageActions
+         listPath1="/setting"
+         listPath2="/setting/supplierlist"
+  listLabel1="Back"
+  listLabel2="Supplier List"/>
 
         <h2 className="text-2xl font-semibold mb-6 text-gray-800">
           Supplier Details

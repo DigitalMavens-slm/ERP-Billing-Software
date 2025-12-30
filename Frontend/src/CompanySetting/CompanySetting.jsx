@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import api from "../api";
+import useFetchList from "../customHooks/useFetchList";
 
 export default function CompanySettingsForm() {
   const [formData, setFormData] = useState({
@@ -15,7 +16,7 @@ export default function CompanySettingsForm() {
     // financialYearStart: "",
     // financialYearEnd: "",
     currency: "",
-    gstType: "",
+    gstType: "UNREGISTERED",
     compositionScheme: false,
     gstNo: "",
     panNo: "",
@@ -30,39 +31,59 @@ export default function CompanySettingsForm() {
   const [paymentFile, setPaymentFile] = useState(null);
   const [extraPaymentFile, setExtraPaymentFile] = useState(null);
   const [invoiceLocked, setInvoiceLocked] = useState(false);
+  const [gstLocked, setGstLocked] = useState(false);
+
 
 
   const API_URL = import.meta.env.VITE_API_URL;
+const{data} =useFetchList("/api/company-settings");
 
-  // ----------------------------------------------
-  // 🔥 Load Existing Company (if any)
-  // ----------------------------------------------
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const res = await api.get("/api/company-settings", { withCredentials: true });
-        if (res.data) {
-          setFormData(res.data);
-        }
-        if (res.data) {
-        setFormData(res.data);
 
-        if (res.data.invoiceStartNumber) {
-          setInvoiceLocked(true); 
-        }
-      }
-      } catch (err) {
-        console.log("Error loading company:", err);
-      }
-    };
-    loadData();
-  }, []);
+useEffect(() => {
+  if (data) {
+    setFormData(data);
 
-  // ----------------------------------------------
-  // 🔥 Input Change
-  // ----------------------------------------------
+    if (data.invoiceStartNumber) {
+      setInvoiceLocked(true);
+    }
+
+    if (data.gstNo) {
+      setGstLocked(true);
+    }
+  }
+}, [data]);
+
+      // setFormData(data);
+  // useEffect(() => {
+  //   const loadData = async () => {
+  //     try {
+  //       const res = await api.get("/api/company-settings", { withCredentials: true });
+  //       console.log(res.data)
+  //       if (res.data) {
+  //         setFormData(res.data);
+  //       }
+  //       if (res.data) {
+  //       setFormData(res.data);
+
+  //       if (res.data.invoiceStartNumber) {
+  //         setInvoiceLocked(true); 
+  //       }
+  //        if (res.data.gstNo) {
+  //         setGstLocked(true);
+  //       }
+  //     }
+  //     } catch (err) {
+  //       console.log("Error loading company:", err);
+  //     }
+  //   };
+  //   loadData();
+  // }, []);
+
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+  //   
 
     if (name.includes("address.")) {
       const key = name.split(".")[1];
@@ -81,11 +102,12 @@ export default function CompanySettingsForm() {
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
+  //    if (name === "gstType" && value === "REGISTERED") {
+  //   setGstLocked(true);
+  // }
   };
 
-  // ----------------------------------------------
-  // 🔥 File Change
-  // ----------------------------------------------
+  
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     if (name === "logoUrl") setLogoFile(files[0]);
@@ -93,9 +115,7 @@ export default function CompanySettingsForm() {
     if (name === "extraPaymentUrl") setExtraPaymentFile(files[0]);
   };
 
-  // ----------------------------------------------
-  // 🔥 Submit (ONLY POST)
-  // ----------------------------------------------
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -144,7 +164,6 @@ export default function CompanySettingsForm() {
 hint={invoiceLocked ? "Locked (cannot be changed)" : "Set carefully. One-time only"}
   name="invoiceStartNumber"
   value={formData.invoiceStartNumber}
-  // type="number"
   onChange={handleChange}
   disabled={invoiceLocked}
 />
@@ -158,11 +177,12 @@ hint={invoiceLocked ? "Locked (cannot be changed)" : "Set carefully. One-time on
           {/* BASIC */}
           <Section title="Basic Information" color="indigo">
             <div className="grid md:grid-cols-2 gap-6">
-              <InputField label="Company Name" name="companyName" value={formData.companyName} onChange={handleChange} />
-              <InputField label="Contact Person" name="contactPerson" value={formData.contactPerson} onChange={handleChange} />
-              <InputField label="Mobile 1" name="mobile1" value={formData.mobile1} onChange={handleChange} />
+              <InputField label="Company Name" name="companyName" value={formData.companyName} onChange={handleChange} required
+                disabled={invoiceLocked}/>
+              <InputField label="Contact Person" name="contactPerson" value={formData.contactPerson} onChange={handleChange}  />
+              <InputField label="Mobile 1" name="mobile1" value={formData.mobile1} onChange={handleChange} required/>
               <InputField label="Mobile 2" name="mobile2" value={formData.mobile2} onChange={handleChange} />
-              <InputField label="Email" type="email" name="email" value={formData.email} onChange={handleChange} />
+              <InputField label="Email" type="email" name="email" value={formData.email} onChange={handleChange} required />
               <InputField label="Website" name="website" value={formData.website} onChange={handleChange} />
               <InputField label="Industry" name="industry" value={formData.industry} onChange={handleChange} />
             </div>
@@ -194,31 +214,34 @@ hint={invoiceLocked ? "Locked (cannot be changed)" : "Set carefully. One-time on
               <div>
                 <label className="form-label">GST Type</label>
                 <select
-                  name="gstNo"
+                  name="gstType"
                   className="input-box"
-                  value={formData.gstNo}
+                  value={formData.gstType}
                   onChange={handleChange}
                 >
                   <option value="UNREGISTERED">UNREGISTERED</option>
                   <option value="REGISTERED">REGISTERED</option>
                 </select>
               </div>
-              {formData.gstNo !== "REGISTERED"&&(
+              {formData.gstType !== "UNREGISTERED"&&(
 
-              <InputField label="GST Num" name="gstType" value={formData.gstType} onChange={handleChange} />
+              <InputField label="GST Num" name="gstNo" value={formData.gstNo} onChange={handleChange} 
+          
+              disabled={gstLocked} hint={gstLocked ? "GST number cannot be changed once registered" : ""}
+               />
               )}
-              <div className="flex items-center gap-3 mt-6">
+              {/* <div className="flex items-center gap-3 mt-6">
                 <input type="checkbox" name="compositionScheme" checked={formData.compositionScheme} onChange={handleChange} />
                 <label className="text-gray-700">Composition Scheme</label>
-              </div>
+              </div> */}
 
-              <InputField
+              {/* <InputField
                 label="PAN Number"
                 name="panNo"
                 value={formData.panNo}
-                disabled={formData.gstNo !== "REGISTERED"}
+                disabled={formData.gstType !== "REGISTERED"}
                 onChange={handleChange}
-              />
+              /> */}
             </div>
           </Section>
 
@@ -251,10 +274,12 @@ function Section({ title, color, children }) {
   );
 }
 
-function InputField({ label, name, value, onChange,hint, type = "text", disabled }) {
+function InputField({ label, name, value, onChange,hint, type = "text", disabled ,required}) {
   return (
     <div className="w-full">
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <label className="block text-sm font-medium text-gray-700 mb-1">{label}
+        {required && <span className="text-red-500 ml-1">*</span>}
+      </label>
         {hint && (
           <span className="text-xs text-red-500">
             {hint}

@@ -82,7 +82,7 @@ const handleDownload = (id) => {
                 <td className="p-4">{inv.date}</td>
                 {/* <td className="p-4">{inv.dueDate || "-"}</td> */}
                 <td className="p-4 font-medium">
-                  ₹ {inv.subtotal?.toLocaleString()}
+                  ₹ {inv.payableAmount?.toLocaleString()}
                 </td>
 
                 <td className="p-4">

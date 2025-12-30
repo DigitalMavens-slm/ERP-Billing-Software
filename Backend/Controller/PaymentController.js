@@ -113,9 +113,16 @@ exports.addPayment = async (req, res) => {
 // if (supplierObjId) newBalance = prevBalance + debit;
 let newBalance = prevBalance;
 
-if (customerObjId) newBalance = prevBalance - credit;   // customer payment received reduces balance
-if (supplierObjId) newBalance = prevBalance - debit;    // supplier payment paid reduces balance
+if (customerObjId) newBalance = prevBalance - credit;   
+if (supplierObjId) newBalance = prevBalance - debit;   
 
+
+if (!LedgerModel) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid ledger type (customer/supplier missing)"
+  });
+}
 
     await LedgerModel.create({
       customerId: customerObjId,
