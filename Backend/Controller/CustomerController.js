@@ -13,7 +13,7 @@ exports.getCustomers = async (req, res) => {
 // POST create customer
 exports.createCustomer = async (req, res) => {
   try {
-    console.log(req.companyId);
+    // console.log(req.companyId);
     const newCustomer = new Customer({
       ...req.body,
       companyId: req.companyId,
@@ -29,7 +29,9 @@ exports.createCustomer = async (req, res) => {
 // DELETE customer by id
 exports.deleteCustomer = async (req, res) => {
   try {
-    await Customer.findByIdAndDelete(req.params.id);
+    await Customer.findByIdAndDelete(
+      { companyId: req.companyId, _id: req.params.id });
+    
     res.json({ message: "Customer deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: "Error deleting customer" });

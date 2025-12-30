@@ -28,8 +28,9 @@ import EditPurchase from './Components/Purchase/EditPurchase'
 import EditInvoice from "./Invoice/EditInvoice"
 import InvoiceView from "./Invoice/InvoiceView";
 import PurchaseView from "./Components/Purchase/PurchaseView"
-
+import SupplierList from "./SupplierForm/SupplerList"
 import AssignStaff from './Components/AssignStaff'
+import CustomerList from './Components/CustomerForm/CustomerList'
 import DeletedInvoiceList from "./Invoice/DeletedInvoiceList"
 
 function App() {
@@ -46,8 +47,7 @@ function App() {
       <ProtectedRoute>
         <Mainpage />
       </ProtectedRoute>
-    }
-  >
+    }>
     <Route path="dashboard" element={<DashBoard />} />
     <Route path="index" element={<Purchase />} />
     <Route path="purchaselist" element={<PurchaseList />} />
@@ -59,7 +59,9 @@ function App() {
 
     <Route path="setting" element={<Settings />}>
       <Route path="supplier" element={<SupplierForm />} />
+      <Route path="supplierlist" element={<SupplierList/>}/>
       <Route path="customer" element={<CustomerForm />} />
+      <Route path="customerlist" element={<CustomerList/>}/>
       <Route path="product" element={<ProductForm />} />
       <Route path="brand" element={<BrandForm />} />
       <Route path="category" element={<CategoryForm />} />

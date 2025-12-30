@@ -16,7 +16,7 @@ import { useAppLocation } from "../../Context/LocationContext";
 import { ExportExcel } from "../../Utills/ExportExcel";
 import { ImportExcel } from "../../Utills/ImportExcel";
 import api from "../../api"
-// const API_URL = import.meta.env.VITE_API_URL;
+import PageActions from "../PageActions";
 
 const initialAddress = {
   line1: "",
@@ -100,15 +100,18 @@ export default function CustomerForm() {
     <>
       {location.pathname === "/setting/customer" && (
         <div className="p-4 md:p-8 max-w-5xl mx-auto bg-white rounded-xl shadow">
+
+          <PageActions listLabel1="Back" listLabel2="Customer List" 
+          listPath1="/setting" listPath2="/setting/customerlist"/>
           {/* HEADER */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Customer Details</h2>
-            <button
+            {/* <button
               onClick={Goback}
               className="flex items-center text-white gap-2 bg-red-600 px-4 py-2 rounded hover:shadow"
             >
               <ArrowLeft size={18} /> Back
-            </button>
+            </button> */}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">

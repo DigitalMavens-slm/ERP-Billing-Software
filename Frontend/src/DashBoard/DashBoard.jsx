@@ -29,15 +29,20 @@ import {
 
 // const API_URL = import.meta.env.VITE_API_URL;
 import api from "../api"
-
+import useFinancialYearStore from "../Zustand/finacialYearStore"
 export default function DashBoard() {
   const navigate = useNavigate();
 
   const [InvoiceCount, setInvoiceCount] = useState([]);
     const [salesTrendData, setSalesTrendData] = useState([]);
   const [statusPieData, setStatusPieData] = useState([]);
-const [financialYear, setFinancialYear] = useState(
-  localStorage.getItem("financialYear")
+// const [financialYear, setFinancialYear] = useState(
+//   localStorage.getItem("financialYear")
+// );
+
+
+const activeFY = useFinancialYearStore(
+  (state) => state.activeFY
 );
 
   const [kpi, setKpi] = useState({
@@ -63,10 +68,17 @@ const [financialYear, setFinancialYear] = useState(
     setKpi(res.data);
   };
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   invoicefetcher();
+  //   getDashboardKPI();
+  // }, [financialYear]);
+
+    useEffect(() => {
     invoicefetcher();
     getDashboardKPI();
-  }, [financialYear]);
+  }, [activeFY]);
+
+  console.log(activeFY)
 
 
   useEffect(() => {

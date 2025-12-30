@@ -22,61 +22,6 @@ exports.getCompanySettings = async (req, res) => {
   }
 };
 
-// ✅ CREATE or UPDATE COMPANY SETTINGS (Single controller)
-
-// exports.createCompanySettings = async (req, res) => {
-//   try {
-//     const data ={...req.body};
-//     // console.log(data)
-//     data.invoicePrefix = "INV";
-//         data.financialYear=getFinancialYear()
-//     if (req.files) {
-//       if (req.files.logoUrl) data.logoUrl = req.files.logoUrl[0].path;
-//       if (req.files.paymentUrl) data.paymentUrl = req.files.paymentUrl[0].path;
-//       if (req.files.extraPaymentUrl) 
-//         data.extraPaymentUrl = req.files.extraPaymentUrl[0].path;
-//     }
-
-//     const user = await User.findById(req.user);
-
-//     if (user.companyId) {
-//       delete data._id; // ❌ Prevent immutable field error
-
-//       const updatedCompany = await Company.findByIdAndUpdate(
-//         user.companyId,
-//         data,
-//         { new: true }
-//       );
-
-//       return res.status(200).json({
-//         message: "Company updated successfully",
-//         company: updatedCompany,
-//       });
-//     }
-
-
-//     // ✅ CREATE FLOW (first time only)
-//     data.loginUser = req.user;
-
-//     const newCompany = await Company.create(data);
-
-//     // Link company with user
-//     await User.findByIdAndUpdate(req.user, {
-//       companyId: newCompany._id,
-//     });
-
-//     return res.status(201).json({
-//       message: "Company created successfully",
-//       company: newCompany,
-//     });
-
-//   } catch (err) {
-//     console.error("Company creation/update error:", err);
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-
 
 exports.createCompanySettings = async (req, res) => {
   try {
@@ -111,7 +56,22 @@ exports.createCompanySettings = async (req, res) => {
       });
     }
 
-    // 🔁 UPDATE FLOW
+    if (
+  existingCompany &&
+  existingCompany.gstLocked &&
+  data.gstNo &&
+  data.gstNo !== existingCompany.gstNo
+) {
+  return res.status(400).json({
+    message: "GST number already registered and cannot be changed",
+  });
+}
+
+if (existingCompany && !existingCompany.gstLocked &&data.gstNo) {
+  data.gstLocked = true;
+  data.gstType = "REGISTERED";
+}
+
     if (existingCompany) {
       delete data._id;
 
@@ -130,6 +90,10 @@ exports.createCompanySettings = async (req, res) => {
     // 🆕 CREATE FLOW (first time only)
     data.loginUser = req.user;
 
+    if (data.gstNo) {
+  data.gstLocked = true;
+  data.gstType = "REGISTERED";
+}
     const newCompany = await Company.create(data);
 
     await User.findByIdAndUpdate(req.user, {

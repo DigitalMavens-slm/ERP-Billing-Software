@@ -49,6 +49,10 @@ const companySchema = new mongoose.Schema({
     ifsc: String,
     bankName: String
   },
+  gstLocked: {
+  type: Boolean,
+  default: false
+},
   logoUrl: String,
   paymentUrl: String,
   extraPaymentUrl: String

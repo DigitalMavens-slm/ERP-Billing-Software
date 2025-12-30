@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 // import axios from "axios";
 import { useAppLocation } from "../../Context/LocationContext";
-// const API_URL=import.meta.env.VITE_API_URL
 import api from "../../api"
+import PageActions from "../PageActions";
+import ToggleActions from "../ToggleActions"
 
 export default function SubCategoryForm() {
   const {location,Goback} = useAppLocation();
@@ -72,12 +73,21 @@ export default function SubCategoryForm() {
     }
   };
 
+  const [showList, setShowList] = useState(false);
   return (
   <>
+
+<ToggleActions
+  leftLabel="New Brand"
+  rightLabel="Brand List"
+  isRightActive={showList}
+  onLeftClick={() => setShowList(false)}
+  onRightClick={() => setShowList(true)}
+/>
     {location.pathname === "/setting/subcategory" && (
       <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg mt-6">
         
-        <button
+        {/* <button
           onClick={Goback}
           className="mb-4 text-sm text-blue-600 hover:underline"
         >
@@ -86,8 +96,10 @@ export default function SubCategoryForm() {
 
         <h2 className="text-2xl font-semibold mb-6 text-gray-800">
           Sub-Category Management
-        </h2>
+        </h2> */}
 
+        {/* <PageActions listLabel1="Back" listLabel2="Sub Category List" /> */}
+{!showList&&(
         <form
           onSubmit={handleSubmit}
           className="space-y-4 bg-gray-50 p-4 rounded-lg border"
@@ -120,14 +132,14 @@ export default function SubCategoryForm() {
           >
             {loading ? "Saving..." : "Add Sub-Category"}
           </button>
-        </form>
+        </form>)}
 
         {message && (
           <div className="mt-4 p-2 bg-green-100 text-green-700 rounded-md">
             {message}
           </div>
         )}
-
+      {showList&&(
         <ul className="mt-6 space-y-3">
           {subCategories.map((s) => (
             <li
@@ -153,6 +165,8 @@ export default function SubCategoryForm() {
             </li>
           ))}
         </ul>
+        )}
+      {/* )} */}
       </div>
     )}
   </>

@@ -92,7 +92,6 @@ const InvoiceView = () => {
 
   const grandTotal = subtotal + cgstTotal + sgstTotal + igstTotal;
 
-  /* ================= UI ================= */
 
   return (
     <div className="bg-blue-50 min-h-screen p-6">
@@ -156,7 +155,6 @@ const InvoiceView = () => {
 </div>
 
 
-        {/* ===== ITEMS TABLE ===== */}
         <table className="w-full border text-sm">
           <thead className="bg-blue-600 text-white">
             <tr>
@@ -174,7 +172,9 @@ const InvoiceView = () => {
           </thead>
 
           <tbody>
+
             {invoice.items.map((item, i) => {
+              console.log(item)
               const taxable = item.qty * item.rate;
 
               let cgst = 0,
@@ -194,9 +194,9 @@ const InvoiceView = () => {
               return (
                 <tr key={i}>
                   <td className="border p-2">{item.product}</td>
-                  <td className="border p-2">{item.hsncode}</td>
+                  <td className="border p-2">{item.productId?.hsncode}</td>
                   <td className="border p-2 text-center">{item.qty}</td>
-                  <td className="border p-2 text-center">{item.unit}</td>
+                  <td className="border p-2 text-center">{item.productId?.unit}</td>
                   <td className="border p-2 text-right">₹{item.rate}</td>
                   <td className="border p-2 text-center">{item.tax}%</td>
 
@@ -225,7 +225,6 @@ const InvoiceView = () => {
           </tbody>
         </table>
 
-        {/* ===== TOTAL ===== */}
         <div className="flex justify-end mt-6">
           <div className="w-1/3 text-sm border-t pt-3">
             <p className="flex justify-between">
@@ -248,12 +247,17 @@ const InvoiceView = () => {
                   <span>SGST</span>
                   <span>₹{sgstTotal.toFixed(2)}</span>
                 </p>
+                <p className="flex justify-between">
+                  <span>RoundOff</span>
+                  <span>₹{invoice.roundOff}</span>
+                </p>
               </>
             )}
-
             <p className="flex justify-between font-bold text-blue-600 text-lg">
               <span>Grand Total</span>
-              <span>₹{grandTotal.toFixed(2)}</span>
+              {/* <span>₹{grandTotal+invoice.roundOff.toFixed(2)}</span> */}
+              <span>₹{(grandTotal + Number(invoice.roundOff)).toFixed(2)}</span>
+
             </p>
           </div>
         </div>

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-// import Axios from "axios";
 import './LoginSignup.css'
-// const API_URL=import.meta.env.VITE_API_URL
+import {useNavigate} from "react-router-dom"
 import api from "../../api"
 const LoginSignup = () => {
   const [state, setState] = useState("Login");
+  const navigate = useNavigate()
 
   const [user, setUser] = useState({
     name: "",
@@ -30,7 +30,6 @@ const LoginSignup = () => {
     try {
       await api.post(`/api/signup`, user,);
       alert("Account created!");
-      // setUser("")
       setState("Login");
     } catch (err) {
       console.error("Registration Error:", err);
@@ -44,7 +43,8 @@ const LoginSignup = () => {
     try {
       const res=  await api.post(`/api/login`,user,);
 //  localStorage.setItem("token", res.data.token);
-      window.location.replace("/index");
+      //  navigate()
+      window.location.replace("/dashboard");
     } catch (err) {
       console.log(err);
       alert("Login failed! Check email or password.");
@@ -91,7 +91,6 @@ const LoginSignup = () => {
             className="input-box"
           />
 
-          {/* ROLE (Only in Sign-Up) */}
           {state === "Sign-Up" && (
             <select
               name="role"
@@ -105,7 +104,6 @@ const LoginSignup = () => {
             </select>
           )}
 
-          {/* COMPANY CODE (Only in Sign-Up) */}
           {state === "Sign-Up" && (
             <input
               type="text"
@@ -118,7 +116,7 @@ const LoginSignup = () => {
           )}
         </div>
 
-        {/* BUTTON */}
+
         <button
           onClick={() => (state === "Login" ? signin() : Register())}
           className="btn-primary"
@@ -126,7 +124,7 @@ const LoginSignup = () => {
           Continue
         </button>
 
-        {/* SWITCH STATE */}
+
         <p className="text-center text-gray-600 mt-4">
           {state === "Sign-Up" ? (
             <>

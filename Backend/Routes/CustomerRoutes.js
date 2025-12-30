@@ -11,7 +11,7 @@ const companyCheck = require("../Middlewares/companyCheck");
 
 router.get("/customers", auth, companyCheck, CustomerController.getCustomers);
 router.post("/customers",auth, companyCheck, CustomerController.createCustomer);
-router.delete("/customers/:id", CustomerController.deleteCustomer);
+router.delete("/customers/:id",auth, companyCheck, CustomerController.deleteCustomer);
 
 
 router.get("/export/:modelname/export/excel",AllModelExportExcel);

@@ -13,13 +13,12 @@ const getAllInvoices = async (req, res) => {
     const resPerPage = 10;
     const currentPage = Number(req.query.page) || 1;
 
-    console.log(req.financialYear)
-    // 🔥 TOTAL COUNT (without pagination)
+ 
     const totalInvoices = await Invoice.countDocuments({
       companyId: req.companyId,
       financialYear:req.financialYear,
       isDeleted: false,
-    });
+    }).populate("items.product", "name hsncode unit")
 
     const apiFeatures = new APIFeatures(
       Invoice.find({ companyId: req.companyId ,financialYear:req.financialYear,isDeleted: false}),
@@ -205,7 +204,9 @@ const createInvoice = async (req, res) => {
 const getInvoiceById = async (req, res) => {
   try {
     console.log("getmethod",req.params.id)
-    const invoice = await Invoice.findById(req.params.id).populate("customerId");
+    const invoice = await Invoice.findById(req.params.id)
+    .populate("customerId") 
+    .populate("items.productId", "name hsncode unit");
     if (!invoice)
       return res
         .status(404)

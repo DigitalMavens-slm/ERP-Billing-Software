@@ -12,11 +12,11 @@ const LedgerSchema = new mongoose.Schema(
       ref: "Customer",
       required: false,
     },
-     financialYear: {
-  type: String,
-  required: true,
-  index: true
-},
+//      financialYear: {
+//   type: String,
+//   required: true,
+//   index: true
+// },
     supplierId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Supplier",

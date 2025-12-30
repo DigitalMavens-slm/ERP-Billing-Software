@@ -16,9 +16,11 @@ exports.signup = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+          //  subscription
+  const trialEnds = new Date();
+  trialEnds.setDate(trialEnds.getDate() + 7);
 
-    user = new User({ name, email, password: hashedPassword, role });
-    // console.log(user)
+    user = new User({ name, email, password: hashedPassword, role,  trialEndsAt: trialEnds, });
     await user.save();
 
     return res.status(201).json({ message: "User registered successfully" });
@@ -27,9 +29,6 @@ exports.signup = async (req, res) => {
   }
 };
 
-
-
-// const isProd = process.env.NODE_ENV === "production";
 
 exports.login = async (req, res) => {
   console.log(req.body)
