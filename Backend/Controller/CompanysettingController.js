@@ -1,5 +1,4 @@
 const Company = require("../Model/CompanysettingModel"); // correct import
-// const CompanySetting = require("../Model/CompanysettingModel");
 const User = require("../Model/userModel"); // correct import
 const getFinancialYear=require("../Utills/getFinancialYear")
 
@@ -10,7 +9,7 @@ exports.getCompanySettings = async (req, res) => {
     const user = await User.findById(req.user);
 
     if (!user || !user.companyId) {
-      return res.json(null); // NEW USER → NO COMPANY YET
+      return res.json(null); 
     }
 
     const company = await Company.findById(user.companyId);
@@ -43,7 +42,6 @@ exports.createCompanySettings = async (req, res) => {
       ? await Company.findById(user.companyId)
       : null;
 
-    // 🔐 INVOICE START NUMBER – ONE TIME ONLY
     if (
       existingCompany &&
       existingCompany.invoiceStartNumber &&
@@ -71,6 +69,9 @@ if (existingCompany && !existingCompany.gstLocked &&data.gstNo) {
   data.gstLocked = true;
   data.gstType = "REGISTERED";
 }
+
+
+
 
     if (existingCompany) {
       delete data._id;
@@ -110,3 +111,4 @@ if (existingCompany && !existingCompany.gstLocked &&data.gstNo) {
     res.status(500).json({ error: err.message });
   }
 };
+

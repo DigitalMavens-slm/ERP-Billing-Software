@@ -1,6 +1,5 @@
 import React, { useState,useEffect } from "react";
 import { Link, useLocation, Outlet,useNavigate } from "react-router-dom";
-// import { Trash2 } from "lucide-react";
 
 import {
   Home, ShoppingCart,FileText,CreditCard,Boxes,Settings,BarChart,Building,Bell,
@@ -9,6 +8,7 @@ import {
   import { useAuth } from "../Context/AuthContext";
   import api from "../api";
 import useFinancialYearStore from "../Zustand/finacialYearStore"
+import useFetchList from "../customHooks/useFetchList";
 
 const Mainpage = () => {
   const { user } = useAuth();
@@ -54,6 +54,14 @@ const [isVerifiedCompany, setIsVerifiedCompany] = useState(false);
     }
   };
 
+  const{data} =useFetchList("/api/company-settings");
+  console.log(data)
+ useEffect(() => {
+  if (data?.companyName) {
+    setIsVerifiedCompany(true);
+  }
+}, [data]);
+  
   useEffect(() => {
   api.defaults.headers.common["x-financial-year"] = activeFY;
   // console.log("🚀 Initial FY header set:", activeFY);
@@ -103,7 +111,7 @@ const [isVerifiedCompany, setIsVerifiedCompany] = useState(false);
 
   {/* Hover menu */}
   {showMenu && (
-    <div className="absolute -right-20 mt-2 w-44 bg-white rounded-xl shadow-lg border z-50">
+    <div className="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border z-50">
 
 {role === "admin" &&(
       <div className="flex items-center gap-2 px-4 py-3 border-b text-sm
@@ -138,7 +146,7 @@ const [isVerifiedCompany, setIsVerifiedCompany] = useState(false);
 </div>
 
           {/* <User2 className="w-7 h-7 cursor-pointer" /> */}
-          <ArrowRight size={24} color="blue" onClick={logout} />
+          {/* <ArrowRight size={24} color="blue" onClick={logout} /> */}
         </div>
       </header>
 
@@ -299,12 +307,12 @@ const [isVerifiedCompany, setIsVerifiedCompany] = useState(false);
                 <BarChart size={20} /> Reports
               </Link>
 
-              <Link
+              {/* <Link
                 to="company"
                 className={`sidebar-btn ${isActive("company") ? "sidebar-active" : ""}`}
               >
                 <Building size={20} /> Company
-              </Link>
+              </Link> */}
 
 
                                      {/* deleted icon */}
@@ -330,6 +338,13 @@ const [isVerifiedCompany, setIsVerifiedCompany] = useState(false);
               >
                 <User2 size={20} /> Assign Staff
               </Link>
+
+              <Link
+  onClick={logout}
+  className={`sidebar-btn ${isActive("logout") ? "sidebar-active" : ""}`}
+>
+  <LogOut size={20} /> Sign Out
+</Link>
             </>
           )}
         </aside>

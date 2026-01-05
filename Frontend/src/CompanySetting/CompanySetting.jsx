@@ -4,6 +4,11 @@ import api from "../api";
 import useFetchList from "../customHooks/useFetchList";
 
 export default function CompanySettingsForm() {
+  const gstRegex =
+  /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+
+  const [gstError, setGstError] = useState("");
+
   const [formData, setFormData] = useState({
     companyName: "",
     contactPerson: "",
@@ -12,9 +17,6 @@ export default function CompanySettingsForm() {
     email: "",
     website: "",
     industry: "",
-    // currentFinancialYear: "",
-    // financialYearStart: "",
-    // financialYearEnd: "",
     currency: "",
     gstType: "UNREGISTERED",
     compositionScheme: false,
@@ -53,33 +55,7 @@ useEffect(() => {
   }
 }, [data]);
 
-      // setFormData(data);
-  // useEffect(() => {
-  //   const loadData = async () => {
-  //     try {
-  //       const res = await api.get("/api/company-settings", { withCredentials: true });
-  //       console.log(res.data)
-  //       if (res.data) {
-  //         setFormData(res.data);
-  //       }
-  //       if (res.data) {
-  //       setFormData(res.data);
-
-  //       if (res.data.invoiceStartNumber) {
-  //         setInvoiceLocked(true); 
-  //       }
-  //        if (res.data.gstNo) {
-  //         setGstLocked(true);
-  //       }
-  //     }
-  //     } catch (err) {
-  //       console.log("Error loading company:", err);
-  //     }
-  //   };
-  //   loadData();
-  // }, []);
-
-
+     
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -118,6 +94,13 @@ useEffect(() => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+  //    if (formData.gstType !== "UNREGISTERED") {
+  //   if (!gstRegex.test(formData.gstNo)) {
+  //     setGstError("Invalid GST number format");
+  //     return; // ❌ STOP SUBMIT
+  //   }
+  // }
 
     const data = new FormData();
 
@@ -225,23 +208,15 @@ hint={invoiceLocked ? "Locked (cannot be changed)" : "Set carefully. One-time on
               </div>
               {formData.gstType !== "UNREGISTERED"&&(
 
-              <InputField label="GST Num" name="gstNo" value={formData.gstNo} onChange={handleChange} 
+              <InputField label="GST Num" name="gstNo" value={formData.gstNo}  onChange={(e) => {
+        handleChange(e);
+        setGstError(""); 
+      }}
           
               disabled={gstLocked} hint={gstLocked ? "GST number cannot be changed once registered" : ""}
                />
               )}
-              {/* <div className="flex items-center gap-3 mt-6">
-                <input type="checkbox" name="compositionScheme" checked={formData.compositionScheme} onChange={handleChange} />
-                <label className="text-gray-700">Composition Scheme</label>
-              </div> */}
-
-              {/* <InputField
-                label="PAN Number"
-                name="panNo"
-                value={formData.panNo}
-                disabled={formData.gstType !== "REGISTERED"}
-                onChange={handleChange}
-              /> */}
+              
             </div>
           </Section>
 

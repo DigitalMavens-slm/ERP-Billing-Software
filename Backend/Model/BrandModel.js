@@ -7,6 +7,11 @@ const brandSchema = new mongoose.Schema({
     trim: true,  // ✅ Avoid spaces-only strings
     // unique: true 
   },
+   companyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
+      default: null,
+    },
 }, { timestamps: true }); // ✅ (optional) for createdAt, updatedAt fields
 
 const BrandModel = mongoose.model("Brand", brandSchema);

@@ -53,8 +53,8 @@ function CustomerList() {
   const columns = [
     { label: "Name", key: "name" },
     { label: "Email", key: "email" },
-    { label: "GST", key: "gst" },
-    { label: "Phone", key: "mobile" }
+    { label: "GST", key: "gstin" },
+    { label: "Phone", key: "phone" }
   ];
 
   return (

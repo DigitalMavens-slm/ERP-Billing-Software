@@ -42,8 +42,7 @@ const LoginSignup = () => {
 
     try {
       const res=  await api.post(`/api/login`,user,);
-//  localStorage.setItem("token", res.data.token);
-      //  navigate()
+
       window.location.replace("/dashboard");
     } catch (err) {
       console.log(err);
@@ -100,7 +99,7 @@ const LoginSignup = () => {
             >
               <option value="">Select Role</option>
               <option value="admin">Admin</option>
-              <option value="staff">Staff</option>
+              {/* <option value="staff">Staff</option> */}
             </select>
           )}
 
@@ -138,13 +137,13 @@ const LoginSignup = () => {
             </>
           ) : (
             <>
-              Create an account?{" "}
+              {/* Create an account?{" "}
               <span
                 onClick={() => setState("Sign-Up")}
                 className="text-indigo-600 font-semibold cursor-pointer hover:underline"
               >
                 Click here
-              </span>
+              </span> */}
             </>
           )}
         </p>

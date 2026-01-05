@@ -1,23 +1,37 @@
 const SubCategory = require("../Model/SubCategoryModel");
 
-// GET all subcategories
+
+
+
 exports.getSubCategories = async (req, res) => {
   try {
-    const subCategories = await SubCategory.find();
+    const companyId = req.user.companyId;
+
+    const subCategories = await SubCategory.find({ companyId });
+
     res.json(subCategories);
   } catch (err) {
     res.status(500).json({ message: "Error fetching subcategories" });
   }
 };
 
-// POST create subcategory
+
 exports.createSubCategory = async (req, res) => {
   const { name, categoryId } = req.body;
-  if (!name || !categoryId) 
-    return res.status(400).json({ message: "Name and categoryId required" });
+
+  if (!name || !categoryId) {
+    return res.status(400).json({
+      message: "Name and categoryId required",
+    });
+  }
 
   try {
-    const subCategory = new SubCategory({ name, categoryId });
+    const subCategory = new SubCategory({
+      name,
+      categoryId,
+      companyId: req.user.companyId, // 🔥 important
+    });
+
     await subCategory.save();
     res.status(201).json(subCategory);
   } catch (err) {
@@ -25,12 +39,24 @@ exports.createSubCategory = async (req, res) => {
   }
 };
 
-// DELETE subcategory
+
+
 exports.deleteSubCategory = async (req, res) => {
   try {
-    await SubCategory.findByIdAndDelete(req.params.id);
+    const deleted = await SubCategory.findOneAndDelete({
+      _id: req.params.id,
+      companyId: req.user.companyId,
+    });
+
+    if (!deleted) {
+      return res.status(404).json({
+        message: "Subcategory not found or not authorized",
+      });
+    }
+
     res.json({ message: "Subcategory deleted" });
   } catch (err) {
     res.status(500).json({ message: "Error deleting subcategory" });
   }
 };
+

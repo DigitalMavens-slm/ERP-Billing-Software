@@ -1,18 +1,3 @@
-// import { create } from "zustand";
-
-// const useFinancialYearStore = create((set) => ({
-//   financialYear: localStorage.getItem("financialYear"),
-
-//   setFinancialYear: (year) => {
-//     localStorage.setItem("financialYear", year);
-//     set({ financialYear: year }); 
-//   },
-// }));
-
-
-// export default useFinancialYearStore;
-
-
 
 import { create } from "zustand";
 
@@ -30,7 +15,7 @@ const useFinancialYearStore = create((set) => ({
     set({ activeFY: fy });
   },
 
-  getFY, // optional-aa expose pannren
+  getFY, 
 }));
 
 export default useFinancialYearStore;
