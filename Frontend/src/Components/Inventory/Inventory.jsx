@@ -38,64 +38,142 @@ export default function Inventory() {
     );
   };
 
+  // return (
+  //   <div className="p-6 max-w-6xl mx-auto">
+  //     <h2 className="text-3xl font-bold text-center mb-6">📊 Inventory Dashboard</h2>
+
+  //     <div className="overflow-x-auto shadow-xl rounded-lg border">
+  //       <table className="min-w-full bg-white">
+  //         <thead>
+  //           <tr className="bg-gray-800 text-white">
+  //             <th className="py-3 px-4 text-left">Product</th>
+  //             <th className="py-3 px-4 text-center">Purchased</th>
+  //             <th className="py-3 px-4 text-center">Sold</th>
+  //             <th className="py-3 px-4 text-center">Available</th>
+  //             <th className="py-3 px-4 text-center">Min Qty</th>
+  //             <th className="py-3 px-4 text-center">Status</th>
+  //           </tr>
+  //         </thead>
+
+  //         <tbody>
+  //           {inventory.map((item) => {
+  //             const purchased = item.totalPurchased || 0; // if you add later
+  //             const sold = item.totalSold || 0; // from invoice reduce logic
+  //             const available = item.minQty; // your available stock
+
+  //             return (
+  //               <tr
+  //                 key={item._id}
+  //                 className="border-b hover:bg-gray-50 transition"
+  //               >
+  //                 <td className="py-3 px-4 font-medium text-gray-700">
+  //                   {item?.productId?.name}
+  //                 </td>
+
+  //                 <td className="py-3 px-4 text-center text-blue-600 font-semibold">
+  //                   {purchased}
+  //                 </td>
+
+  //                 <td className="py-3 px-4 text-center text-red-600 font-semibold">
+  //                   {sold}
+  //                 </td>
+
+  //                 <td className="py-3 px-4 text-center font-semibold">
+  //                   {available}
+  //                 </td>
+
+  //                 <td className="py-3 px-4 text-center text-orange-600 font-semibold">
+  //                   {item.minQty}
+  //                 </td>
+
+  //                 <td className="py-3 px-4 text-center">
+  //                   {getStatusBadge(available, item.minQty)}
+  //                 </td>
+  //               </tr>
+  //             );
+  //           })}
+  //         </tbody>
+  //       </table>
+  //     </div>
+  //   </div>
+  // );
+
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h2 className="text-3xl font-bold text-center mb-6">📊 Inventory Dashboard</h2>
+  <div className="p-4 md:p-6 max-w-6xl mx-auto">
 
-      <div className="overflow-x-auto shadow-xl rounded-lg border">
-        <table className="min-w-full bg-white">
-          <thead>
-            <tr className="bg-gray-800 text-white">
-              <th className="py-3 px-4 text-left">Product</th>
-              <th className="py-3 px-4 text-center">Purchased</th>
-              <th className="py-3 px-4 text-center">Sold</th>
-              <th className="py-3 px-4 text-center">Available</th>
-              <th className="py-3 px-4 text-center">Min Qty</th>
-              <th className="py-3 px-4 text-center">Status</th>
-            </tr>
-          </thead>
+    <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">
+      📊 Inventory Dashboard
+    </h2>
 
-          <tbody>
-            {inventory.map((item) => {
-              const purchased = item.totalPurchased || 0; // if you add later
-              const sold = item.totalSold || 0; // from invoice reduce logic
-              const available = item.minQty; // your available stock
+    <div className="overflow-x-auto shadow-xl rounded-lg border bg-white">
+      <table className="w-full text-sm md:text-base text-left">
 
-              return (
-                <tr
-                  key={item._id}
-                  className="border-b hover:bg-gray-50 transition"
-                >
-                  <td className="py-3 px-4 font-medium text-gray-700">
-                    {item?.productId?.name}
-                  </td>
+        <thead>
+          <tr className="bg-gray-800 text-white">
+            <th className="py-3 px-3 md:px-4">Product</th>
+            <th className="py-3 px-3 md:px-4 text-center hidden sm:table-cell">
+              Purchased
+            </th>
+            <th className="py-3 px-3 md:px-4 text-center hidden sm:table-cell">
+              Sold
+            </th>
+            <th className="py-3 px-3 md:px-4 text-center">
+              Available
+            </th>
+            <th className="py-3 px-3 md:px-4 text-center hidden md:table-cell">
+              Min Qty
+            </th>
+            <th className="py-3 px-3 md:px-4 text-center">
+              Status
+            </th>
+          </tr>
+        </thead>
 
-                  <td className="py-3 px-4 text-center text-blue-600 font-semibold">
-                    {purchased}
-                  </td>
+        <tbody>
+          {inventory.map((item) => {
+            const purchased = item.totalPurchased || 0;
+            const sold = item.totalSold || 0;
+            const available = item.minQty;
 
-                  <td className="py-3 px-4 text-center text-red-600 font-semibold">
-                    {sold}
-                  </td>
+            return (
+              <tr
+                key={item._id}
+                className="border-b hover:bg-gray-50 transition"
+              >
+                <td className="py-3 px-3 md:px-4 font-medium text-gray-700">
+                  {item?.productId?.name}
+                </td>
 
-                  <td className="py-3 px-4 text-center font-semibold">
-                    {available}
-                  </td>
+                <td className="py-3 px-3 md:px-4 text-center text-blue-600 font-semibold hidden sm:table-cell">
+                  {purchased}
+                </td>
 
-                  <td className="py-3 px-4 text-center text-orange-600 font-semibold">
-                    {item.minQty}
-                  </td>
+                <td className="py-3 px-3 md:px-4 text-center text-red-600 font-semibold hidden sm:table-cell">
+                  {sold}
+                </td>
 
-                  <td className="py-3 px-4 text-center">
-                    {getStatusBadge(available, item.minQty)}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+                <td className="py-3 px-3 md:px-4 text-center font-semibold">
+                  {available}
+                </td>
+
+                <td className="py-3 px-3 md:px-4 text-center text-orange-600 font-semibold hidden md:table-cell">
+                  {item.minQty}
+                </td>
+
+                <td className="py-3 px-3 md:px-4 text-center">
+                  {getStatusBadge(available, item.minQty)}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+
+      </table>
     </div>
-  );
+
+  </div>
+);
+
+
 }
 

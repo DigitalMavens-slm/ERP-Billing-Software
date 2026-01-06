@@ -93,94 +93,268 @@ const InvoiceView = () => {
   const grandTotal = subtotal + cgstTotal + sgstTotal + igstTotal;
 
 
-  return (
-    <div className="bg-blue-50 min-h-screen p-6">
-      <div
-        ref={componentRef}
-        className="mx-auto max-w-4xl bg-white p-8 border font-sans"
-      >
-        {/* ===== HEADER ===== */}
-        <div className="flex justify-between border-b-4 border-blue-600 pb-4 mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-blue-600">
-              {companyName}
-            </h2>
-            <p className="text-sm">
-              {address?.street}, {address?.city} <br />
-              {address?.state} - {address?.pincode} <br />
-              <b>GSTIN:</b> {gstNo} <br />
-              <b>Phone:</b> {mobile1} <br />
-              <b>Email:</b> {email}
-            </p>
-          </div>
-        </div>
+//   return (
+//     <div className="bg-blue-50 min-h-screen p-6">
+//       <div
+//         ref={componentRef}
+//         className="mx-auto max-w-4xl bg-white p-8 border font-sans"
+//       >
+//         {/* ===== HEADER ===== */}
+//         <div className="flex justify-between border-b-4 border-blue-600 pb-4 mb-6">
+//           <div>
+//             <h2 className="text-2xl font-bold text-blue-600">
+//               {companyName}
+//             </h2>
+//             <p className="text-sm">
+//               {address?.street}, {address?.city} <br />
+//               {address?.state} - {address?.pincode} <br />
+//               <b>GSTIN:</b> {gstNo} <br />
+//               <b>Phone:</b> {mobile1} <br />
+//               <b>Email:</b> {email}
+//             </p>
+//           </div>
+//         </div>
 
        
 
 
-          <div className="grid grid-cols-3 gap-6 mb-6">
-  <div>
-    <h3 className="font-semibold text-blue-600 mb-1">Bill To</h3>
-    <p className="font-medium">{invoice.customerName}</p>
-    <p>{invoice.customerId?.billingAddress?.line1}</p>
-    <p>
-      {invoice.customerId?.billingAddress?.city},{" "}
-      {invoice.customerId?.billingAddress?.state} -{" "}
-      {invoice.customerId?.billingAddress?.pincode}
-    </p>
-    <p>GSTIN: {invoice.customerId?.gstin}</p>
-    <p>Phone: {invoice.customerId?.phone}</p>
-  </div>
+//           <div className="grid grid-cols-3 gap-6 mb-6">
+//   <div>
+//     <h3 className="font-semibold text-blue-600 mb-1">Bill To</h3>
+//     <p className="font-medium">{invoice.customerName}</p>
+//     <p>{invoice.customerId?.billingAddress?.line1}</p>
+//     <p>
+//       {invoice.customerId?.billingAddress?.city},{" "}
+//       {invoice.customerId?.billingAddress?.state} -{" "}
+//       {invoice.customerId?.billingAddress?.pincode}
+//     </p>
+//     <p>GSTIN: {invoice.customerId?.gstin}</p>
+//     <p>Phone: {invoice.customerId?.phone}</p>
+//   </div>
 
-  <div>
-    <h3 className="font-semibold text-blue-600 mb-1">Ship To</h3>
-    <p>{invoice.customerId?.shippingAddress?.line1}</p>
-    <p>
-      {invoice.customerId?.shippingAddress?.city},{" "}
-      {invoice.customerId?.shippingAddress?.state} -{" "}
-      {invoice.customerId?.shippingAddress?.pincode}
-    </p>
-  </div>
+//   <div>
+//     <h3 className="font-semibold text-blue-600 mb-1">Ship To</h3>
+//     <p>{invoice.customerId?.shippingAddress?.line1}</p>
+//     <p>
+//       {invoice.customerId?.shippingAddress?.city},{" "}
+//       {invoice.customerId?.shippingAddress?.state} -{" "}
+//       {invoice.customerId?.shippingAddress?.pincode}
+//     </p>
+//   </div>
 
-  {/* ===== INVOICE INFO ===== */}
-  <div className="text-right">
-    <h1 className="text-3xl font-bold text-blue-600">INVOICE</h1>
-    <p>
-      <b>No:</b> {invoice.invoiceNum}
-    </p>
-    <p>
-      <b>Date:</b> {invoice.date.slice(0, 10)}
-    </p>
-  </div>
-</div>
+//   {/* ===== INVOICE INFO ===== */}
+//   <div className="text-right">
+//     <h1 className="text-3xl font-bold text-blue-600">INVOICE</h1>
+//     <p>
+//       <b>No:</b> {invoice.invoiceNum}
+//     </p>
+//     <p>
+//       <b>Date:</b> {invoice.date.slice(0, 10)}
+//     </p>
+//   </div>
+// </div>
 
 
-        <table className="w-full border text-sm">
+//         <table className="w-full border text-sm">
+//           <thead className="bg-blue-600 text-white">
+//             <tr>
+//               <th className="border p-2">Item</th>
+//               <th className="border p-2">Hsn Code</th>
+//               <th className="border p-2">Qty</th>
+//               <th className="border p-2">Unit</th>
+//               <th className="border p-2">Rate</th>
+//               <th className="border p-2">GST%</th>
+//               <th className="border p-2">Taxable</th>
+//               <th className="border p-2">CGST </th>
+//               <th className="border p-2">SGST</th>
+//               <th className="border p-2">Total</th>
+//             </tr>
+//           </thead>
+
+//           <tbody>
+
+//             {invoice.items.map((item, i) => {
+//               console.log(item)
+//               const taxable = item.qty * item.rate;
+
+//               let cgst = 0,
+//                 sgst = 0,
+//                 igst = 0,
+//                 total = 0;
+
+//               if (item.taxType === "IGST") {
+//                 igst = (taxable * item.tax) / 100;
+//                 total = taxable + igst;
+//               } else {
+//                 cgst = (taxable * item.tax) / 200;
+//                 sgst = (taxable * item.tax) / 200;
+//                 total = taxable + cgst + sgst;
+//               }
+
+//               return (
+//                 <tr key={i}>
+//                   <td className="border p-2">{item.product}</td>
+//                   <td className="border p-2">{item.productId?.hsncode}</td>
+//                   <td className="border p-2 text-center">{item.qty}</td>
+//                   <td className="border p-2 text-center">{item.productId?.unit}</td>
+//                   <td className="border p-2 text-right">₹{item.rate}</td>
+//                   <td className="border p-2 text-center">{item.tax}%</td>
+
+//                   <td className="border p-2 text-right">
+//                     ₹{taxable.toFixed(2)}
+//                   </td>
+
+//                   <td className="border p-2 text-right">
+//                     {item.taxType === "IGST"
+//                       ? `IGST ₹${igst.toFixed(2)}`
+//                       : `₹${cgst.toFixed(2)}`}
+//                   </td>
+
+//                   <td className="border p-2 text-right">
+//                     {item.taxType === "IGST"
+//                       ? "-"
+//                       : `₹${sgst.toFixed(2)}`}
+//                   </td>
+
+//                   <td className="border p-2 text-right font-bold">
+//                     ₹{total.toFixed(2)}
+//                   </td>
+//                 </tr>
+//               );
+//             })}
+//           </tbody>
+//         </table>
+
+//         <div className="flex justify-end mt-6">
+//           <div className="w-1/3 text-sm border-t pt-3">
+//             <p className="flex justify-between">
+//               <span>Subtotal</span>
+//               <span>₹{subtotal.toFixed(2)}</span>
+//             </p>
+
+//             {igstTotal > 0 ? (
+//               <p className="flex justify-between">
+//                 <span>IGST</span>
+//                 <span>₹{igstTotal.toFixed(2)}</span>
+//               </p>
+//             ) : (
+//               <>
+//                 <p className="flex justify-between">
+//                   <span>CGST</span>
+//                   <span>₹{cgstTotal.toFixed(2)}</span>
+//                 </p>
+//                 <p className="flex justify-between">
+//                   <span>SGST</span>
+//                   <span>₹{sgstTotal.toFixed(2)}</span>
+//                 </p>
+//                 <p className="flex justify-between">
+//                   <span>RoundOff</span>
+//                   <span>₹{invoice.roundOff}</span>
+//                 </p>
+//               </>
+//             )}
+//             <p className="flex justify-between font-bold text-blue-600 text-lg">
+//               <span>Grand Total</span>
+//               {/* <span>₹{grandTotal+invoice.roundOff.toFixed(2)}</span> */}
+//               <span>₹{(grandTotal + Number(invoice.roundOff)).toFixed(2)}</span>
+
+//             </p>
+//           </div>
+//         </div>
+//       </div>
+
+//       {!isPrintMode && (
+//         <div className="text-center mt-6">
+//           <button
+//             onClick={handlePrint}
+//             className="bg-blue-600 text-white px-6 py-2 rounded"
+//           >
+//             Download / Print Invoice
+//           </button>
+//         </div>
+//       )}
+//     </div>
+//   );
+
+
+return (
+  <div className="bg-blue-50 min-h-screen p-3 sm:p-4 md:p-6">
+    <div
+      ref={componentRef}
+      className="mx-auto max-w-4xl bg-white p-4 sm:p-6 md:p-8 border font-sans"
+    >
+
+      {/* ================= HEADER ================= */}
+      <div className="flex flex-col sm:flex-row sm:justify-between gap-4 border-b-4 border-blue-600 pb-4 mb-6">
+        <div className="flex gap-3">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-blue-600 text-white flex items-center justify-center font-bold rounded">
+            LOGO
+          </div>
+
+          <div className="text-sm">
+            <h2 className="text-xl sm:text-2xl font-bold text-blue-600">
+              {companyName}
+            </h2>
+            <p className="leading-relaxed">
+              {address?.street}, {address?.city}<br />
+              {address?.state} - {address?.pincode}<br />
+              <b>GSTIN:</b> {gstNo}<br />
+              <b>Phone:</b> {mobile1}<br />
+              <b>Email:</b> {email}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ================= CUSTOMER + INVOICE ================= */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 text-sm">
+
+        <div>
+          <h3 className="font-semibold text-blue-600 mb-1">
+            Customer
+          </h3>
+          <p>{invoice.customerName}</p>
+          <p>{invoice.customerId?.billingAddress?.line1}</p>
+          <p>
+            {invoice.customerId?.billingAddress?.city},{" "}
+            {invoice.customerId?.billingAddress?.state} -{" "}
+            {invoice.customerId?.billingAddress?.pincode}
+          </p>
+          <p>GSTIN: {invoice.customerId?.gstin}</p>
+          <p>Phone: {invoice.customerId?.phone}</p>
+        </div>
+
+        <div className="sm:text-right">
+          <h1 className="text-2xl sm:text-3xl font-bold text-blue-600">
+            INVOICE
+          </h1>
+          <p><b>No:</b> {invoice.invoiceNum}</p>
+          <p><b>Date:</b> {invoice.date.slice(0, 10)}</p>
+        </div>
+
+      </div>
+
+      {/* ================= ITEMS TABLE (SAME AS PURCHASE) ================= */}
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs sm:text-sm border">
           <thead className="bg-blue-600 text-white">
             <tr>
               <th className="border p-2">Item</th>
-              <th className="border p-2">Hsn Code</th>
+              <th className="border p-2 hidden sm:table-cell">HSN</th>
               <th className="border p-2">Qty</th>
-              <th className="border p-2">Unit</th>
+              <th className="border p-2 hidden sm:table-cell">Unit</th>
               <th className="border p-2">Rate</th>
-              <th className="border p-2">GST%</th>
-              <th className="border p-2">Taxable</th>
-              <th className="border p-2">CGST </th>
-              <th className="border p-2">SGST</th>
+              <th className="border p-2 hidden md:table-cell">Taxable</th>
+              <th className="border p-2">CGST / IGST</th>
+              <th className="border p-2 hidden sm:table-cell">SGST</th>
               <th className="border p-2">Total</th>
             </tr>
           </thead>
 
           <tbody>
-
             {invoice.items.map((item, i) => {
-              console.log(item)
               const taxable = item.qty * item.rate;
-
-              let cgst = 0,
-                sgst = 0,
-                igst = 0,
-                total = 0;
+              let cgst = 0, sgst = 0, igst = 0, total = 0;
 
               if (item.taxType === "IGST") {
                 igst = (taxable * item.tax) / 100;
@@ -194,29 +368,26 @@ const InvoiceView = () => {
               return (
                 <tr key={i}>
                   <td className="border p-2">{item.product}</td>
-                  <td className="border p-2">{item.productId?.hsncode}</td>
+                  <td className="border p-2 hidden sm:table-cell">
+                    {item.productId?.hsncode || "-"}
+                  </td>
                   <td className="border p-2 text-center">{item.qty}</td>
-                  <td className="border p-2 text-center">{item.productId?.unit}</td>
+                  <td className="border p-2 text-center hidden sm:table-cell">
+                    {item.productId?.unit}
+                  </td>
                   <td className="border p-2 text-right">₹{item.rate}</td>
-                  <td className="border p-2 text-center">{item.tax}%</td>
-
-                  <td className="border p-2 text-right">
+                  <td className="border p-2 text-right hidden md:table-cell">
                     ₹{taxable.toFixed(2)}
                   </td>
-
-                  <td className="border p-2 text-right">
+                  <td className="border p-2 text-center">
                     {item.taxType === "IGST"
                       ? `IGST ₹${igst.toFixed(2)}`
                       : `₹${cgst.toFixed(2)}`}
                   </td>
-
-                  <td className="border p-2 text-right">
-                    {item.taxType === "IGST"
-                      ? "-"
-                      : `₹${sgst.toFixed(2)}`}
+                  <td className="border p-2 text-center hidden sm:table-cell">
+                    {item.taxType === "IGST" ? "-" : `₹${sgst.toFixed(2)}`}
                   </td>
-
-                  <td className="border p-2 text-right font-bold">
+                  <td className="border p-2 text-right font-semibold">
                     ₹{total.toFixed(2)}
                   </td>
                 </tr>
@@ -224,57 +395,46 @@ const InvoiceView = () => {
             })}
           </tbody>
         </table>
+      </div>
 
-        <div className="flex justify-end mt-6">
-          <div className="w-1/3 text-sm border-t pt-3">
-            <p className="flex justify-between">
-              <span>Subtotal</span>
-              <span>₹{subtotal.toFixed(2)}</span>
-            </p>
-
-            {igstTotal > 0 ? (
-              <p className="flex justify-between">
-                <span>IGST</span>
-                <span>₹{igstTotal.toFixed(2)}</span>
-              </p>
-            ) : (
-              <>
-                <p className="flex justify-between">
-                  <span>CGST</span>
-                  <span>₹{cgstTotal.toFixed(2)}</span>
-                </p>
-                <p className="flex justify-between">
-                  <span>SGST</span>
-                  <span>₹{sgstTotal.toFixed(2)}</span>
-                </p>
-                <p className="flex justify-between">
-                  <span>RoundOff</span>
-                  <span>₹{invoice.roundOff}</span>
-                </p>
-              </>
-            )}
-            <p className="flex justify-between font-bold text-blue-600 text-lg">
-              <span>Grand Total</span>
-              {/* <span>₹{grandTotal+invoice.roundOff.toFixed(2)}</span> */}
-              <span>₹{(grandTotal + Number(invoice.roundOff)).toFixed(2)}</span>
-
-            </p>
-          </div>
+      {/* ================= TOTALS ================= */}
+      <div className="flex justify-end mt-6">
+        <div className="w-full sm:w-1/2 md:w-1/3 text-sm border-t pt-3">
+          <p className="flex justify-between">
+            <span>Subtotal</span>
+            <span>₹{subtotal.toFixed(2)}</span>
+          </p>
+          <p className="flex justify-between">
+            <span>CGST</span>
+            <span>₹{cgstTotal.toFixed(2)}</span>
+          </p>
+          <p className="flex justify-between">
+            <span>SGST</span>
+            <span>₹{sgstTotal.toFixed(2)}</span>
+          </p>
+          <p className="flex justify-between font-bold text-blue-600 text-lg">
+            <span>Grand Total</span>
+            <span>₹{grandTotal.toFixed(2)}</span>
+          </p>
         </div>
       </div>
 
-      {!isPrintMode && (
-        <div className="text-center mt-6">
-          <button
-            onClick={handlePrint}
-            className="bg-blue-600 text-white px-6 py-2 rounded"
-          >
-            Download / Print Invoice
-          </button>
-        </div>
-      )}
     </div>
-  );
+
+    {!isPrintMode && (
+      <div className="text-center mt-6">
+        <button
+          onClick={handlePrint}
+          className="bg-blue-600 text-white px-6 py-2 rounded w-full sm:w-auto"
+        >
+          Download / Print Invoice
+        </button>
+      </div>
+    )}
+  </div>
+);
+
+
 };
 
 export default InvoiceView;

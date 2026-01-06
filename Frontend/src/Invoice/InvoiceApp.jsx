@@ -263,246 +263,482 @@ const payableAmount = subtotal + roundOff;
     }
   }
 
- return (
-    <div className="w-full p-4 space-y-6">
+//  return (
+//     <div className="w-full p-4 space-y-6">
 
-      {/* HEADER */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+//       {/* HEADER */}
+//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
-        <div className="flex flex-col">
-          <label>Invoice No *</label>
-          <input className="input" value={invoiceNum} readOnly />
-        </div>
+//         <div className="flex flex-col">
+//           <label>Invoice No *</label>
+//           <input className="input" value={invoiceNum} readOnly />
+//         </div>
 
-        <div className="flex flex-col">
-          <label>Date *</label>
-          <input
-            type="date"
-            className="input"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-        </div>
+//         <div className="flex flex-col">
+//           <label>Date *</label>
+//           <input
+//             type="date"
+//             className="input"
+//             value={date}
+//             onChange={(e) => setDate(e.target.value)}
+//           />
+//         </div>
 
-        <div className="flex flex-col">
-          <label>Invoice Type *</label>
-          <select
-            className="input"
-            value={invoiceType}
-            onChange={(e) => setInvoiceType(e.target.value)}
-          >
-            <option value="Invoice">Invoice</option>
-            <option value="Proforma Invoice">Proforma Invoice</option>
-          </select>
-        </div>
-      </div>
+//         <div className="flex flex-col">
+//           <label>Invoice Type *</label>
+//           <select
+//             className="input"
+//             value={invoiceType}
+//             onChange={(e) => setInvoiceType(e.target.value)}
+//           >
+//             <option value="Invoice">Invoice</option>
+//             <option value="Proforma Invoice">Proforma Invoice</option>
+//           </select>
+//         </div>
+//       </div>
 
-      {/* CUSTOMER DETAILS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+//       {/* CUSTOMER DETAILS */}
+//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
   
-  <div className="flex flex-col relative">
-    <label>Customer Name *</label>
+//   <div className="flex flex-col relative">
+//     <label>Customer Name *</label>
 
-    {/* INPUT BOX */}
-    <input
-      className="input"
-      placeholder="Enter Customer Name"
-      value={customerName}
-      name="customer"
-      autoComplete="off"
-      onChange={handleChange}
-    />
+//     {/* INPUT BOX */}
+//     <input
+//       className="input"
+//       placeholder="Enter Customer Name"
+//       value={customerName}
+//       name="customer"
+//       autoComplete="off"
+//       onChange={handleChange}
+//     />
 
-    {/* SUGGESTION BOX */}
-    {filteredCustomers.length > 0 && (
-      <ul className="absolute left-0 right-0 top-full mt-1 
-                     bg-white shadow-lg rounded-lg border 
-                     w-full max-h-48 overflow-y-auto z-20">
+//     {/* SUGGESTION BOX */}
+//     {filteredCustomers.length > 0 && (
+//       <ul className="absolute left-0 right-0 top-full mt-1 
+//                      bg-white shadow-lg rounded-lg border 
+//                      w-full max-h-48 overflow-y-auto z-20">
 
-        {filteredCustomers.map((c) => (
-          <li
-            key={c._id}
-            className="p-2 cursor-pointer hover:bg-gray-100 border-b last:border-none"
-            onClick={() => selectCustomer(c.name)}
-          >
-            {c.name}
-          </li>
-        ))}
+//         {filteredCustomers.map((c) => (
+//           <li
+//             key={c._id}
+//             className="p-2 cursor-pointer hover:bg-gray-100 border-b last:border-none"
+//             onClick={() => selectCustomer(c.name)}
+//           >
+//             {c.name}
+//           </li>
+//         ))}
 
-        {/* ADD CUSTOMER BUTTON INSIDE SUGGESTION BOX */}
-        <li
-          onClick={() => navigate("/setting/customer")}
-          className="p-2 text-center font-semibold 
-                     bg-black text-white cursor-pointer 
-                     hover:bg-gray-800 rounded-b-lg"
-        >
-          + Add New Customer
-        </li>
+//         {/* ADD CUSTOMER BUTTON INSIDE SUGGESTION BOX */}
+//         <li
+//           onClick={() => navigate("/setting/customer")}
+//           className="p-2 text-center font-semibold 
+//                      bg-black text-white cursor-pointer 
+//                      hover:bg-gray-800 rounded-b-lg"
+//         >
+//           + Add New Customer
+//         </li>
 
-      </ul>
-    )}
-  </div>
-
-
+//       </ul>
+//     )}
+//   </div>
 
 
-        <div className="flex flex-col">
-          <label>Bill Type *</label>
-          <select
-            className="input"
-            value={billType}
-            onChange={(e) => {
-              setBillType(e.target.value);
-              setPayment((prev) => ({ ...prev, billType: e.target.value }));
-            }}
-          >
-            <option value="Cash">Cash</option>
-            <option value="Credit">Credit</option>
-          </select>
-        </div>
 
-        <div className="flex flex-col">
-          <label>GST Type *</label>
-          <select
-            className="input"
-            value={gstType}
-            onChange={(e) => setGstType(e.target.value)}
-          >
-            <option value="GST">GST</option>
-            <option value="IGST">IGST</option>
-            {/* <option value="NOTax">No Tax</option> */}
-          </select>
-        </div>
 
-        <div className="flex flex-col">
-          <label>All Amounts Are *</label>
-          <select
-            className="input"
-            value={amountType}
-            onChange={(e) => setAmountType(e.target.value)}
-          >
-            {/* <option value="No Tax">No Tax</option> */}
-            <option value="Including Tax">Including Tax</option>
-            <option value="Excluding Tax">Excluding Tax</option>
-          </select>
-        </div>
-      </div>
+//         <div className="flex flex-col">
+//           <label>Bill Type *</label>
+//           <select
+//             className="input"
+//             value={billType}
+//             onChange={(e) => {
+//               setBillType(e.target.value);
+//               setPayment((prev) => ({ ...prev, billType: e.target.value }));
+//             }}
+//           >
+//             <option value="Cash">Cash</option>
+//             <option value="Credit">Credit</option>
+//           </select>
+//         </div>
 
-      {/* ITEM INPUT */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
+//         <div className="flex flex-col">
+//           <label>GST Type *</label>
+//           <select
+//             className="input"
+//             value={gstType}
+//             onChange={(e) => setGstType(e.target.value)}
+//           >
+//             <option value="GST">GST</option>
+//             <option value="IGST">IGST</option>
+//             {/* <option value="NOTax">No Tax</option> */}
+//           </select>
+//         </div>
 
-        <div className="relative">
-          <input
-            className="input"
-            placeholder="Product Name"
-            name="product"
-            value={item.product}
-            onClick={handleProductClick}
-            onChange={handleChange}
-            autoComplete="off"
-          />
-          {filteredProducts.length > 0 && (
-            <>
-            <ul className="absolute z-20 w-full bg-white shadow rounded max-h-40 overflow-y-auto">
-              {filteredProducts.map((p) => (
-                <li
-                  key={p._id}
-                  className="p-2 hover:bg-gray-200 cursor-pointer"
-                  onClick={() => selectProduct(p.name)}
-                >
-                  {p.name}
-                </li>
-              ))}
-            </ul>
+//         <div className="flex flex-col">
+//           <label>All Amounts Are *</label>
+//           <select
+//             className="input"
+//             value={amountType}
+//             onChange={(e) => setAmountType(e.target.value)}
+//           >
+//             {/* <option value="No Tax">No Tax</option> */}
+//             <option value="Including Tax">Including Tax</option>
+//             <option value="Excluding Tax">Excluding Tax</option>
+//           </select>
+//         </div>
+//       </div>
+
+//       {/* ITEM INPUT */}
+//       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
+
+//         <div className="relative">
+//           <input
+//             className="input"
+//             placeholder="Product Name"
+//             name="product"
+//             value={item.product}
+//             onClick={handleProductClick}
+//             onChange={handleChange}
+//             autoComplete="off"
+//           />
+//           {filteredProducts.length > 0 && (
+//             <>
+//             <ul className="absolute z-20 w-full bg-white shadow rounded max-h-40 overflow-y-auto">
+//               {filteredProducts.map((p) => (
+//                 <li
+//                   key={p._id}
+//                   className="p-2 hover:bg-gray-200 cursor-pointer"
+//                   onClick={() => selectProduct(p.name)}
+//                 >
+//                   {p.name}
+//                 </li>
+//               ))}
+//             </ul>
              
-          </>
-          )}
-        </div>
+//           </>
+//           )}
+//         </div>
 
-        <input className="input" name="qty" placeholder="QTY" type="number" value={item.qty} onChange={handleChange} />
-        <input className="input" name="mrp" placeholder="MRP" type="number" value={item.mrp} onChange={handleChange} />
-        <input className="input" name="rate" placeholder="Rate" type="number" value={item.rate} onChange={handleChange} />
-        <input className="input" name="dis" placeholder="DIS %" type="number" value={item.dis} onChange={handleChange} />
+//         <input className="input" name="qty" placeholder="QTY" type="number" value={item.qty} onChange={handleChange} />
+//         <input className="input" name="mrp" placeholder="MRP" type="number" value={item.mrp} onChange={handleChange} />
+//         <input className="input" name="rate" placeholder="Rate" type="number" value={item.rate} onChange={handleChange} />
+//         <input className="input" name="dis" placeholder="DIS %" type="number" value={item.dis} onChange={handleChange} />
 
-        <select className="input" name="tax" value={item.tax} onChange={handleChange}>
-          <option value="0">0</option>
-          <option value="5">5</option>
-          <option value="12">12</option>
-          <option value="18">18</option>
-          <option value="28">28</option>
+//         <select className="input" name="tax" value={item.tax} onChange={handleChange}>
+//           <option value="0">0</option>
+//           <option value="5">5</option>
+//           <option value="12">12</option>
+//           <option value="18">18</option>
+//           <option value="28">28</option>
+//         </select>
+
+//         <button className="bg-blue-600 text-white px-4 rounded" onClick={addItem}>Add</button>
+//       </div>
+
+//       {/* ITEM TABLE */}
+//       <div className="overflow-x-auto">
+//         <table className="w-full text-center border-collapse">
+//           <thead className="bg-gray-200 text-sm">
+//             <tr>
+//               <th className="border p-2">PRODUCT NAME</th>
+//               <th className="border p-2">QTY</th>
+//               <th className="border p-2">MRP</th>
+//               <th className="border p-2">RATE</th>
+//               <th className="border p-2">DIS%</th>
+//               <th className="border p-2">GST%</th>
+//               <th className="border p-2">TOTAL</th>
+//               <th className="border p-2">ACTION</th>
+//             </tr>
+//           </thead>
+
+//           <tbody>
+//             {items.map((itm, idx) => (
+//               <tr key={idx}>
+//                 <td className="border p-2">{itm.product}</td>
+//                 <td className="border p-2">{itm.qty}</td>
+//                 <td className="border p-2">₹{itm.mrp}</td>
+//                 <td className="border p-2">₹{itm.rate}</td>
+//                 <td className="border p-2">{itm.dis}%</td>
+//                 <td className="border p-2">{itm.tax}%</td>
+//                 <td className="border p-2">₹{calculateItemBreakdown(itm).totalAmount.toFixed(2)}</td>
+//                 <td className="border p-2">
+//                   <button
+//                     className="bg-red-600 text-white px-3 py-1 rounded"
+//                     onClick={() => deleteItem(idx)}
+//                   >
+//                     Delete
+//                   </button>
+//                 </td>
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+//       </div>
+
+//       <div className="flex flex-col md:flex-row justify-between font-bold text-lg">
+//         <div>Total Qty: {quantity}</div>
+
+//          <div className="flex items-center gap-2">
+//     <label>RoundOff</label>
+//     <input
+//       type="number"
+//       step="0.01"
+//       className="w-24 border px-2 py-1 rounded"
+//       value={roundOff}
+//       onChange={(e) => setRoundOff(Number(e.target.value) || 0)}
+//       placeholder="+ / -"
+//     />
+//   </div>
+//         {/* <div className="text-blue-600">Payable: ₹{subtotal.toFixed(2)}</div> */}
+// <div className="text-blue-600">
+//   Payable: ₹{payableAmount.toFixed(2)}
+// </div>
+//       </div>
+
+
+//       <div className="text-right">
+//         <button className="bg-green-600 text-white px-5 py-2 rounded" onClick={handleSave}>
+//           Save & View Invoice
+//         </button>
+//       </div>
+//     </div>
+//   );
+
+return (
+  <div className="w-full p-4 md:p-6 space-y-6 bg-gray-50">
+
+    {/* ================= HEADER ================= */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="flex flex-col">
+        <label>Invoice No *</label>
+        <input className="input" value={invoiceNum} readOnly />
+      </div>
+
+      <div className="flex flex-col">
+        <label>Date *</label>
+        <input
+          type="date"
+          className="input"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+      </div>
+
+      <div className="flex flex-col">
+        <label>Invoice Type *</label>
+        <select
+          className="input"
+          value={invoiceType}
+          onChange={(e) => setInvoiceType(e.target.value)}
+        >
+          <option value="Invoice">Invoice</option>
+          <option value="Proforma Invoice">Proforma Invoice</option>
         </select>
-
-        <button className="bg-blue-600 text-white px-4 rounded" onClick={addItem}>Add</button>
-      </div>
-
-      {/* ITEM TABLE */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-center border-collapse">
-          <thead className="bg-gray-200 text-sm">
-            <tr>
-              <th className="border p-2">PRODUCT NAME</th>
-              <th className="border p-2">QTY</th>
-              <th className="border p-2">MRP</th>
-              <th className="border p-2">RATE</th>
-              <th className="border p-2">DIS%</th>
-              <th className="border p-2">GST%</th>
-              <th className="border p-2">TOTAL</th>
-              <th className="border p-2">ACTION</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {items.map((itm, idx) => (
-              <tr key={idx}>
-                <td className="border p-2">{itm.product}</td>
-                <td className="border p-2">{itm.qty}</td>
-                <td className="border p-2">₹{itm.mrp}</td>
-                <td className="border p-2">₹{itm.rate}</td>
-                <td className="border p-2">{itm.dis}%</td>
-                <td className="border p-2">{itm.tax}%</td>
-                <td className="border p-2">₹{calculateItemBreakdown(itm).totalAmount.toFixed(2)}</td>
-                <td className="border p-2">
-                  <button
-                    className="bg-red-600 text-white px-3 py-1 rounded"
-                    onClick={() => deleteItem(idx)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex flex-col md:flex-row justify-between font-bold text-lg">
-        <div>Total Qty: {quantity}</div>
-
-         <div className="flex items-center gap-2">
-    <label>RoundOff</label>
-    <input
-      type="number"
-      step="0.01"
-      className="w-24 border px-2 py-1 rounded"
-      value={roundOff}
-      onChange={(e) => setRoundOff(Number(e.target.value) || 0)}
-      placeholder="+ / -"
-    />
-  </div>
-        {/* <div className="text-blue-600">Payable: ₹{subtotal.toFixed(2)}</div> */}
-<div className="text-blue-600">
-  Payable: ₹{payableAmount.toFixed(2)}
-</div>
-      </div>
-
-
-      <div className="text-right">
-        <button className="bg-green-600 text-white px-5 py-2 rounded" onClick={handleSave}>
-          Save & View Invoice
-        </button>
       </div>
     </div>
-  );
+
+    {/* ================= CUSTOMER DETAILS ================= */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <div className="flex flex-col relative">
+        <label>Customer Name *</label>
+        <input
+          className="input"
+          placeholder="Enter Customer Name"
+          value={customerName}
+          name="customer"
+          autoComplete="off"
+          onChange={handleChange}
+        />
+
+        {filteredCustomers.length > 0 && (
+          <ul className="absolute left-0 right-0 top-full mt-1 bg-white shadow-lg rounded-lg border w-full max-h-48 overflow-y-auto z-20">
+            {filteredCustomers.map((c) => (
+              <li
+                key={c._id}
+                className="p-2 cursor-pointer hover:bg-gray-100 border-b last:border-none"
+                onClick={() => selectCustomer(c.name)}
+              >
+                {c.name}
+              </li>
+            ))}
+
+            <li
+              onClick={() => navigate("/setting/customer")}
+              className="p-2 text-center font-semibold bg-black text-white cursor-pointer hover:bg-gray-800 rounded-b-lg"
+            >
+              + Add New Customer
+            </li>
+          </ul>
+        )}
+      </div>
+
+      <div className="flex flex-col">
+        <label>Bill Type *</label>
+        <select
+          className="input"
+          value={billType}
+          onChange={(e) => {
+            setBillType(e.target.value);
+            setPayment((prev) => ({ ...prev, billType: e.target.value }));
+          }}
+        >
+          <option value="Cash">Cash</option>
+          <option value="Credit">Credit</option>
+        </select>
+      </div>
+
+      <div className="flex flex-col">
+        <label>GST Type *</label>
+        <select
+          className="input"
+          value={gstType}
+          onChange={(e) => setGstType(e.target.value)}
+        >
+          <option value="GST">GST</option>
+          <option value="IGST">IGST</option>
+        </select>
+      </div>
+
+      <div className="flex flex-col">
+        <label>All Amounts Are *</label>
+        <select
+          className="input"
+          value={amountType}
+          onChange={(e) => setAmountType(e.target.value)}
+        >
+          <option value="Including Tax">Including Tax</option>
+          <option value="Excluding Tax">Excluding Tax</option>
+        </select>
+      </div>
+    </div>
+
+    {/* ================= ITEM INPUT ================= */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
+
+      <div className="relative col-span-1 sm:col-span-2 lg:col-span-2">
+        <input
+          className="input"
+          placeholder="Product Name"
+          name="product"
+          value={item.product}
+          onClick={handleProductClick}
+          onChange={handleChange}
+          autoComplete="off"
+        />
+
+        {filteredProducts.length > 0 && (
+          <ul className="absolute z-20 w-full bg-white shadow rounded max-h-40 overflow-y-auto">
+            {filteredProducts.map((p) => (
+              <li
+                key={p._id}
+                className="p-2 hover:bg-gray-200 cursor-pointer"
+                onClick={() => selectProduct(p.name)}
+              >
+                {p.name}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <input className="input" name="qty" placeholder="QTY" type="number" value={item.qty} onChange={handleChange} />
+      <input className="input" name="mrp" placeholder="MRP" type="number" value={item.mrp} onChange={handleChange} />
+      <input className="input" name="rate" placeholder="Rate" type="number" value={item.rate} onChange={handleChange} />
+      <input className="input" name="dis" placeholder="DIS %" type="number" value={item.dis} onChange={handleChange} />
+
+      <select className="input" name="tax" value={item.tax} onChange={handleChange}>
+        <option value="0">0</option>
+        <option value="5">5</option>
+        <option value="12">12</option>
+        <option value="18">18</option>
+        <option value="28">28</option>
+      </select>
+
+      <button
+        className="bg-blue-600 text-white px-4 py-2 rounded w-full lg:w-auto"
+        onClick={addItem}
+      >
+        Add
+      </button>
+    </div>
+
+    {/* ================= ITEM TABLE ================= */}
+    <div className="overflow-x-auto">
+      <table className="w-full text-center border-collapse text-sm">
+        <thead className="bg-gray-200">
+          <tr>
+            <th className="border p-2">PRODUCT</th>
+            <th className="border p-2">QTY</th>
+            <th className="border p-2 hidden sm:table-cell">MRP</th>
+            <th className="border p-2 hidden sm:table-cell">RATE</th>
+            <th className="border p-2 hidden md:table-cell">DIS%</th>
+            <th className="border p-2 hidden md:table-cell">GST%</th>
+            <th className="border p-2">TOTAL</th>
+            <th className="border p-2">ACTION</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {items.map((itm, idx) => (
+            <tr key={idx}>
+              <td className="border p-2">{itm.product}</td>
+              <td className="border p-2">{itm.qty}</td>
+              <td className="border p-2 hidden sm:table-cell">₹{itm.mrp}</td>
+              <td className="border p-2 hidden sm:table-cell">₹{itm.rate}</td>
+              <td className="border p-2 hidden md:table-cell">{itm.dis}%</td>
+              <td className="border p-2 hidden md:table-cell">{itm.tax}%</td>
+              <td className="border p-2">
+                ₹{calculateItemBreakdown(itm).totalAmount.toFixed(2)}
+              </td>
+              <td className="border p-2">
+                <button
+                  className="bg-red-600 text-white px-3 py-1 rounded"
+                  onClick={() => deleteItem(idx)}
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    {/* ================= TOTALS ================= */}
+    <div className="flex flex-col sm:flex-row justify-between gap-4 font-bold text-lg">
+      <div>Total Qty: {quantity}</div>
+
+      <div className="flex items-center gap-2">
+        <label>RoundOff</label>
+        <input
+          type="number"
+          step="0.01"
+          className="w-24 border px-2 py-1 rounded"
+          value={roundOff}
+          onChange={(e) => setRoundOff(Number(e.target.value) || 0)}
+        />
+      </div>
+
+      <div className="text-blue-600">
+        Payable: ₹{payableAmount.toFixed(2)}
+      </div>
+    </div>
+
+    {/* ================= SAVE ================= */}
+    <div className="text-right">
+      <button
+        className="bg-green-600 text-white px-6 py-3 rounded w-full sm:w-auto"
+        onClick={handleSave}
+      >
+        Save & View Invoice
+      </button>
+    </div>
+
+  </div>
+);
+
 };
 
 export default InvoiceApp;

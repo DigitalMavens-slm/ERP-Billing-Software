@@ -12,7 +12,6 @@ import {
 } from "recharts";
 // import "./Reports.css";
 
-// const API_URL = import.meta.env.VITE_API_URL;
 import api from "../api"
 
 export default function ReportsPage() {
@@ -96,12 +95,14 @@ export default function ReportsPage() {
     if (filters.type === "cashflow") return "Cash Flow Trend";
   };
 
-  return (
+return (
   <div className="p-4 md:p-8 bg-gray-50 min-h-screen">
 
-    {/* HEADER */}
+    {/* ================= HEADER ================= */}
     <header className="mb-6">
-      <h1 className="text-3xl font-extrabold text-gray-800">📊 Reports Dashboard</h1>
+      <h1 className="text-2xl md:text-3xl font-extrabold text-gray-800">
+        📊 Reports Dashboard
+      </h1>
       <p className="text-gray-600 text-sm">
         Insights — Sales, Purchases & Cashflow Overview
       </p>
@@ -110,8 +111,10 @@ export default function ReportsPage() {
     <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-6">
 
       {/* ================= FILTER SIDEBAR ================= */}
-      <aside className="bg-sandel border border-gray-200 rounded-xl p-5 shadow-sm">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">Filters</h2>
+      <aside className="bg-sandel border border-gray-200 rounded-xl p-4 md:p-5 shadow-sm">
+        <h2 className="text-lg md:text-xl font-semibold mb-4 text-gray-800">
+          Filters
+        </h2>
 
         <div className="space-y-3">
 
@@ -140,7 +143,9 @@ export default function ReportsPage() {
           <div>
             <label className="block text-sm font-medium text-gray-700">Report Type</label>
             <select
-              name="type" value={filters.type} onChange={onFilterChange}
+              name="type"
+              value={filters.type}
+              onChange={onFilterChange}
               className="border rounded-md px-3 py-2 w-full text-sm focus:ring-2 focus:ring-indigo-300"
             >
               <option value="sales">Sales</option>
@@ -171,7 +176,7 @@ export default function ReportsPage() {
             </button>
             <button
               onClick={resetFilters}
-              className="flex-1 bg-red-600 hover:bg-red-500 text-gray-800 py-2 rounded-md text-sm border"
+              className="flex-1 bg-red-600 hover:bg-red-500 text-white py-2 rounded-md text-sm shadow"
             >
               Reset
             </button>
@@ -180,26 +185,24 @@ export default function ReportsPage() {
         </div>
       </aside>
 
-      
-
       {/* ================= MAIN CONTENT ================= */}
       <main className="space-y-6">
 
-        {/* KPI CARDS COLORFUL */}
+        {/* KPI CARDS */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <KpiCard color="from-indigo-500 to-indigo-700" title="Total Sales" value={formatCurrency(kpis.totalSales)} />
-          <KpiCard color="from-emerald-500 to-emerald-700" title="Purchases" value={formatCurrency(kpis.totalPurchases)} />
-          <KpiCard color="from-orange-400 to-orange-600" title="Net Cash" value={formatCurrency(kpis.netCash)} />
-          <KpiCard color="from-pink-500 to-pink-700" title="Invoices" value={kpis.invoices} />
+          <KpiCard title="Total Sales" value={formatCurrency(kpis.totalSales)} />
+          <KpiCard title="Purchases" value={formatCurrency(kpis.totalPurchases)} />
+          <KpiCard title="Net Cash" value={formatCurrency(kpis.netCash)} />
+          <KpiCard title="Invoices" value={kpis.invoices} />
         </div>
 
-        {/* CHART CARD */}
-        <section className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">
+        {/* CHART */}
+        <section className="bg-white border border-gray-200 rounded-xl p-4 md:p-5 shadow-sm">
+          <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-3">
             {getChartTitle()}
           </h3>
 
-          <div className="w-full h-[260px]">
+          <div className="w-full h-[240px] md:h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -211,108 +214,97 @@ export default function ReportsPage() {
                   dataKey="value"
                   stroke="#6366f1"
                   strokeWidth={2}
-                  dot={{ r: 3, stroke: "#6366f1", fill: "#6366f1" }}
+                  dot={{ r: 3 }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </section>
 
-       
       </main>
-      
     </div>
-     {/* TABLE SECTION */}
-        <section className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">Records</h3>
 
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[600px] border-collapse">
-              <thead>
-                <tr className="bg-indigo-100 text-indigo-900 text-sm">
-                  <th className="p-3">Date</th>
-                  <th className="p-3">Ref</th>
-                  <th className="p-3">Party</th>
-                  <th className="p-3">Type</th>
-                  <th className="p-3 text-right">Amount</th>
+    {/* ================= TABLE SECTION ================= */}
+    <section className="bg-white border border-gray-200 rounded-xl p-4 md:p-5 shadow-sm mt-6">
+      <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-3">
+        Records
+      </h3>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm md:text-base">
+          <thead>
+            <tr className="bg-indigo-100 text-indigo-900">
+              <th className="p-3">Date</th>
+              <th className="p-3 hidden sm:table-cell">Ref</th>
+              <th className="p-3">Party</th>
+              <th className="p-3 hidden md:table-cell">Type</th>
+              <th className="p-3 text-right">Amount</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={5} className="text-center py-4 text-gray-600">
+                  Loading...
+                </td>
+              </tr>
+            ) : rows.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="text-center py-4 text-gray-600">
+                  No records found
+                </td>
+              </tr>
+            ) : (
+              rows.map((r, i) => (
+                <tr
+                  key={r._id}
+                  className={`${
+                    i % 2 === 0 ? "bg-white" : "bg-indigo-50/40"
+                  } border-b hover:bg-indigo-100 transition`}
+                >
+                  <td className="p-3">{r.date}</td>
+                  <td className="p-3 hidden sm:table-cell">{r.reference}</td>
+                  <td className="p-3">{r.party}</td>
+                  <td className="p-3 hidden md:table-cell">{r.type}</td>
+                  <td className="p-3 text-right">
+                    {formatCurrency(r.amount)}
+                  </td>
                 </tr>
-              </thead>
-
-              <tbody>
-                {loading ? (
-                  <tr><td colSpan={5} className="text-center py-4 text-gray-600">Loading...</td></tr>
-                ) : rows.length === 0 ? (
-                  <tr><td colSpan={5} className="text-center py-4 text-gray-600">No records found</td></tr>
-                ) : (
-                  rows.map((r, i) => (
-                    <tr
-                      key={r._id}
-                      className={`${
-                        i % 2 === 0 ? "bg-white" : "bg-indigo-50/40"
-                      } border-b text-sm text-gray-700 hover:bg-indigo-100 transition`}
-                    >
-                      <td className="p-3">{r.date}</td>
-                      <td className="p-3">{r.reference}</td>
-                      <td className="p-3">{r.party}</td>
-                      <td className="p-3">{r.type}</td>
-                      <td className="p-3 text-right">{formatCurrency(r.amount)}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </section>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </section>
 
   </div>
 );
 
+
 }
-
-// function KpiCard({ title, value }) {
-//   return (
-//     <div className="kpi-card">
-//       <div className="kpi-title">{title}</div>
-//       <div className="kpi-value">{value}</div>
-//     </div>
-//   );
-// }
-
 
 function KpiCard({ title, value }) {
   return (
     <div className="
-      bg-white 
-      border 
-      border-gray-200 
-      rounded-xl 
-      p-4 
-      shadow-sm 
-      hover:shadow-md 
-      transition-all 
-      duration-300
-      flex 
-      flex-col
-      justify-center
+      bg-white
+      border border-gray-200
+      rounded-xl
+      p-4
+      shadow-sm
+      hover:shadow-md
+      transition-all
+      flex flex-col
       gap-1
     ">
-      
-      <div className="text-sm font-medium text-gray-600">
+      <div className="text-xs md:text-sm font-medium text-gray-600">
         {title}
       </div>
 
-      <div className="
-        text-2xl 
-        font-bold 
-        text-transparent 
-        bg-clip-text 
-        bg-gradient-to-r 
-        from-indigo-500 
-        to-indigo-700
-      ">
+      <div className="text-xl md:text-2xl font-bold text-indigo-600">
         {value}
       </div>
-
     </div>
   );
 }
+

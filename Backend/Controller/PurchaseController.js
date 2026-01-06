@@ -10,33 +10,6 @@ const user = require("../Model/userModel");
 const Inventory=require("../Model/InventoryModel")
 const getFinancialYear=require("../Utills/getFinancialYear")
 
-// ✅ Get all purchases
-// const getAllPurchases = async (req, res) => {
-//   try {
-//     const resPerPage = 10;
-
-//     const apiFeatures = new APIFeatures(
-//       Purchase.find({ companyId: req.companyId }), 
-//       req.query
-//     )
-//       .search()
-//       .filter()
-//       .paginate(resPerPage);
-
-//     const purchases = await apiFeatures.query;
-
-//     res.status(200).json({
-//       success: true,
-//       count: purchases.length,
-//       purchases,
-//     });
-//   } catch (err) {
-//     console.error("❌ Error fetching purchases:", err);
-//     res.status(500).json({ success: false, message: "Server Error" });
-//   }
-// };
-
-
 
 const PurchaseAPIFeatures = require("../Utills/PurchaseApiFeatures");
 
@@ -117,33 +90,6 @@ const createPurchase = async (req, res) => {
        const purchase=  await newPurchase.save();
       //  console.log(purchase.items._id)
 
-// purchase.items.forEach(async (itm) => {
-//   const inventoryItem = await Inventory.findOne({
-//     productId: itm.productId,
-//     companyId: purchase.companyId,
-//   });
-
-//   if (inventoryItem) {
-//     // Update existing inventory
-//     inventoryItem.qty += itm.qty;              // increase stock
-//     inventoryItem.minQty += itm.qty;           // update min qty or available qty
-//     inventoryItem.totalPurchased += itm.qty;   // 🔥 IMPORTANT — add purchase qty
-//     await inventoryItem.save();
-
-//   } else {
-//     // Create new inventory record
-//     await Inventory.create({
-//       productId: itm.productId,
-//       companyId: purchase.companyId,
-//       qty: itm.qty,
-//       minQty: itm.qty,
-//       totalPurchased: itm.qty,   // 🔥 first purchase qty
-//       totalSold: 0,              // no sales yet
-//     });
-//   }
-// });
-
-
 
 for (const itm of purchase.items) {
   const inventoryItem = await Inventory.findOne({
@@ -221,7 +167,7 @@ const getPurchaseById = async (req, res) => {
        _id: req.params.id,
   companyId: req.companyId,
 
-}).populate("supplierId");
+}).populate("supplierId").populate("items.product", "name hsncode unit");
 
     if (!purchase) {
       return res.status(404).json({

@@ -46,117 +46,155 @@ const InvoiceDetails = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6" id="invoice-details">
-      
-      {/* HEADER */}
-      <h2 className="text-2xl font-bold mb-4 text-center">📄 Invoice Details</h2>
+  <div
+    id="invoice-details"
+    className="w-full max-w-5xl mx-auto px-3 sm:px-6 py-4"
+  >
 
-      {/* TOP DETAILS BOX */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-5 rounded-lg shadow-sm">
+    {/* HEADER */}
+    <h2 className="text-xl sm:text-2xl font-bold mb-4 text-center">
+      📄 Invoice Details
+    </h2>
 
-        <div>
-          <p><b>Invoice No:</b> {invoice.invoiceNum}</p>
-          <p><b>Date:</b> {invoice.date}</p>
-          <p><b>Bill Type:</b> {invoice.billType}</p>
-          <p><b>GST Type:</b> {invoice.gstType}</p>
-        </div>
+    {/* TOP DETAILS BOX */}
+<div className="bg-gray-50 rounded-lg shadow-sm p-3 sm:p-5 text-sm sm:text-base">
 
-        <div>
-          <p><b>Customer:</b> {invoice.customerName}</p>
-          <p><b>Phone:</b> {customer.phone}</p>
-          <p><b>Email:</b> {customer.email}</p>
-          <p><b>GST:</b> {customer.gst}</p>
-        </div>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-        <div className="md:col-span-2">
-          <p><b>Address:</b></p>
-          <p className="ml-3 text-gray-700">
-            {customer.address.line1}, {customer.address.line2},<br />
-            {customer.address.city} - {customer.address.pincode}
-          </p>
-        </div>
+    {/* LEFT */}
+    <div className="space-y-1">
+      <p><b>Invoice No:</b> {invoice.invoiceNum}</p>
+      <p><b>Date:</b> {invoice.date}</p>
+      <p><b>Bill Type:</b> {invoice.billType}</p>
+      <p><b>GST Type:</b> {invoice.gstType}</p>
+    </div>
 
+    {/* RIGHT */}
+    <div className="space-y-1">
+      <p><b>Customer:</b> {invoice.customerName}</p>
+      <p><b>Phone:</b> {customer.phone}</p>
+      <p className="break-all">
+        <b>Email:</b> {customer.email}
+      </p>
+      <p><b>GST:</b> {customer.gst || "-"}</p>
+    </div>
+
+    {/* ADDRESS */}
+    <div className="md:col-span-2 border-t pt-2">
+      <p><b>Address:</b></p>
+      <p className="text-gray-700 leading-relaxed">
+        {customer.address.line1}, {customer.address.line2}<br />
+        {customer.address.city} - {customer.address.pincode}
+      </p>
+    </div>
+
+  </div>
+</div>
+
+
+    {/* ITEMS - DESKTOP TABLE */}
+<div className="hidden sm:block mt-6 overflow-x-auto">
+  <table className="min-w-[650px] w-full border rounded-lg shadow-sm text-sm">
+    <thead className="bg-gray-800 text-white">
+      <tr>
+        <th className="p-2">#</th>
+        <th className="p-2">Product</th>
+        <th className="p-2">Qty</th>
+        <th className="p-2">MRP</th>
+        <th className="p-2">Rate</th>
+        <th className="p-2">Dis%</th>
+        <th className="p-2">GST%</th>
+        <th className="p-2">Total</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {invoice.items.map((itm, i) => (
+        <tr key={i} className="text-center border-b">
+          <td className="p-2">{i + 1}</td>
+          <td className="p-2 font-medium">{itm.product}</td>
+          <td className="p-2">{itm.qty}</td>
+          <td className="p-2">₹{itm.mrp}</td>
+          <td className="p-2">₹{itm.rate}</td>
+          <td className="p-2">{itm.dis}%</td>
+          <td className="p-2">{itm.tax}%</td>
+          <td className="p-2 font-semibold">
+            ₹{(itm.qty * itm.rate).toFixed(2)}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+{/* ITEMS - MOBILE CARD VIEW */}
+<div className="sm:hidden mt-6 space-y-3">
+  {invoice.items.map((itm, i) => (
+    <div
+      key={i}
+      className="border rounded-lg p-3 shadow-sm bg-white text-sm"
+    >
+      <div className="flex justify-between mb-1">
+        <span className="font-semibold">{itm.product}</span>
+        <span>#{i + 1}</span>
       </div>
 
-      {/* ITEMS TABLE */}
-      <div className="mt-6">
-        <table className="w-full border rounded-lg overflow-hidden shadow-sm">
-          <thead className="bg-gray-800 text-white">
-            <tr>
-              <th className="p-2">#</th>
-              <th className="p-2">Product</th>
-              <th className="p-2">Qty</th>
-              <th className="p-2">MRP</th>
-              <th className="p-2">Rate</th>
-              <th className="p-2">Dis%</th>
-              <th className="p-2">GST%</th>
-              <th className="p-2">Total</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {invoice.items.map((itm, i) => (
-              <tr key={i} className="text-center border-b">
-                <td className="p-2">{i + 1}</td>
-                <td className="p-2">{itm.product}</td>
-                <td className="p-2">{itm.qty}</td>
-                <td className="p-2">₹{itm.mrp}</td>
-                <td className="p-2">₹{itm.rate}</td>
-                <td className="p-2">{itm.dis}%</td>
-                <td className="p-2">{itm.tax}%</td>
-                <td className="p-2 font-semibold">₹{(itm.qty * itm.rate).toFixed(2)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* TOTAL BOX */}
-      <div className="mt-6 bg-gray-900 text-white p-4 rounded-lg shadow-md text-right">
-        <p className="text-lg">
-          <b>Sub Total:</b> ₹{totalAmount.toFixed(2)}
+      <div className="grid grid-cols-2 gap-2">
+        <p><b>Qty:</b> {itm.qty}</p>
+        <p><b>MRP:</b> ₹{itm.mrp}</p>
+        <p><b>Rate:</b> ₹{itm.rate}</p>
+        <p><b>Dis%:</b> {itm.dis}%</p>
+        <p><b>GST%:</b> {itm.tax}%</p>
+        <p className="font-semibold">
+          <b>Total:</b> ₹{(itm.qty * itm.rate).toFixed(2)}
         </p>
-        <p className="text-xl font-bold">
-          <b>Round Off:</b> ₹{invoice.roundOff.toFixed(2)}
-        </p>
-        <p className="text-xl font-bold">
-          <b>Payable Amount:</b> ₹{(totalAmount + Number(invoice.roundOff)).toFixed(2)}
-        </p>
       </div>
+    </div>
+  ))}
+</div>
 
-      <div className="flex flex-wrap justify-center gap-4 mt-6">
 
-        <button
-          onClick={() => navigate("/invoicecreate")}
-          className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
-        >
-          ← Back to Invoice
-        </button>
+    {/* TOTAL BOX */}
+    <div className="mt-6 bg-gray-900 text-white p-4 rounded-lg shadow-md text-right text-sm sm:text-base">
+      <p><b>Sub Total:</b> ₹{totalAmount.toFixed(2)}</p>
+      <p><b>Round Off:</b> ₹{invoice.roundOff.toFixed(2)}</p>
+      <p className="text-lg sm:text-xl font-bold">
+        <b>Payable Amount:</b>{" "}
+        ₹{(totalAmount + Number(invoice.roundOff)).toFixed(2)}
+      </p>
+    </div>
 
-        {/* <button
-          onClick={() => handlePrint("invoice-details")}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          🖨 Print / PDF
-        </button> */}
+    {/* ACTION BUTTONS */}
+    <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
 
-        <button
-          onClick={() => handleDownloadPDF("invoice-details", "Invoice-" + invoice.invoiceNum)}
-          className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700"
-        >
-          📄 Download PDF
-        </button>
+      <button
+        onClick={() => navigate("/invoicecreate")}
+        className="w-full sm:w-auto px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
+      >
+        ← Back to Invoice
+      </button>
 
-        <button
-          onClick={sendMail}
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-        >
-          📧 Send Mail
-        </button>
-      </div>
+      <button
+        onClick={() =>
+          handleDownloadPDF("invoice-details", "Invoice-" + invoice.invoiceNum)
+        }
+        className="w-full sm:w-auto px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700"
+      >
+        📄 Download PDF
+      </button>
+
+      <button
+        onClick={sendMail}
+        className="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+      >
+        📧 Send Mail
+      </button>
 
     </div>
-  );
+
+  </div>
+);
+
 };
 
 export default InvoiceDetails;

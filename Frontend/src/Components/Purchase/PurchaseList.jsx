@@ -59,21 +59,110 @@ const handleDownload = (id) => {
     return "bg-yellow-100 text-yellow-700 border border-yellow-300 px-3 py-1 rounded-full text-sm";
   };
 
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-5">Purchase List</h2>
+//   return (
+//     <div className="p-6">
+//       <h2 className="text-2xl font-bold mb-5">Purchase List</h2>
 
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        <table className="w-full text-left">
+//       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+//         <table className="w-full text-left">
+//           <thead className="bg-gray-100 border-b">
+//             <tr>
+//               <th className="p-4">Purchase #</th>
+//               <th className="p-4">Supplier</th>
+//               <th className="p-4">Date</th>
+//               {/* <th className="p-4">Due Date</th> */}
+//               <th className="p-4">Amount</th>
+//               <th className="p-4">Status</th>
+//               <th className="p-4 text-center">Actions</th>
+//             </tr>
+//           </thead>
+
+//           <tbody>
+//             {purchases.map((pur, i) => (
+//               <tr
+//                 key={i}
+//                 className="border-b hover:bg-gray-50 transition"
+//               >
+//                 <td className="p-4 font-semibold">{pur.billNum}</td>
+//                 <td className="p-4">{pur.supplierName}</td>
+//                 <td className="p-4">{pur.date}</td>
+//                 {/* <td className="p-4">{pur.dueDate || "-"}</td> */}
+//                 <td className="p-4 font-medium">
+//                   ₹ {pur.subtotal?.toLocaleString()}
+//                 </td>
+
+//                 <td className="p-4">
+//                   <span className={statusBadge(pur.paymentStatus)}>{pur.paymentStatus}</span>
+//                 </td>
+
+//                 <td className="p-4 flex justify-center gap-4">
+//                   {/* EDIT BUTTON */}
+                  
+//                   {/* <button onClick={() => navigate(`/purchase/${pur._id}`, { state: { purchaseId: pur._id } })}>
+//   <Edit size={20} />
+// </button> */}
+
+//                   {/* DELETE BUTTON */}
+//                   <button
+//                     className="text-red-600 hover:text-red-800"
+//                     onClick={() => deletePurchase(pur._id)}
+//                   >
+//                     <Trash2 size={20} />
+//                   </button>
+
+//                     <button
+//     className="text-blue-600 hover:text-blue-800"
+//     onClick={() => handleView(pur._id)}
+//     title="View"
+//   >
+//     <Eye size={20} />
+//   </button>
+
+//   {/* DOWNLOAD */}
+//   <button
+//     className="text-green-600 hover:text-green-800"
+//     onClick={() => handleDownload(pur._id)}
+//     title="Download Invoice"
+//   >
+//     <Download size={20} />
+//   </button>
+//                 </td>
+
+//               </tr>
+//             ))}
+//           </tbody>
+
+//         </table>
+//                                     {/* {pagination} */}
+//                        <div className="flex justify-center items-center gap-4 py-4">
+//           <button onClick={prev} disabled={page === 1}>&lt;</button>
+//           <span>Page {page} / {totalPages}</span>
+//           <button onClick={next} disabled={page === totalPages}>&gt;</button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+
+return (
+  <div className="p-4 md:p-6">
+    <h2 className="text-xl md:text-2xl font-bold mb-5">
+      Purchase List
+    </h2>
+
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+
+      {/* TABLE WRAPPER */}
+      <div className="overflow-x-auto">
+        <table className="w-full text-left text-sm md:text-base">
+
           <thead className="bg-gray-100 border-b">
             <tr>
-              <th className="p-4">Purchase #</th>
-              <th className="p-4">Supplier</th>
-              <th className="p-4">Date</th>
-              {/* <th className="p-4">Due Date</th> */}
-              <th className="p-4">Amount</th>
-              <th className="p-4">Status</th>
-              <th className="p-4 text-center">Actions</th>
+              <th className="p-3 md:p-4">Purchase #</th>
+              <th className="p-3 md:p-4">Supplier</th>
+              <th className="p-3 md:p-4 hidden sm:table-cell">Date</th>
+              <th className="p-3 md:p-4 hidden md:table-cell">Amount</th>
+              <th className="p-3 md:p-4">Status</th>
+              <th className="p-3 md:p-4 text-center">Actions</th>
             </tr>
           </thead>
 
@@ -83,63 +172,90 @@ const handleDownload = (id) => {
                 key={i}
                 className="border-b hover:bg-gray-50 transition"
               >
-                <td className="p-4 font-semibold">{pur.billNum}</td>
-                <td className="p-4">{pur.supplierName}</td>
-                <td className="p-4">{pur.date}</td>
-                {/* <td className="p-4">{pur.dueDate || "-"}</td> */}
-                <td className="p-4 font-medium">
+                <td className="p-3 md:p-4 font-semibold">
+                  {pur.billNum}
+                </td>
+
+                <td className="p-3 md:p-4">
+                  {pur.supplierName}
+                </td>
+
+                <td className="p-3 md:p-4 hidden sm:table-cell">
+                  {pur.date}
+                </td>
+
+                <td className="p-3 md:p-4 hidden md:table-cell font-medium">
                   ₹ {pur.subtotal?.toLocaleString()}
                 </td>
 
-                <td className="p-4">
-                  <span className={statusBadge(pur.paymentStatus)}>{pur.paymentStatus}</span>
+                <td className="p-3 md:p-4">
+                  <span className={statusBadge(pur.paymentStatus)}>
+                    {pur.paymentStatus}
+                  </span>
                 </td>
 
-                <td className="p-4 flex justify-center gap-4">
-                  {/* EDIT BUTTON */}
-                  
-                  {/* <button onClick={() => navigate(`/purchase/${pur._id}`, { state: { purchaseId: pur._id } })}>
-  <Edit size={20} />
-</button> */}
+                <td className="p-3 md:p-4 flex justify-center gap-3">
 
-                  {/* DELETE BUTTON */}
+                  {/* DELETE */}
                   <button
                     className="text-red-600 hover:text-red-800"
                     onClick={() => deletePurchase(pur._id)}
+                    title="Delete"
                   >
-                    <Trash2 size={20} />
+                    <Trash2 size={18} />
                   </button>
 
-                    <button
-    className="text-blue-600 hover:text-blue-800"
-    onClick={() => handleView(pur._id)}
-    title="View"
-  >
-    <Eye size={20} />
-  </button>
+                  {/* VIEW */}
+                  <button
+                    className="text-blue-600 hover:text-blue-800"
+                    onClick={() => handleView(pur._id)}
+                    title="View"
+                  >
+                    <Eye size={18} />
+                  </button>
 
-  {/* DOWNLOAD */}
-  <button
-    className="text-green-600 hover:text-green-800"
-    onClick={() => handleDownload(pur._id)}
-    title="Download Invoice"
-  >
-    <Download size={20} />
-  </button>
+                  {/* DOWNLOAD */}
+                  <button
+                    className="text-green-600 hover:text-green-800"
+                    onClick={() => handleDownload(pur._id)}
+                    title="Download Invoice"
+                  >
+                    <Download size={18} />
+                  </button>
+
                 </td>
-
               </tr>
             ))}
           </tbody>
 
         </table>
-                                    {/* {pagination} */}
-                       <div className="flex justify-center items-center gap-4 py-4">
-          <button onClick={prev} disabled={page === 1}>&lt;</button>
-          <span>Page {page} / {totalPages}</span>
-          <button onClick={next} disabled={page === totalPages}>&gt;</button>
-        </div>
       </div>
+
+      {/* PAGINATION */}
+      <div className="flex justify-center items-center gap-4 py-4 text-sm md:text-base">
+        <button
+          onClick={prev}
+          disabled={page === 1}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          &lt;
+        </button>
+
+        <span>
+          Page {page} / {totalPages}
+        </span>
+
+        <button
+          onClick={next}
+          disabled={page === totalPages}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          &gt;
+        </button>
+      </div>
+
     </div>
-  );
+  </div>
+);
+
 }

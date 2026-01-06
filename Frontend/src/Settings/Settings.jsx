@@ -29,7 +29,7 @@ export default function Settings() {
     { path: "category", label: "Categories", icon: <Folder size={36} /> },
     { path: "brand", label: "My Brands", icon: <Tag size={36} /> },
     { path: "product", label: "My Products", icon: <Package size={36} /> },
-    { path: "salesperson", label: "Sales Person", icon: <UserCircle size={36} /> },
+    // { path: "salesperson", label: "Sales Person", icon: <UserCircle size={36} /> },
   ];
 
   const staffItems = [

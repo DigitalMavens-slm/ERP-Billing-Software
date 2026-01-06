@@ -48,17 +48,6 @@ app.use(cookieParser());
 app.use(financialYear)
 
 
-// app.use(cors({
-//   origin: [
-//     "http://localhost:5173",
-//     // "https://erp-billing-software-12.onrender.com"   
-//     "https://erp.digitalmavens.tech"
-//   ],
-//   credentials: true
-// }));
-
-
-
 
 app.use('/uploads', express.static('uploads'));
 

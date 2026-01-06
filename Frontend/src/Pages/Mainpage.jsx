@@ -48,7 +48,9 @@ const [isVerifiedCompany, setIsVerifiedCompany] = useState(false);
   const logout = async () => {
     try {
       await api.post("/api/logout",);
-      window.location.replace("/login");
+      // window.location.replace("/login");
+      navigate("/login", { replace: true });
+
     } catch (error) {
       console.log("Logout failed:", error);
     }
@@ -56,16 +58,16 @@ const [isVerifiedCompany, setIsVerifiedCompany] = useState(false);
 
   const{data} =useFetchList("/api/company-settings");
   console.log(data)
- useEffect(() => {
-  if (data?.companyName) {
-    setIsVerifiedCompany(true);
-  }
-}, [data]);
-  
   useEffect(() => {
-  api.defaults.headers.common["x-financial-year"] = activeFY;
-  // console.log("🚀 Initial FY header set:", activeFY);
-}, []);
+    if (data?.companyName) {
+      setIsVerifiedCompany(true);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    api.defaults.headers.common["x-financial-year"] = activeFY;
+    // console.log("🚀 Initial FY header set:", activeFY);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f7fb]">
@@ -80,70 +82,70 @@ const [isVerifiedCompany, setIsVerifiedCompany] = useState(false);
           ERP Billing — SOFTWARE
         </h1>
 
-              
 
-<select
-  value={activeFY}
-  onChange={(e) => {
-    const fy = e.target.value;
 
-    setActiveFY(fy);
-    localStorage.setItem("fy", fy);
-    api.defaults.headers.common["x-financial-year"] = fy;
-    window.location.reload();
-  }}
->
-  <option value="2023-2024">2023-24</option>
-  <option value="2024-2025">2024-25</option>
-  <option value="2025-2026">2025-26</option>
-</select>
+        <select
+          value={activeFY}
+          onChange={(e) => {
+            const fy = e.target.value;
+
+            setActiveFY(fy);
+            localStorage.setItem("fy", fy);
+            api.defaults.headers.common["x-financial-year"] = fy;
+            window.location.reload();
+          }}
+        >
+          <option value="2023-2024">2023-24</option>
+          <option value="2024-2025">2024-25</option>
+          <option value="2025-2026">2025-26</option>
+        </select>
 
 
 
         <div className="flex items-center gap-5">
           <Bell className="w-6 h-6 cursor-pointer" />
           <div
-  className="relative"
- onClick={()=> setShowMenu(prev => !prev)}
->
-  {/* User Icon */}
-  <User2 className="w-7 h-7 cursor-pointer text-gray-700 hover:text-black" />
+            className="relative"
+            onClick={() => setShowMenu(prev => !prev)}
+          >
+            {/* User Icon */}
+            <User2 className="w-7 h-7 cursor-pointer text-gray-700 hover:text-black" />
 
-  {/* Hover menu */}
-  {showMenu && (
-    <div className="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border z-50">
+            {/* Hover menu */}
+            {showMenu && (
+              <div className="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border z-50">
 
-{role === "admin" &&(
-      <div className="flex items-center gap-2 px-4 py-3 border-b text-sm
-                       cursor-pointer hover:bg-gray-100" onClick={()=>navigate("/company")}>
-        {isVerifiedCompany ? (
-          <>
-            <BadgeCheck className="w-4 h-4 text-green-600" />
-            <span className="text-green-600 font-medium">
-              Verified Company
-            </span>
-          </>
-        ) : (
-          <>
-            <BadgeX className="w-4 h-4 text-red-500" />
-            <span className="text-red-500 font-medium">
-              Not Verified
-            </span>
-          </>
-        )}
-      </div>)}
+                {role === "admin" && (
+                  <div className="flex items-center gap-2 px-4 py-3 border-b text-sm
+                       cursor-pointer hover:bg-gray-100" onClick={() => navigate("/company")}>
+                    {isVerifiedCompany ? (
+                      <>
+                        <BadgeCheck className="w-4 h-4 text-green-600" />
+                        <span className="text-green-600 font-medium">
+                          Verified Company
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <BadgeX className="w-4 h-4 text-red-500" />
+                        <span className="text-red-500 font-medium">
+                          Not Verified
+                        </span>
+                      </>
+                    )}
+                  </div>)}
 
-      {/* Logout icon only */}
-      <div
-        onClick={logout}
-        className="flex items-center justify-center py-3 cursor-pointer hover:bg-gray-100 rounded-b-xl"
-        title="Logout"
-      >
-      LogOut  <LogOut className="w-5 h-5 text-gray-600 hover:text-red-600" />
-      </div>
-    </div>
-  )}
-</div>
+                {/* Logout icon only */}
+                <div
+                  onClick={logout}
+                  className="flex items-center justify-center py-3 cursor-pointer hover:bg-gray-100 rounded-b-xl"
+                  title="Logout"
+                >
+                  LogOut  <LogOut className="w-5 h-5 text-gray-600 hover:text-red-600" />
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* <User2 className="w-7 h-7 cursor-pointer" /> */}
           {/* <ArrowRight size={24} color="blue" onClick={logout} /> */}

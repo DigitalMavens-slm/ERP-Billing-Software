@@ -137,13 +137,13 @@ const LoginSignup = () => {
             </>
           ) : (
             <>
-              {/* Create an account?{" "}
+              Create an account?{" "}
               <span
                 onClick={() => setState("Sign-Up")}
                 className="text-indigo-600 font-semibold cursor-pointer hover:underline"
               >
                 Click here
-              </span> */}
+              </span>
             </>
           )}
         </p>
